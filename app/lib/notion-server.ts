@@ -14,7 +14,7 @@ export async function queryDatabase(token: string, db: string) {
 
     return response.results;
   } catch (error: any) {
-    console.error("❌ Notion API Error:", error);
+    console.error(" Notion API Error:", error);
     throw new Error(error.message || "Failed to fetch Notion data");
   }
 }
