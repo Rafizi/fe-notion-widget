@@ -1,15 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextResponse } from "next/server";
 import { randomUUID } from "crypto";
+import { redis } from "@/app/lib/redis";
 
-const globalStore = globalThis as any;
-
-if (!globalStore.__tokenStore) {
-  globalStore.__tokenStore = new Map<string, string>();
-}
-
-const tokenStore: Map<string, string> = globalStore.__tokenStore;
-
+// ⛔️ globalThis + Map udah nggak dipakai lagi
 
 export async function POST(req: Request) {
   const { token, db } = await req.json();
@@ -19,17 +13,18 @@ export async function POST(req: Request) {
 
   const id = randomUUID().slice(0, 6);
 
-  tokenStore.set(id, token);
+  // simpan token ke Redis dengan expiry, misal 2 jam
+  await redis.set(`notion-token:${id}`, token, {
+    ex: 60 * 60 * 2, // 2 jam
+  });
 
-  // const embedUrl = `http://localhost:3000/embed/${id}?db=${db}`;
-  // const embedUrl = `https://khalify-notion-widgets.vercel.app/embed/${id}?db=${db}`;
-  const embedUrl = `https://khalify-notion-widgets.vercel.app/embed/${id}?db=${db}`;
-
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+  const embedUrl = `${baseUrl}/embed/${id}?db=${db}`;
 
   return NextResponse.json({ success: true, embedUrl });
 }
 
-
-export function getToken(id: string) {
-  return tokenStore.get(id);
+// helper yang dipakai EmbedPage
+export async function getToken(id: string) {
+  return await redis.get<string>(`notion-token:${id}`);
 }

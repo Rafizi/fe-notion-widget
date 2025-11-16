@@ -52,7 +52,7 @@ export default async function EmbedPage(props: any) {
 
     if (!db) return <p style={{ color: "red" }}>Missing database ID.</p>;
 
-    const token = getToken(id);
+    const token = await getToken(id);
     if (!token)
       return <p style={{ color: "red" }}>Invalid or expired embed link.</p>;
 
@@ -66,13 +66,16 @@ export default async function EmbedPage(props: any) {
             const name = extractName(item);
 
             return (
+
               <div
+
                 key={i}
                 className="
                   relative group 
                   bg-gray-900 rounded-lg overflow-hidden
                 "
               >
+
                 {/* Thumbnail */}
                 <AutoThumbnail src={url} />
 
