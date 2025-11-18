@@ -51,45 +51,34 @@ export default async function EmbedPage(props: any) {
     const id = paramsObj.id;
     const db = searchObj?.db;
 
-    if (!db) return <p style={{ color: "red" }}>Missing database ID.</p>;
+    if (!db)
+      return errorBox("Database ID not valid. / Token error.");
 
     const token = await getToken(id);
     if (!token)
-      return <p style={{ color: "red" }}>Invalid or expired embed link.</p>;
+      return errorBox("Token not valid. / Token error.");
 
     const data = await queryDatabase(token, db);
 
     return (
       <main className="bg-black min-h-screen p-4">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-          {data.map((item: any, i: number) => {
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+
+          {data.slice(0, 3).map((item: any, i: number) => {
             const url = extractImage(item);
             const name = extractName(item);
 
             return (
-              <div
-                key={i}
-                className="
-                  relative group 
-                  bg-gray-900 rounded-lg overflow-hidden
-                "
-              >
-                {/* Thumbnail */}
-                <AutoThumbnail src={url} />
+              <div key={i} className="bg-gray-900 rounded-lg overflow-hidden">
 
-                {/* Hover Overlay */}
-                <div
-                  className="
-                    absolute inset-0 bg-black/60 
-                    opacity-0 group-hover:opacity-100
-                    transition-all duration-300
-                    flex items-center justify-center
-                  "
-                >
-                  <p className="text-white font-semibold text-center px-2 text-sm">
-                    {name}
-                  </p>
+                {/* Instagram ratio 4:5 */}
+                <div className="aspect-[4/5] w-full overflow-hidden bg-gray-800">
+                  <AutoThumbnail src={url} />
                 </div>
+
+                <p className="text-white text-center py-2 text-sm">
+                  {name}
+                </p>
               </div>
             );
           })}
@@ -97,10 +86,15 @@ export default async function EmbedPage(props: any) {
       </main>
     );
   } catch (err: any) {
-    return (
-      <p style={{ color: "red", padding: 20 }}>
-        Error: {err?.message || "Unknown server error"}
-      </p>
-    );
+    return errorBox(err?.message || "Unknown server error");
   }
 }
+
+function errorBox(text: string) {
+  return (
+    <div className="p-4 bg-red-900 border border-red-600 text-red-300 rounded-lg m-4">
+      {text}
+    </div>
+  );
+}
+
