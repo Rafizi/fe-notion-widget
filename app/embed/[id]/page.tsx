@@ -1,11 +1,8 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
-
-import { useEffect, useState } from "react";
 import { getToken } from "@/app/api/embed/route";
 import AutoThumbnail from "@/app/components/AutoThumbnail";
 import { queryDatabase } from "@/app/lib/notion-server";
+import { useState } from "react";
 
 function extractImage(item: any) {
   const props = item.properties;
@@ -46,55 +43,53 @@ function extractName(item: any) {
   return item.properties?.Name?.title?.[0]?.plain_text || "Untitled";
 }
 
-export default function EmbedPage(props: any) {
-  const [data, setData] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-
-  const paramsObj = props.params;
-  const searchObj = props.searchParams;
+export default async function EmbedPage(props: any) {
+  // === SERVER SIDE FETCH ===
+  const paramsObj = await props.params;
+  const searchObj = await props.searchParams;
 
   const id = paramsObj.id;
   const db = searchObj?.db;
 
-  const loadData = async () => {
-    setRefreshing(true);
-
-    const token = await getToken(id);
-    if (!token) return;
-
-    const result = await queryDatabase(token, db);
-    setData(result);
-
-    setRefreshing(false);
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    loadData();
-  }, []);
-
   if (!db) return <p style={{ color: "red" }}>Missing database ID.</p>;
 
-  return (
-    <main className="bg-black min-h-screen p-4">
+  const token = await getToken(id);
+  if (!token)
+    return <p style={{ color: "red" }}>Invalid or expired embed link.</p>;
 
-      {/* Button Refresh */}
-      <div className="flex justify-end mb-4">
-        <button
-          onClick={loadData}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
-        >
-          {refreshing ? "Refreshing..." : "Refresh"}
-        </button>
-      </div>
+  const initialData = await queryDatabase(token, db);
 
-      {/* Loading */}
-      {loading ? (
-        <p className="text-white">Loading...</p>
-      ) : (
+  // === CLIENT COMPONENT ADA DI DALAM SERVER COMPONENT ===
+  function Client({ data, id, db }: any) {
+    "use client";
+
+    const [items, setItems] = useState(data);
+    const [loading, setLoading] = useState(false);
+
+    const refresh = async () => {
+      setLoading(true);
+
+      const res = await fetch(`/api/embed-refresh?id=${id}&db=${db}`);
+      const newData = await res.json();
+
+      setItems(newData);
+      setLoading(false);
+    };
+
+    return (
+      <main className="bg-black min-h-screen p-4">
+        {/* REFRESH BUTTON */}
+        <div className="flex justify-end mb-4">
+          <button
+            onClick={refresh}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
+          >
+            {loading ? "Refreshing..." : "Refresh"}
+          </button>
+        </div>
+
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-          {data.map((item: any, i: number) => {
+          {items.map((item: any, i: number) => {
             const url = extractImage(item);
             const name = extractName(item);
 
@@ -121,7 +116,9 @@ export default function EmbedPage(props: any) {
             );
           })}
         </div>
-      )}
-    </main>
-  );
+      </main>
+    );
+  }
+
+  return <Client data={initialData} id={id} db={db} />;
 }
