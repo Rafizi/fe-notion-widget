@@ -63,13 +63,12 @@ export default async function EmbedPage(props: any) {
     return (
       
       <main className="bg-black min-h-screen p-4">
-        <RefreshButton />
         <div className="grid grid-cols-3 md:grid-cols-3 gap-3">
           {data.map((item: any, i: number) => {
             const url = extractImage(item);
             const name = extractName(item);
 
-            return (
+            return (  
               <div
                 key={i}
                 className="
@@ -98,8 +97,7 @@ export default async function EmbedPage(props: any) {
             );
           })}
         </div>
-
-        
+                <RefreshButton />
       </main>
     );
   } catch (err: any) {
