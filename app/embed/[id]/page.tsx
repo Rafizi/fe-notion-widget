@@ -61,7 +61,9 @@ export default async function EmbedPage(props: any) {
     const data = await queryDatabase(token, db);
 
     return (
+      
       <main className="bg-black min-h-screen p-4">
+        <RefreshButton />
         <div className="grid grid-cols-3 md:grid-cols-3 gap-3">
           {data.map((item: any, i: number) => {
             const url = extractImage(item);
@@ -97,7 +99,7 @@ export default async function EmbedPage(props: any) {
           })}
         </div>
 
-        <RefreshButton />
+        
       </main>
     );
   } catch (err: any) {
