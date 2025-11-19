@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { getToken } from "@/app/api/embed/route";
 import AutoThumbnail from "@/app/components/AutoThumbnail";
+import EmbedFilter from "@/app/components/EmbedFilter";
 import RefreshButton from "@/app/components/RefreshButton";
 import { queryDatabase } from "@/app/lib/notion-server";
 
@@ -116,6 +117,7 @@ export default async function EmbedPage(props: any) {
 
     return (
       <main className="bg-black min-h-screen p-4">
+        <EmbedFilter />
         <div className="grid grid-cols-3 md:grid-cols-3 gap-3">
           {filtered.map((item: any, i: number) => {
             const url = extractImage(item);
