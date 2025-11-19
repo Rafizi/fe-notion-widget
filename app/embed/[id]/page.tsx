@@ -53,7 +53,8 @@ export default async function EmbedPage(props: any) {
     const db = searchObj?.db;
 
     // 🔥 Ambil filter dari query URL
-    const statusFilter = searchObj?.status;
+    const decode = (v: string) => decodeURIComponent(v).replace(/\+/g, " ");
+    const statusFilter = searchObj?.status ? decode(searchObj.status) : null;
     const platformFilter = searchObj?.platform;
     const pillarFilter = searchObj?.pillar;
     const pinnedFilter = searchObj?.pinned; // true / false
