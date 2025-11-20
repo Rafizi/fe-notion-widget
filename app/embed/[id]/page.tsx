@@ -51,9 +51,6 @@ export default async function EmbedPage(props: any) {
 
     const id = paramsObj.id;
     const db = searchObj?.db;
-
-    // 🔥 Ambil filter dari query URL
-    // Decode URL value (fix + issue)
     const decode = (v: string) => decodeURIComponent(v).replace(/\+/g, " ");
 
     const statusFilter = searchObj?.status ? decode(searchObj.status) : null;
@@ -78,12 +75,18 @@ export default async function EmbedPage(props: any) {
     let filtered = data;
 
     // Filter Status
-    if (statusFilter) {
-      filtered = filtered.filter((item: any) => {
-        const status = item.properties?.Status?.select?.name;
-        return status?.toLowerCase() === statusFilter.toLowerCase();
-      });
-    }
+    // Filter Status
+if (statusFilter) {
+  filtered = filtered.filter((item: any) => {
+    const statuses = item.properties?.Status?.multi_select;
+
+    // handle multi-select
+    return statuses?.some(
+      (s: any) => s.name.toLowerCase() === statusFilter.toLowerCase()
+    );
+  });
+}
+
 
     // Filter Platform
     if (platformFilter) {
