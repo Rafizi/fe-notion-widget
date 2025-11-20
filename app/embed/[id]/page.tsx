@@ -4,6 +4,8 @@ import AutoThumbnail from "@/app/components/AutoThumbnail";
 import EmbedFilter from "@/app/components/EmbedFilter";
 import RefreshButton from "@/app/components/RefreshButton";
 import { queryDatabase } from "@/app/lib/notion-server";
+import { Pin } from "lucide-react";
+
 
 function extractImage(item: any) {
   const props = item.properties;
@@ -151,14 +153,9 @@ export default async function EmbedPage(props: any) {
                 {/* PIN ICON */}
                 {isPinned && (
                   <div className="absolute top-2 right-2 z-20">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                      className="w-5 h-5 text-yellow-400 drop-shadow"
-                    >
-                      <path d="M9 2l6 6-1.5 1.5L17 13l-1 1-3.5-3.5L11 12l6 6H7l6-6-1.5-1.5L5 7l4-4z" />
-                    </svg>
+                    <div className="absolute top-2 right-2 z-20">
+    <Pin className="w-5 h-5 text-yellow-400 drop-shadow" fill="yellow" />
+  </div>
                   </div>
                 )}
 
