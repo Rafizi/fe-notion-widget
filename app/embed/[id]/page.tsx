@@ -1,50 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { getToken } from "@/app/api/embed/route";
-import AutoThumbnail from "@/app/components/AutoThumbnail";
-import EmbedFilter from "@/app/components/EmbedFilter";
-import RefreshButton from "@/app/components/RefreshButton";
+import ClientViewComponent from "@/app/components/ClientViewComponent";
 import { queryDatabase } from "@/app/lib/notion-server";
-import { Pin } from "lucide-react";
-
-
-function extractImage(item: any) {
-  const props = item.properties;
-
-  const isVideoUrl = (url: string) =>
-    /(mp4|mov|avi|webm|mkv)(?=($|\?|&))/i.test(url);
-
-  if (props.Attachment?.files?.length > 0) {
-    const file = props.Attachment.files[0];
-    const url = file.file?.url || file.external?.url;
-
-    if (url?.includes("canva.com")) return "/canva-placeholder.png";
-    if (url && isVideoUrl(url)) return url;
-
-    return url;
-  }
-
-  const linkText = props["*Link"]?.rich_text?.[0]?.plain_text;
-  if (linkText) {
-    if (linkText.includes("canva.com")) return "/canva-placeholder.png";
-    if (isVideoUrl(linkText)) return linkText;
-
-    return linkText;
-  }
-
-  const canvaUrl = props["*Canva Link"]?.url;
-  if (canvaUrl) {
-    if (canvaUrl.includes("canva.com")) return "/canva-placeholder.png";
-    if (isVideoUrl(canvaUrl)) return canvaUrl;
-
-    return canvaUrl;
-  }
-
-  return "/placeholder.png";
-}
-
-function extractName(item: any) {
-  return item.properties?.Name?.title?.[0]?.plain_text || "Untitled";
-}
 
 export default async function EmbedPage(props: any) {
   try {
@@ -53,35 +10,27 @@ export default async function EmbedPage(props: any) {
 
     const id = paramsObj.id;
     const db = searchObj?.db;
+
     const decode = (v: string) => decodeURIComponent(v).replace(/\+/g, " ");
 
     const statusFilter = searchObj?.status ? decode(searchObj.status) : null;
-    const platformFilter = searchObj?.platform
-      ? decode(searchObj.platform)
-      : null;
+    const platformFilter = searchObj?.platform ? decode(searchObj.platform) : null;
     const pillarFilter = searchObj?.pillar ? decode(searchObj.pillar) : null;
     const pinnedFilter = searchObj?.pinned;
 
-    if (!db)
-      return (
-        <p style={{ color: "red", fontSize: "2rem" }}>Database ID not valid.</p>
-      );
+    if (!db) return <p style={{ color: "red" }}>Database ID not valid.</p>;
 
     const token = await getToken(id);
-    if (!token)
-      return <p style={{ color: "red", fontSize: "2rem" }}>Token not valid.</p>;
+    if (!token) return <p style={{ color: "red" }}>Token not valid.</p>;
 
     const data = await queryDatabase(token, db);
 
-    // 🧠 START FILTERING
     let filtered = data;
 
-    // Hide Post (if Hide checkbox = true)
     filtered = filtered.filter(
       (item: any) => item.properties?.Hide?.checkbox !== true
     );
 
-    // Filter Status
     if (statusFilter) {
       filtered = filtered.filter((item: any) => {
         const val =
@@ -93,99 +42,36 @@ export default async function EmbedPage(props: any) {
       });
     }
 
-    // Filter Platform
     if (platformFilter) {
       filtered = filtered.filter((item: any) => {
-        const platform = item.properties?.Platform?.select?.name;
-        return platform?.toLowerCase() === platformFilter.toLowerCase();
+        const val = item.properties?.Platform?.select?.name;
+        return val?.toLowerCase() === platformFilter.toLowerCase();
       });
     }
 
-    // Filter Content Pillar
     if (pillarFilter) {
       filtered = filtered.filter((item: any) => {
-        const pillar = item.properties?.["Content Pillar"]?.select?.name;
-        return pillar?.toLowerCase() === pillarFilter.toLowerCase();
+        const val = item.properties?.["Content Pillar"]?.select?.name;
+        return val?.toLowerCase() === pillarFilter.toLowerCase();
       });
     }
 
-    // Filter Pinned (checkbox)
     if (pinnedFilter === "true") {
-      filtered = filtered.filter(
-        (item: any) => item.properties?.Pinned?.checkbox === true
-      );
+      filtered = filtered.filter((i: any) => i.properties?.Pinned?.checkbox);
     }
-
     if (pinnedFilter === "false") {
-      filtered = filtered.filter(
-        (item: any) => item.properties?.Pinned?.checkbox === false
-      );
+      filtered = filtered.filter((i: any) => !i.properties?.Pinned?.checkbox);
     }
 
-    // SORTING (pinned items always on top)
+    // Sorting pinned-first
     filtered = filtered.sort((a: any, b: any) => {
-      const aPinned = a.properties?.Pinned?.checkbox ? 1 : 0;
-      const bPinned = b.properties?.Pinned?.checkbox ? 1 : 0;
-      return bPinned - aPinned; // pinned first
+      const A = a.properties?.Pinned?.checkbox ? 1 : 0;
+      const B = b.properties?.Pinned?.checkbox ? 1 : 0;
+      return B - A;
     });
 
-    // END FILTERING 🔥
-
-    return (
-      <main className="bg-black min-h-screen p-4">
-        <EmbedFilter />
-
-        <div className="grid grid-cols-3 md:grid-cols-3 gap-3">
-          {filtered.map((item: any, i: number) => {
-            const url = extractImage(item);
-            const name = extractName(item);
-            const isPinned = item.properties?.Pinned?.checkbox === true;
-
-            return (
-              <div
-                key={i}
-                className="
-                relative group 
-                bg-gray-900 rounded-lg overflow-hidden
-                aspect-4/5
-              "
-              >
-                {/* PIN ICON */}
-                {isPinned && (
-                  <div className="absolute top-2 right-2 z-20">
-                    <div className="absolute top-2 right-2 z-20">
-    <Pin className="w-5 h-5 text-yellow-400 drop-shadow" fill="yellow" />
-  </div>
-                  </div>
-                )}
-
-                <AutoThumbnail src={url} />
-
-                <div
-                  className="
-                    absolute inset-0 bg-black/60 
-                    opacity-0 group-hover:opacity-100
-                    transition-all duration-300
-                    flex items-center justify-center
-                  "
-                >
-                  <p className="text-white font-semibold text-center px-2 text-sm">
-                    {name}
-                  </p>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        <RefreshButton />
-      </main>
-    );
+    return <ClientViewComponent filtered={filtered} />;
   } catch (err: any) {
-    return (
-      <p style={{ color: "red", padding: 20 }}>
-        Error: {err?.message || "Unknown server error"}
-      </p>
-    );
+    return <p style={{ color: "red" }}>{err.message}</p>;
   }
 }
