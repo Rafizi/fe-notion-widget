@@ -13,6 +13,7 @@ export default function LoginPage() {
         emailRedirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/auth/callback`
       }
     });
+    
 
     if (error) {
       alert("Gagal ngirim email bro");
