@@ -10,10 +10,10 @@ export default function LoginPage() {
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/auth/callback`
+        emailRedirectTo: `https://khalify-notion-widgets.vercel.app/auth/callback`
       }
     });
-    
+
 
     if (error) {
       alert("Gagal ngirim email bro");
