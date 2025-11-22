@@ -128,26 +128,49 @@ export default function ClientViewComponent({ filtered }: { filtered: any[] }) {
   );
 }
 
-/* 🔥 UTILITY FUNCTIONS (PASTE DI ATAS ATAU BAWAH) */
 function extractImage(item: any) {
   const props = item.properties;
 
   const isVideoUrl = (url: string) =>
     /(mp4|mov|avi|webm|mkv)(?=($|\?|&))/i.test(url);
 
+  // ✅ 1. PRIORITAS: Attachment — tapi harus benar-benar Image Attachment
   if (props.Attachment?.files?.length > 0) {
     const file = props.Attachment.files[0];
+
+    // file.file.url = upload image  
+    // file.external.url = external link (kadang Canva)
     const url = file.file?.url || file.external?.url;
-    if (url?.includes("canva.com")) return "/canva-placeholder.png";
+
+    // ❌ Tolak kalau Canva
+    if (url?.includes("canva.com")) return "/canva-rejected.png";
+
+    // Jika video → return tetap
     if (isVideoUrl(url)) return url;
+
+    // Otherwise → valid image
     return url;
   }
 
+  // ❌ 2. Tolak jika type-nya Canva Design
+  const type = props["Image Source"]?.select?.name;
+  if (type === "Canva Design") {
+    return "/canva-rejected.png";
+  }
+
+  // ❌ 3. Tolak link rich text yang isinya Canva
   const linkText = props["*Link"]?.rich_text?.[0]?.plain_text;
+  if (linkText?.includes("canva.com")) return "/canva-rejected.png";
   if (linkText) return linkText;
 
+  // ❌ 4. Tolak field khusus Canva Link
   const canvaUrl = props["*Canva Link"]?.url;
+  if (canvaUrl?.includes("canva.com")) return "/canva-rejected.png";
+
+  // Kalau bukan Canva, masih bisa pake
   if (canvaUrl) return canvaUrl;
 
+  // fallback
   return "/placeholder.png";
 }
+
