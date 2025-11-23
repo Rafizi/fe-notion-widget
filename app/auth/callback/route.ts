@@ -25,6 +25,7 @@ export async function GET(request: Request) {
       return NextResponse.redirect("/login?error=session");
     }
   }
+  
 
   return NextResponse.redirect("/dashboard");
 }
