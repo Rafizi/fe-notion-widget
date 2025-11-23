@@ -16,6 +16,8 @@ export default function CallbackBody() {
     const errorCode = searchParams.get("error_code");
     const code = searchParams.get("code");
 
+    console.log("PARAMS:", { error, errorCode, code }); // 🔥 DEBUG #1
+
     if (error || errorCode) {
       setStatus("error");
       setMessage("Magic link invalid atau sudah expired bro 😭");
@@ -29,8 +31,16 @@ export default function CallbackBody() {
     }
 
     const run = async () => {
-      const { error: exchangeError } =
+      console.log("📩 EXCHANGE START dengan code:", code); // 🔥 DEBUG #2
+
+      const { data, error: exchangeError } =
         await supabase.auth.exchangeCodeForSession(code);
+
+      // DEBUG LOG PALING PENTING
+      console.log("📌 SUPABASE RESPONSE:", {
+        data,
+        exchangeError,
+      }); // 🔥 DEBUG #3
 
       if (exchangeError) {
         setStatus("error");
