@@ -1,23 +1,27 @@
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
-import { cookies } from "next/headers";
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import { createRouteHandlerClient, createServerComponentClient } from '@supabase/auth-helpers-nextjs';import { cookies } from 'next/headers';
 
 export default async function DashboardPage() {
-  const supabase = createServerComponentClient({ cookies });
+  const supabase = createRouteHandlerClient(
+  { cookies },
+  {
+    supabaseUrl: process.env.SUPABASE_URL!,
+    supabaseKey: process.env.SUPABASE_ANON_KEY!,
+  }
+);
+
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) {
-    return <div>Lu belum login bro 🔒</div>;
-  }
+  if (!user) return <div>Lu belum login bro 🔒</div>;
 
   return (
-    <div className="p-10">
-      <h1>Welcome bro 👋</h1>
-      <p>Email: {user.email}</p>
+    <div>
+      <h1>Welcome bro</h1>
+      <p>{user.email}</p>
     </div>
   );
 }
