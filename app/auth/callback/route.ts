@@ -1,12 +1,19 @@
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
-import { NextResponse } from 'next/server';
+import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
+import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
-export async function GET(req: Request) {
-  const url = new URL(req.url);
-  const code = url.searchParams.get('code');
+export async function GET(request: Request) {
+  const url = new URL(request.url);
+  const code = url.searchParams.get("code");
+  const error = url.searchParams.get("error");
+
+  // handle supabase expired OTP
+  if (error) {
+    console.error("Supabase auth error:", url.searchParams.toString());
+    return NextResponse.redirect("/login?error=otp_expired");
+  }
 
   const supabase = createRouteHandlerClient({ cookies });
 
@@ -15,9 +22,9 @@ export async function GET(req: Request) {
 
     if (error) {
       console.error("Exchange error:", error);
-      return NextResponse.redirect('/login?error=session');
+      return NextResponse.redirect("/login?error=session");
     }
   }
 
-  return NextResponse.redirect('/dashboard');
+  return NextResponse.redirect("/dashboard");
 }
