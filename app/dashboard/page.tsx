@@ -1,26 +1,30 @@
-export const dynamic = "force-dynamic";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
 
-import { cookies } from "next/headers";
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/app/lib/supabaseClient";
 
-export default async function DashboardPage() {
-  const supabase = createServerComponentClient(
-    { cookies },
-    {
-      supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    }
-  );
+export default function DashboardPage() {
+  const router = useRouter();
+  const [user, setUser] = useState<any>(null);
 
-  const { data: { user }, error } = await supabase.auth.getUser();
+  useEffect(() => {
+    const loadUser = async () => {
+      const { data, error } = await supabase.auth.getUser();
 
-  if (error) {
-    console.error("SERVER USER ERROR:", error);
-  }
+      if (error || !data.user) {
+        router.replace("/login");
+        return;
+      }
 
-  if (!user) {
-    return <div>Lu belum login bro 🔒</div>;
-  }
+      setUser(data.user);
+    };
+
+    loadUser();
+  }, []);
+
+  if (!user) return <div>Loading bro...</div>;
 
   return (
     <div className="p-10">
