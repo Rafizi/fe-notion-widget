@@ -51,7 +51,7 @@ export default function CallbackBody() {
 
         if (userData?.user) {
           console.log("LOGIN BERHASIL VIA COOKIE");
-          return router.replace("/dashboard");
+          return router.replace("/home");
         }
 
         if (exchangeError) {
