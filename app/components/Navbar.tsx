@@ -2,58 +2,89 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { supabase } from "@/app/lib/supabaseClient";
+
+// lucide icons
+import { Home, Settings, HelpCircle, User } from "lucide-react";
 
 export default function Navbar() {
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const pathname = usePathname();
+
+  const menuItems = [
+    { id: "/home", label: "Welcome", icon: Home },
+    { id: "/widgets/create", label: "Setup", icon: Settings },
+    { id: "/help", label: "Help", icon: HelpCircle },
+    { id: "/account", label: "Account", icon: User },
+  ];
 
   useEffect(() => {
     const loadUser = async () => {
       const { data } = await supabase.auth.getUser();
       setUserEmail(data.user?.email ?? null);
     };
-
     loadUser();
   }, []);
 
   return (
-    <nav className="w-full border-b bg-white/70 backdrop-blur-md">
-      <div className="max-w-6xl mx-auto flex items-center justify-between py-3 px-6">
-        {/* LEFT */}
-        <div className="flex items-center gap-3">
-          <div className="bg-purple-600 text-white font-bold w-8 h-8 flex justify-center items-center rounded-lg">
-            {userEmail ? userEmail[0].toUpperCase() : "?"}
+    <header className="bg-white sticky top-0 z-50 border-b border-gray-200 backdrop-blur-md bg-white/80">
+      <div className="max-w-7xl mx-auto px-6 py-4">
+        <div className="flex items-center justify-between">
+          
+          {/* LEFT (Logo + User + Title) */}
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-purple-600 rounded-xl flex items-center justify-center">
+              <span className="text-white text-lg font-semibold">
+                {userEmail ? userEmail[0].toUpperCase() : "?"}
+              </span>
+            </div>
+            <div>
+              <h1 className="text-md font-semibold text-gray-900">
+                {userEmail ?? "Loading..."}
+              </h1>
+              <p className="text-xs text-purple-600 -mt-1">Instagram Grid Preview</p>
+            </div>
           </div>
-          <div>
-            <h1 className="font-semibold">{userEmail ?? "Loading..."}</h1>
-            <p className="text-xs text-gray-500 -mt-1">Instagram Grid Preview</p>
+
+          {/* MIDDLE NAV / MENU */}
+          <nav>
+            <ul className="flex items-center gap-2">
+              {menuItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = pathname.startsWith(item.id);
+
+                return (
+                  <li key={item.id}>
+                    <Link
+                      href={item.id}
+                      className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-all ${
+                        isActive
+                          ? "bg-purple-50 text-purple-600 ring-1 ring-purple-200"
+                          : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                      }`}
+                    >
+                      <Icon
+                        className={`w-5 h-5 ${
+                          isActive ? "text-purple-600" : "text-gray-400"
+                        }`}
+                      />
+                      <span>{item.label}</span>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </nav>
+
+          {/* RIGHT / FOOTER INFO */}
+          <div className="text-right leading-tight">
+            <p className="text-xs text-gray-500">Made with ❤️ by</p>
+            <p className="text-sm text-gray-900 font-semibold">@rainbowgrow</p>
           </div>
-        </div>
 
-        {/* MIDDLE NAV */}
-        <div className="flex items-center gap-6">
-          <Link href="/home" className="text-purple-600 font-medium flex items-center gap-1">
-            <span>🏠</span> Welcome
-          </Link>
-          <Link href="../widgets/create" className="text-gray-700 flex items-center gap-1">
-            <span>⚙️</span> Setup
-          </Link>
-          <Link href="/help" className="text-gray-700 flex items-center gap-1">
-            <span>❔</span> Help
-          </Link>
-          <Link href="/account" className="text-gray-700 flex items-center gap-1">
-            <span>👤</span> Account
-          </Link>
-        </div>
-
-        {/* RIGHT */}
-        <div className="text-xs text-gray-600 text-right leading-tight">
-          <p className="flex items-center gap-1 justify-end">
-            Made with <span className="text-red-500">❤️</span> by
-          </p>
-          <p className="font-semibold">@rainbowgrow</p>
         </div>
       </div>
-    </nav>
+    </header>
   );
 }
