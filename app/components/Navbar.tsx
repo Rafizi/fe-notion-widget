@@ -26,7 +26,7 @@ export default function Navbar() {
   }, []);
 
   return (
-    <header className="bg-white sticky top-0 z-50 border-b border-gray-200 backdrop-blur-md bg-white/80">
+    <header className=" sticky top-0 z-50 border-b border-gray-200 backdrop-blur-md bg-white/80">
       <div className="max-w-7xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           {/* LEFT */}

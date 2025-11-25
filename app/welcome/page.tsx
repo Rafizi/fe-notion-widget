@@ -25,9 +25,8 @@ export default function WelcomePage() {
     <>
       <Navbar />
 
-      <div className="max-w-5xl mx-auto p-10 bg:white min-h-screen">
-
-        {/* Top Section */}
+      <div className="max-w-5xl mx-auto p-10 min-h-screen">
+        {/* TOP HERO SECTION (kode 1) */}
         <div className="grid md:grid-cols-2 gap-10 items-center">
           <img
             src="/ImageWithFallback.png"
@@ -48,6 +47,7 @@ export default function WelcomePage() {
               Just a few steps and you’ll have a beautiful Instagram-style gallery that updates automatically.
             </p>
 
+            {/* Get started tetap versi kode 1 */}
             <button
               onClick={() => router.push("/setup")}
               className="mt-6 bg-purple-600 text-white px-6 py-3 rounded-lg shadow hover:bg-purple-700 transition"
@@ -57,36 +57,32 @@ export default function WelcomePage() {
           </div>
         </div>
 
-        {/* Steps Section */}
-        <h2 className="text-xl font-semibold mt-20 mb-6">Easy setups (5 mins):</h2>
+        {/* TITLE */}
+        <h2 className="text-xl font-semibold mt-20 mb-6">
+          Easy setups (5 mins):
+        </h2>
 
-        <div className="grid md:grid-cols-3 gap-6">
-          <div className="p-6 bg-white rounded-xl border shadow-sm hover:shadow transition">
-            <h3 className="font-bold mb-2 text-black flex items-center gap-2">
-              <span className="bg-purple-600 text-white w-7 h-7 rounded-full flex items-center justify-center text-sm">1</span>
-              Setup Notion Template
-            </h3>
-            <p className="text-gray-600 text-sm">Create your database in Notion</p>
-          </div>
-
-          <div className="p-6 bg-white rounded-xl border shadow-sm hover:shadow transition">
-            <h3 className="font-bold mb-2 text-black flex items-center gap-2">
-              <span className="bg-purple-600 text-white w-7 h-7 rounded-full flex items-center justify-center text-sm">2</span>
-              Connect Integration
-            </h3>
-            <p className="text-gray-600 text-sm">Link your Notion workspace</p>
-          </div>
-
-          <div className="p-6 bg-white rounded-xl border shadow-sm hover:shadow transition">
-            <h3 className="font-bold mb-2 text-black flex items-center gap-2">
-              <span className="bg-purple-600 text-white w-7 h-7 rounded-full flex items-center justify-center text-sm">3</span>
-              Embed Widget
-            </h3>
-            <p className="text-gray-600 text-sm">Add to your Notion page</p>
-          </div>
+        {/* 🔥 STEPS (diambil dari kode 2) */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {[
+            { step: "1", title: "Setup Notion Template", desc: "Create your database in Notion" },
+            { step: "2", title: "Connect Integration", desc: "Link your Notion workspace" },
+            { step: "3", title: "Embed Widget", desc: "Add to your Notion page" },
+          ].map((item) => (
+            <div
+              key={item.step}
+              className="bg-white border border-gray-200 rounded-xl p-6 hover:border-purple-300 transition-colors"
+            >
+              <div className="w-10 h-10 bg-purple-600 text-white rounded-full flex items-center justify-center mb-4">
+                {item.step}
+              </div>
+              <h3 className="text-gray-900 mb-2">{item.title}</h3>
+              <p className="text-sm text-gray-600">{item.desc}</p>
+            </div>
+          ))}
         </div>
 
-        {/* New Section: Video Tutorials + Why Use This */}
+        {/* VIDEO + WHY USE THIS (tetap kode 1) */}
         <div className="grid md:grid-cols-2 gap-6 mt-10">
 
           {/* VIDEO TUTORIALS */}
@@ -130,7 +126,6 @@ export default function WelcomePage() {
             </ul>
           </div>
         </div>
-
       </div>
     </>
   );
