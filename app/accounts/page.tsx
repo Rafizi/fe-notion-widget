@@ -29,7 +29,7 @@ export default function AccountsPage() {
       <h1 className="text-2xl font-bold">Your Account</h1>
       <p className="mt-3 text-gray-700">Email: {user.email}</p>
 
-      <button
+      {/* <button
         className="mt-6 bg-red-500 text-white px-4 py-2 rounded"
         onClick={async () => {
           await supabase.auth.signOut();
@@ -37,7 +37,8 @@ export default function AccountsPage() {
         }}
       >
         Logout
-      </button>
+      </button> */}
+      
     </div>
   );
 }

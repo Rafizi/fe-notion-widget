@@ -63,17 +63,17 @@ export default function HomePage() {
 
       <div className="grid md:grid-cols-3 gap-6">
         <div className="p-6 bg-white shadow rounded-xl">
-          <h3 className="font-bold mb-2">1. Setup Notion Template</h3>
+          <h3 className="font-bold mb-2 text-black">1. Setup Notion Template</h3>
           <p className="text-gray-600 text-sm">Create your database in Notion</p>
         </div>
 
         <div className="p-6 bg-white shadow rounded-xl">
-          <h3 className="font-bold mb-2">2. Connect Integration</h3>
+          <h3 className="font-bold mb-2 text-black">2. Connect Integration</h3>
           <p className="text-gray-600 text-sm">Link your Notion workspace</p>
         </div>
 
         <div className="p-6 bg-white shadow rounded-xl">
-          <h3 className="font-bold mb-2">3. Embed Widget</h3>
+          <h3 className="font-bold mb-2 text-black">3. Embed Widget</h3>
           <p className="text-gray-600 text-sm">Add to your Notion page</p>
         </div>
       </div>
