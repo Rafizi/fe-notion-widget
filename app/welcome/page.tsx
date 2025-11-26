@@ -51,7 +51,7 @@ export default function WelcomePage() {
 
             {/* CTA atas tetap kode 1 */}
             <button
-              onClick={() => router.push("/setup")}
+              onClick={() => router.push("/widgets/create")}
               className="mt-6 bg-purple-600 text-white px-6 py-3 rounded-lg shadow hover:bg-purple-700 transition"
             >
               Get Started →
@@ -137,7 +137,7 @@ export default function WelcomePage() {
         {/* CTA BUTTON BAWAH – posisi benar di luar grid */}
         <div className="flex justify-center md:justify-end mt-6">
           <button
-            onClick={() => router.push("/setup")}
+            onClick={() => router.push("/wideget/create")}
             className="flex items-center gap-2 px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-full transition-colors shadow-lg shadow-purple-200 hover:shadow-xl"
           >
             <span>Let&apos;s Started</span>
