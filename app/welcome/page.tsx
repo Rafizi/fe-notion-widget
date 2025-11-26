@@ -27,7 +27,6 @@ export default function WelcomePage() {
       <Navbar />
 
       <div className="max-w-5xl mx-auto px-12 py-12">
-
         {/* HERO SECTION dari kode 1 */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-16">
           <img
@@ -42,11 +41,13 @@ export default function WelcomePage() {
             </span>
 
             <h1 className="text-4xl text-gray-900 font-bold mt-5">
-              Making Instagram feed planning easier by bringing your grid view to Notion
+              Making Instagram feed planning easier by bringing your grid view
+              to Notion
             </h1>
 
             <p className="text-gray-600 text-lg mt-4 leading-relaxed">
-              Just a few steps and you’ll have a beautiful Instagram-style gallery that updates automatically.
+              Just a few steps and you’ll have a beautiful Instagram-style
+              gallery that updates automatically.
             </p>
 
             {/* CTA tetap KODE 1 */}
@@ -65,9 +66,21 @@ export default function WelcomePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
-              { step: "1", title: "Setup Notion Template", desc: "Create your database in Notion" },
-              { step: "2", title: "Connect Integration", desc: "Link your Notion workspace" },
-              { step: "3", title: "Embed Widget", desc: "Add to your Notion page" },
+              {
+                step: "1",
+                title: "Setup Notion Template",
+                desc: "Create your database in Notion",
+              },
+              {
+                step: "2",
+                title: "Connect Integration",
+                desc: "Link your Notion workspace",
+              },
+              {
+                step: "3",
+                title: "Embed Widget",
+                desc: "Add to your Notion page",
+              },
             ].map((item) => (
               <div
                 key={item.step}
@@ -76,7 +89,9 @@ export default function WelcomePage() {
                 <div className="w-10 h-10 bg-purple-600 text-white rounded-full flex items-center justify-center mb-4">
                   {item.step}
                 </div>
-                <h3 className="text-gray-900 font-semibold mb-2">{item.title}</h3>
+                <h3 className="text-gray-900 font-semibold mb-2">
+                  {item.title}
+                </h3>
                 <p className="text-sm text-gray-600">{item.desc}</p>
               </div>
             ))}
@@ -85,12 +100,15 @@ export default function WelcomePage() {
 
         {/* 🌈 VIDEO + WHY USE THIS (FULL KODE 2) */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-
           {/* VIDEO CARD */}
           <div className="bg-gradient-to-br from-purple-50 to-pink-50 border border-purple-200 rounded-xl p-6">
             <div className="flex items-center gap-2 mb-4">
               <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
-                <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                <svg
+                  className="w-4 h-4 text-white"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
                   <path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" />
                 </svg>
               </div>
@@ -127,6 +145,50 @@ export default function WelcomePage() {
                 <span>No coding required</span>
               </li>
             </ul>
+          </div>
+          <div className="flex justify-center md:justify-end mt-10">
+            <button
+              onClick={() => router.push("/setup")}
+              className="flex items-center gap-2 px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-full transition-colors shadow-lg shadow-purple-200 hover:shadow-xl"
+            >
+              <span>Let&apos;s Started</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="2"
+                stroke="currentColor"
+                className="w-5 h-5"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M17.25 12l-6.75 6.75M17.25 12l-6.75-6.75M17.25 12H3"
+                />
+              </svg>
+            </button>
+          </div>
+          <div className="flex justify-center md:justify-end mt-10">
+            <button
+              onClick={() => router.push("/setup")}
+              className="flex items-center gap-2 px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-full transition-colors shadow-lg shadow-purple-200 hover:shadow-xl"
+            >
+              <span>Let&apos;s Started</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="2"
+                stroke="currentColor"
+                className="w-5 h-5"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M17.25 12l-6.75 6.75M17.25 12l-6.75-6.75M17.25 12H3"
+                />
+              </svg>
+            </button>
           </div>
         </div>
       </div>
