@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import NotionConnectForm from "@/app/components/NotionConnectForm";
+import Navbar from "@/app/components/Navbar";
 
 export default function CreateWidgetPage() {
   const [step, setStep] = useState(1);
@@ -48,10 +49,8 @@ export default function CreateWidgetPage() {
 
   return (
     <div className="w-full min-h-screen bg-white text-black p-10">
+      <Navbar />
 
-      {/* ----------------------------- */}
-      {/*            STEPPER            */}
-      {/* ----------------------------- */}
       <div className="flex justify-center mb-10">
         <div className="flex items-center gap-10">
 
@@ -81,9 +80,6 @@ export default function CreateWidgetPage() {
         </div>
       </div>
 
-      {/* ----------------------------- */}
-      {/*          STEP CONTENT          */}
-      {/* ----------------------------- */}
       <div className="max-w-4xl mx-auto bg-gray-50 p-8 rounded-xl shadow">
 
         {/* STEP 1 */}
