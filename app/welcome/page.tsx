@@ -146,28 +146,7 @@ export default function WelcomePage() {
               </li>
             </ul>
           </div>
-          <div className="flex justify-center md:justify-end mt-10">
-            <button
-              onClick={() => router.push("/setup")}
-              className="flex items-center gap-2 px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-full transition-colors shadow-lg shadow-purple-200 hover:shadow-xl"
-            >
-              <span>Let&apos;s Started</span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="2"
-                stroke="currentColor"
-                className="w-5 h-5"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M17.25 12l-6.75 6.75M17.25 12l-6.75-6.75M17.25 12H3"
-                />
-              </svg>
-            </button>
-          </div>
+          
           <div className="flex justify-center md:justify-end mt-10">
             <button
               onClick={() => router.push("/setup")}
