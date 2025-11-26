@@ -26,8 +26,10 @@ export default function AccountsPage() {
   if (!user) return <div className="p-10">Loading...</div>;
 
   return (
-    <div className="p-10">
+    <> 
       <Navbar />
+    <div className="p-10">
+     
       <h1 className="text-2xl font-bold">Your Account</h1>
       <p className="mt-3 text-gray-700">Email: {user.email}</p>
 
@@ -42,5 +44,6 @@ export default function AccountsPage() {
       </button> */}
       
     </div>
+     </>
   );
 }
