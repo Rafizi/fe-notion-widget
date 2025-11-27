@@ -7,33 +7,46 @@ import { CustomizeStep } from "@/app/components/customize-step";
 import { FinishStep } from "@/app/components/finish-step";
 
 // ============================
-//  FLEXIBLE NOTION DB PARSER
+//  FLEXIBLE ID VALIDATOR
+// ============================
+function validateNotionInput(input: string): boolean {
+  if (!input) return false;
+
+  // CASE 1 — direct new Notion ID (ntn_xxxxx)
+  if (input.startsWith("ntn_") && input.length > 20) {
+    return true;
+  }
+
+  // CASE 2 — UUID 32 chars
+  const clean = input.replace(/-/g, "");
+  if (clean.length === 32) {
+    return true;
+  }
+
+  // CASE 3 — URLs Still allowed (optional)
+  if (input.includes("notion.so") || input.includes("ntn.so")) {
+    return true;
+  }
+
+  return false;
+}
+
+// ============================
+//  FLEXIBLE PARSER
 // ============================
 function extractFlexibleNotionId(input: string): string | null {
   if (!input) return null;
 
-  // CASE 1 — Direct new ID (ntn_xxxxx)
-  if (input.startsWith("ntn_")) {
-    return input.trim();
-  }
+  if (input.startsWith("ntn_")) return input.trim();
 
-  // Remove URL parameters
   const clean = input.split("?")[0];
-
-  // Extract the last path segment
   const segments = clean.split("/");
   const last = segments.pop() || "";
 
-  // CASE 2 — New ID inside URL (notion.so/.../ntn_xxx)
-  if (last.startsWith("ntn_")) {
-    return last.trim();
-  }
+  if (last.startsWith("ntn_")) return last.trim();
 
-  // CASE 3 — UUID Notion database ID (with or without hyphens)
   const uuid = last.replace(/-/g, "");
-  if (uuid.length === 32) {
-    return uuid;
-  }
+  if (uuid.length === 32) return uuid;
 
   return null;
 }
@@ -41,13 +54,13 @@ function extractFlexibleNotionId(input: string): string | null {
 export default function CreateWidgetPageMerged() {
   const [step, setStep] = useState(1);
 
-  // --- LOGIC DARI KODE 1 ---
+  // Logic asli
   const [token, setToken] = useState<string | null>(null);
   const [db, setDb] = useState<string | null>(null);
   const [embedUrl, setEmbedUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // --- UI STATE DARI KODE 2 ---
+  // UI state
   const [notionUrl, setNotionUrl] = useState("");
   const [isUrlValid, setIsUrlValid] = useState(false);
 
@@ -81,7 +94,7 @@ export default function CreateWidgetPageMerged() {
 
       <div className="w-full min-h-screen bg-white text-black p-10">
 
-        {/* HEADER STEP INDICATOR */}
+        {/* HEADER */}
         <div className="flex justify-center mb-10">
           <div className="flex items-center gap-10">
             {[
@@ -134,7 +147,10 @@ export default function CreateWidgetPageMerged() {
           {step === 2 && (
             <ConnectStep
               notionUrl={notionUrl}
-              setNotionUrl={setNotionUrl}
+              setNotionUrl={(val) => {
+                setNotionUrl(val);
+                setIsUrlValid(validateNotionInput(val));
+              }}
               isUrlValid={isUrlValid}
               setIsUrlValid={setIsUrlValid}
               onNext={() => {
