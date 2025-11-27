@@ -18,16 +18,40 @@ export function ConnectStep({
 }: ConnectStepProps) {
   const [showInstructions, setShowInstructions] = useState(false);
 
-  const validateUrl = (url: string) => {
-    const isValid = url.includes('notion.so') && url.length > 20;
-    setIsUrlValid(isValid);
-    return isValid;
+  // --- SMART VALIDATOR ---
+  const validateUrl = (input: string) => {
+    if (!input) {
+      setIsUrlValid(false);
+      return false;
+    }
+
+    // ACCEPT direct Notion Resource ID (NEW format)
+    if (input.startsWith("ntn_") && input.length >= 24) {
+      setIsUrlValid(true);
+      return true;
+    }
+
+    // ACCEPT UUID 32 chars
+    const clean = input.replace(/-/g, "");
+    if (clean.length === 32) {
+      setIsUrlValid(true);
+      return true;
+    }
+
+    // ACCEPT Notion URLs (optional)
+    if (input.includes("notion.so") || input.includes("ntn.so")) {
+      setIsUrlValid(true);
+      return true;
+    }
+
+    setIsUrlValid(false);
+    return false;
   };
 
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const url = e.target.value;
-    setNotionUrl(url);
-    validateUrl(url);
+    const val = e.target.value.trim();
+    setNotionUrl(val);
+    validateUrl(val);
   };
 
   return (
@@ -44,17 +68,17 @@ export function ConnectStep({
         </div>
       </div>
 
-      {/* Database URL Input */}
+      {/* INPUT */}
       <div>
         <label className="block text-sm text-gray-700 mb-2">
-          Notion Database URL
+          Notion Database ID / URL
         </label>
         <div className="relative">
           <input
             type="text"
             value={notionUrl}
             onChange={handleUrlChange}
-            placeholder="https://www.notion.so/workspace/..."
+            placeholder="ntn_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
             className={`w-full px-4 py-3 bg-white border rounded-lg text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 transition-all ${
               notionUrl === ''
                 ? 'border-gray-300 focus:ring-purple-500'
@@ -76,7 +100,7 @@ export function ConnectStep({
         {notionUrl && !isUrlValid && (
           <p className="text-sm text-red-600 mt-2 flex items-center gap-1">
             <AlertCircle className="w-4 h-4" />
-            Please enter a valid Notion database URL
+            Please enter a valid Notion Database ID or URL
           </p>
         )}
       </div>
@@ -87,7 +111,7 @@ export function ConnectStep({
           onClick={() => setShowInstructions(!showInstructions)}
           className="w-full px-4 py-3 flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
         >
-          <span className="text-sm text-gray-900">How to get your database URL?</span>
+          <span className="text-sm text-gray-900">How to get your database ID?</span>
           {showInstructions ? (
             <ChevronDown className="w-4 h-4 text-gray-500" />
           ) : (
@@ -98,11 +122,9 @@ export function ConnectStep({
         {showInstructions && (
           <div className="px-4 pb-4 text-sm text-gray-600 space-y-2 border-t border-gray-200 pt-4">
             <ol className="list-decimal ml-4 space-y-2">
-              <li>Open your Notion workspace in browser</li>
-              <li>Navigate to your database page</li>
-              <li>Click on the database to open it in full page</li>
-              <li>Copy the URL from your browser&lsquo;s address bar</li>
-              <li>Paste it in the field above</li>
+              <li>Open your Notion database</li>
+              <li>Click “Share” → “Copy link”</li>
+              <li>Or copy the internal database ID starting with <strong>ntn_</strong></li>
             </ol>
           </div>
         )}
