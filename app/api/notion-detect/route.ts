@@ -32,30 +32,26 @@ export async function POST(req: Request) {
       block?.format?.block_icon ||
       null;
 
-    // ---- SAFE COLLECTION (NO TS ERROR) ----
     const collectionObj: any = data?.recordMap?.collection
       ? (Object.values(data.recordMap.collection)[0] as any)
       : null;
 
     const collection = collectionObj?.value || null;
 
-    // ---- SAFE VIEW (NO TS ERROR) ----
     const viewObj: any = data?.recordMap?.collection_view
       ? (Object.values(data.recordMap.collection_view)[0] as any)
       : null;
 
     const view = viewObj?.value || null;
 
-    // ---- SAFE SCHEMA ----
     const schema = collection?.schema || {};
 
     return NextResponse.json({
       success: true,
       title,
       icon,
-      type: view?.type || "unknown",
       propertiesCount: Object.keys(schema).length,
-      raw: data,
+      publicUrl: `https://www.notion.so/${id}`,
     });
   } catch (error) {
     return NextResponse.json({

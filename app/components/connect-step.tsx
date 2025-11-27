@@ -159,12 +159,20 @@ export function ConnectStep({
 
           <div className="text-sm text-gray-600 space-y-1">
             <p>
-              <strong>Type:</strong>{" "}
-              <span className="capitalize">{dbInfo.type}</span>
+              <strong>Properties:</strong> {dbInfo.propertiesCount}
             </p>
 
+            {/* Link Database */}
             <p>
-              <strong>Properties:</strong> {dbInfo.propertiesCount}
+              <strong>Database URL:</strong>
+              <br />
+              <a
+                className="text-blue-600 underline"
+                href={dbInfo.publicUrl}
+                target="_blank"
+              >
+                {dbInfo.publicUrl}
+              </a>
             </p>
 
             <p className="text-green-600 font-medium">
