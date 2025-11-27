@@ -69,11 +69,12 @@ export function ConnectStep({
       return;
     }
 
+    // WAJIB ADA INI BRO
     setDbInfo({
       title: data.title,
       icon: data.icon,
       propertiesCount: data.propertiesCount,
-      publicUrl: data.publicUrl, 
+      publicUrl: data.publicUrl, // <-- FIX UTAMA !!!!
     });
   };
 
@@ -165,17 +166,19 @@ export function ConnectStep({
             </p>
 
             {/* 👇 Tambahin ini */}
-            <p>
-              <strong>Database URL:</strong>
-              <br />
-              <a
-                href={dbInfo.publicUrl}
-                className="text-blue-600 underline"
-                target="_blank"
-              >
-                {dbInfo.publicUrl}
-              </a>
-            </p>
+            {dbInfo.publicUrl && (
+              <p>
+                <strong>Database URL:</strong>
+                <br />
+                <a
+                  href={dbInfo.publicUrl}
+                  target="_blank"
+                  className="text-blue-600 underline"
+                >
+                  {dbInfo.publicUrl}
+                </a>
+              </p>
+            )}
 
             <p className="text-green-600 font-medium">
               Connected via Public Notion API
