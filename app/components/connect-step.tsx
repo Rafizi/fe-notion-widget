@@ -51,32 +51,33 @@ export function ConnectStep({
 
   // AUTO DETECT DATABASE METADATA (PUBLIC API)
   const detectDb = async (id: string) => {
-    setLoadingDetect(true);
-    setDbInfo(null);
-    setDetectError(null);
+  setLoadingDetect(true);
+  setDbInfo(null);
+  setDetectError(null);
 
-    const res = await fetch("/api/notion-detect", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id }),
-    });
+  const res = await fetch("/api/notion-detect", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id }),
+  });
 
-    const data = await res.json();
-    setLoadingDetect(false);
+  const data = await res.json();
+  setLoadingDetect(false);
 
-    if (!data.success) {
-      setDetectError(data.error);
-      return;
-    }
+  if (!data.success) {
+    setDetectError(data.error);
+    return;
+  }
 
-    // WAJIB ADA INI BRO
-    setDbInfo({
-      title: data.title,
-      icon: data.icon,
-      propertiesCount: data.propertiesCount,
-      publicUrl: data.publicUrl, // <-- FIX UTAMA !!!!
-    });
-  };
+  // WAJIB ADA INI BRO
+  setDbInfo({
+    title: data.title,
+    icon: data.icon,
+    propertiesCount: data.propertiesCount,
+    publicUrl: data.publicUrl,   // <-- FIX UTAMA !!!!
+  });
+};
+
 
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value.trim();
@@ -166,19 +167,17 @@ export function ConnectStep({
             </p>
 
             {/* 👇 Tambahin ini */}
-            {dbInfo.publicUrl && (
-              <p>
-                <strong>Database URL:</strong>
-                <br />
-                <a
-                  href={dbInfo.publicUrl}
-                  target="_blank"
-                  className="text-blue-600 underline"
-                >
-                  {dbInfo.publicUrl}
-                </a>
-              </p>
-            )}
+            <p>
+              <strong>Database URL:</strong>
+              <br />
+              <a
+                href={dbInfo.publicUrl}
+                className="text-blue-600 underline"
+                target="_blank"
+              >
+                {dbInfo.publicUrl}
+              </a>
+            </p>
 
             <p className="text-green-600 font-medium">
               Connected via Public Notion API
