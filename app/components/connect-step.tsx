@@ -162,13 +162,13 @@ export function ConnectStep({
               <strong>Properties:</strong> {dbInfo.propertiesCount}
             </p>
 
-            {/* Link Database */}
+            {/* 👇 Tambahin ini */}
             <p>
               <strong>Database URL:</strong>
               <br />
               <a
-                className="text-blue-600 underline"
                 href={dbInfo.publicUrl}
+                className="text-blue-600 underline"
                 target="_blank"
               >
                 {dbInfo.publicUrl}
