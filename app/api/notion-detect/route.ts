@@ -22,54 +22,43 @@ export async function POST(req: Request) {
       });
     }
 
-    // ---- BLOCK ROOT ----
+    // ROOT BLOCK
     const block = data?.recordMap?.block?.[id]?.value;
-
-    const title = block?.properties?.title?.[0]?.[0] || "Untitled Database";
-
-    const icon =
-      block?.format?.page_icon ||
-      block?.format?.block_icon ||
-      null;
-
-    // ---- COLLECTION ----
-    const collectionObj: any = data?.recordMap?.collection
-      ? (Object.values(data.recordMap.collection)[0] as any)
-      : null;
-
-    const collection = collectionObj?.value || null;
-
-    // ---- VIEW ----
-    const viewObj: any = data?.recordMap?.collection_view
-      ? (Object.values(data.recordMap.collection_view)[0] as any)
-      : null;
-
-    const view = viewObj?.value || null;
-
-    const schema = collection?.schema || {};
-
-    // -------------------------------
-    // GENERATE REAL DATABASE URL
-    // -------------------------------
-    // pageUUID → ID page root
     const pageUUID = block?.id?.replace(/-/g, "") || null;
 
-    // viewId → ID dari collection view
-    const viewId =
-      Object.keys(data?.recordMap?.collection_view || {})[0] || null;
+    // COLLECTION & SCHEMA
+    const collectionObj: any = data?.recordMap?.collection
+      ? Object.values(data.recordMap.collection)[0]
+      : null;
+    const collection = collectionObj?.value || null;
+    const schema = collection?.schema || {};
 
-    // URL FINAL (100% sama Notion)
-    const publicUrl =
-      pageUUID && viewId
-        ? `https://www.notion.so/${pageUUID}?v=${viewId}`
-        : null;
+    // VIEW FIX (PORTOLABS-STYLE)
+    const viewKey = Object.keys(data?.recordMap?.collection_view || {})[0] || null;
+    const viewObj: any = viewKey
+      ? data.recordMap.collection_view[viewKey].value
+      : null;
+
+    // ⭐ IMPORTANT: Build URL even if view is missing
+    let publicUrl = null;
+
+    if (pageUUID && viewKey) {
+      publicUrl = `https://www.notion.so/${pageUUID}?v=${viewKey}`;
+    } else if (pageUUID) {
+      // ⭐ fallback if DB has no view
+      publicUrl = `https://www.notion.so/${pageUUID}`;
+    }
 
     return NextResponse.json({
       success: true,
-      title,
-      icon,
+      title:
+        block?.properties?.title?.[0]?.[0] || "Untitled Database",
+      icon:
+        block?.format?.page_icon ||
+        block?.format?.block_icon ||
+        null,
       propertiesCount: Object.keys(schema).length,
-      publicUrl, // ⬅ FIXED BRO!
+      publicUrl, // ⭐ ALWAYS present now
     });
   } catch (error) {
     return NextResponse.json({
