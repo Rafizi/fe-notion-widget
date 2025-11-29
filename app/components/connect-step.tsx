@@ -26,7 +26,7 @@ export function ConnectStep({
   const [dbInfo, setDbInfo] = useState<any>(null);
   const [detectError, setDetectError] = useState<string | null>(null);
 
-  // VALIDATOR — ntn_, UUID, atau URL notion
+  // VALIDATOR
   const validate = (input: string) => {
     if (!input) return false;
     if (input.startsWith("ntn_") && input.length > 20) return true;
@@ -39,14 +39,12 @@ export function ConnectStep({
     return false;
   };
 
-  // Ekstrak ID yg bakal dikirim ke API
+  // EXTRACT ID (API akan handle detail parsing)
   const extractId = (input: string): string | null => {
-    if (input.startsWith("ntn_")) return input.trim();
     return input.trim();
-    // untuk URL/UUID kita kirim apa adanya,
-    // parsing lanjutnya dilakukan di API (extractIdFromUrl / isUuidLike)
   };
 
+  // DETECT DATABASE (CALL API)
   const detectDb = async (id: string) => {
     setLoadingDetect(true);
     setDbInfo(null);
@@ -67,12 +65,19 @@ export function ConnectStep({
         return;
       }
 
+      // SAVE FULL NEW FORMAT
       setDbInfo({
         title: data.title,
         icon: data.icon,
-        propertiesCount: data.propertiesCount,
+        dbId: data.dbId,
+        viewId: data.viewId,
+        viewType: data.viewType,
+        viewName: data.viewName,
+        schemaCount: data.schemaCount,
         publicUrl: data.publicUrl,
+        fields: data.fields,
       });
+
     } catch (err) {
       console.error(err);
       setLoadingDetect(false);
@@ -123,7 +128,7 @@ export function ConnectStep({
             type="text"
             value={notionUrl}
             onChange={handleUrlChange}
-            placeholder="ntn_xxxxxxxxxxxxxxxxxxxxx"
+            placeholder="ntn_xxxxxxxxxxxxx"
             className={`w-full px-4 py-3 bg-white border rounded-lg text-gray-900
               placeholder:text-gray-400 focus:outline-none focus:ring-2 transition-all
               ${
@@ -135,6 +140,7 @@ export function ConnectStep({
               }`}
           />
 
+          {/* STATUS ICON */}
           {notionUrl && (
             <div className="absolute right-3 top-1/2 -translate-y-1/2">
               {loadingDetect ? (
@@ -163,32 +169,37 @@ export function ConnectStep({
             </h3>
           </div>
 
-          <div className="text-sm text-gray-600 space-y-1">
-            <p>
-              <strong>Properties:</strong> {dbInfo.propertiesCount}
-            </p>
+          <div className="text-sm text-gray-600 space-y-2">
 
-            {dbInfo.publicUrl && (
-              <p>
-                <strong>Database URL:</strong>
-                <br />
-                <a
-                  href={dbInfo.publicUrl}
-                  className="text-blue-600 underline break-all"
-                  target="_blank"
-                >
-                  {dbInfo.publicUrl}
-                </a>
-              </p>
-            )}
+            <p><strong>View Type:</strong> {dbInfo.viewType}</p>
+
+            <p><strong>Fields:</strong></p>
+            <ul className="ml-4 list-disc">
+              <li>Title: {dbInfo.fields?.titleField || "N/A"}</li>
+              <li>Image: {dbInfo.fields?.imageField || "N/A"}</li>
+              <li>Status: {dbInfo.fields?.statusField || "N/A"}</li>
+            </ul>
+
+            <p>
+              <strong>Database URL:</strong><br />
+              <a
+                href={dbInfo.publicUrl}
+                target="_blank"
+                className="text-blue-600 underline break-all"
+              >
+                {dbInfo.publicUrl}
+              </a>
+            </p>
 
             <p className="text-green-600 font-medium">
               Connected via Notion token_v2 (server-side)
             </p>
+
           </div>
         </div>
       )}
 
+      {/* NEXT BUTTON */}
       <button
         onClick={onNext}
         disabled={!dbInfo}
