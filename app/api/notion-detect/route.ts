@@ -8,7 +8,7 @@ if (!NOTION_TOKEN) {
 
 const headers = {
   "Content-Type": "application/json;charset=UTF-8",
-  "Cookie": `token_v2=${NOTION_TOKEN}`,
+  Cookie: `token_v2=${NOTION_TOKEN}`,
 };
 
 function cleanId(id: string) {
@@ -63,14 +63,11 @@ export async function POST(req: Request) {
     // ============================
     // 3. Fetch pageData (with token_v2)
     // ============================
-    const res2 = await fetch(
-      "https://www.notion.so/api/v3/getPublicPageData",
-      {
-        method: "POST",
-        headers,
-        body: JSON.stringify({ pageId }),
-      }
-    );
+    const res2 = await fetch("https://www.notion.so/api/v3/getPublicPageData", {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ pageId }),
+    });
 
     const data2 = await res2.json();
 
@@ -83,9 +80,7 @@ export async function POST(req: Request) {
 
     // Extract block
     const blockMap = data2.recordMap.block;
-    const block =
-      blockMap?.[pageId] ||
-      Object.values(blockMap)[0];
+    const block = blockMap?.[pageId] || Object.values(blockMap)[0];
 
     const blockValue = (block as any)?.value;
 
@@ -93,11 +88,17 @@ export async function POST(req: Request) {
       blockValue?.properties?.title?.[0]?.[0] || "Untitled Database";
 
     // Extract collection + view
-    const collectionObj = Object.values(data2.recordMap.collection || {})[0];
-    const viewObj = Object.values(data2.recordMap.collection_view || {})[0];
+    // ...existing code...
+    const collectionObj = Object.values(data2.recordMap.collection || {})[0] as
+      | { value: any }
+      | undefined;
+    const viewObj = Object.values(data2.recordMap.collection_view || {})[0] as
+      | { value: any }
+      | undefined;
 
     const collection = collectionObj?.value;
     const view = viewObj?.value;
+    // ...existing code...
 
     if (!collection || !view) {
       return NextResponse.json({
@@ -120,7 +121,10 @@ export async function POST(req: Request) {
       (k) => schema[k].type === "select" || schema[k].type === "status"
     );
 
-    const publicUrl = `https://www.notion.so/${pageId}?v=${view.id.replace(/-/g, "")}`;
+    const publicUrl = `https://www.notion.so/${pageId}?v=${view.id.replace(
+      /-/g,
+      ""
+    )}`;
 
     return NextResponse.json({
       success: true,
