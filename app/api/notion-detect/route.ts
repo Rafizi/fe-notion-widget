@@ -2,37 +2,24 @@
 import { NextResponse } from "next/server";
 
 const NOTION_TOKEN = process.env.NOTION_TOKEN_V2;
-if (!NOTION_TOKEN) {
-  console.error("❌ NOTION_TOKEN_V2 missing");
-}
 
 const headers = {
   "Content-Type": "application/json;charset=UTF-8",
   Cookie: `token_v2=${NOTION_TOKEN}`,
 };
 
-function cleanId(id: string) {
-  return id.replace(/-/g, "");
-}
+const cleanId = (id: string) => id.replace(/-/g, "");
 
 export async function POST(req: Request) {
   const { id } = await req.json();
-
-  if (!id) {
-    return NextResponse.json({
-      success: false,
-      error: "Missing ID",
-    });
-  }
+  if (!id) return NextResponse.json({ success: false, error: "Missing ID" });
 
   try {
     let pageId = id;
 
-    // ============================
-    // 1. If input starts with ntn_
-    // ============================
+    // ========== 1. Resolve ntn_ token → get real parent page ==========
     if (id.startsWith("ntn_")) {
-      const res = await fetch("https://www.notion.so/api/v3/getRecordValues", {
+      const r = await fetch("https://www.notion.so/api/v3/getRecordValues", {
         method: "POST",
         headers,
         body: JSON.stringify({
@@ -40,76 +27,79 @@ export async function POST(req: Request) {
         }),
       });
 
-      const data = await res.json();
-      const coll = data?.results?.[0]?.value;
+      const json = await r.json();
+      const c = json?.results?.[0]?.value;
 
-      if (!coll) {
+      if (!c) {
         return NextResponse.json({
           success: false,
-          error: "Invalid or private database (collection not found).",
+          error: "Invalid token or collection not found",
         });
       }
 
-      // ⭐ THIS IS THE FIX ⭐
-      // Collection always has a parent → THAT is the real database page!!
-      pageId = cleanId(coll.parent_id);
+      pageId = cleanId(c.parent_id);
     }
 
-    // ============================
-    // 2. Clean pageId
-    // ============================
     pageId = cleanId(pageId);
 
-    // ============================
-    // 3. Fetch pageData (with token_v2)
-    // ============================
-    const res2 = await fetch("https://www.notion.so/api/v3/getPublicPageData", {
+    // ========== 2. Get BLOCK (page) ==========
+    const pageRes = await fetch("https://www.notion.so/api/v3/getRecordValues", {
       method: "POST",
       headers,
-      body: JSON.stringify({ pageId }),
+      body: JSON.stringify({
+        requests: [{ id: pageId, table: "block" }],
+      }),
     });
 
-    const data2 = await res2.json();
+    const pageJson = await pageRes.json();
+    const block = pageJson?.results?.[0]?.value;
 
-    if (!data2 || data2.error) {
+    if (!block) {
       return NextResponse.json({
         success: false,
-        error: "Invalid or private database (cannot resolve collection_view).",
+        error: "Page not found or private",
       });
     }
 
-    // Extract block
-    const blockMap = data2.recordMap.block;
-    const block = blockMap?.[pageId] || Object.values(blockMap)[0];
+    const collectionId = block.collection_id;
+    const viewId = block.view_ids?.[0];
 
-    const blockValue = (block as any)?.value;
+    if (!collectionId || !viewId) {
+      return NextResponse.json({
+        success: false,
+        error: "This is not a Notion database page",
+      });
+    }
 
-    const title =
-      blockValue?.properties?.title?.[0]?.[0] || "Untitled Database";
+    // ========== 3. Fetch collection + view ==========
+    const detailRes = await fetch(
+      "https://www.notion.so/api/v3/getRecordValues",
+      {
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+          requests: [
+            { id: collectionId, table: "collection" },
+            { id: viewId, table: "collection_view" },
+          ],
+        }),
+      }
+    );
 
-    // Extract collection + view
-    // ...existing code...
-    const collectionObj = Object.values(data2.recordMap.collection || {})[0] as
-      | { value: any }
-      | undefined;
-    const viewObj = Object.values(data2.recordMap.collection_view || {})[0] as
-      | { value: any }
-      | undefined;
+    const detailJson = await detailRes.json();
 
-    const collection = collectionObj?.value;
-    const view = viewObj?.value;
-    // ...existing code...
+    const collection = detailJson?.results?.[0]?.value;
+    const view = detailJson?.results?.[1]?.value;
 
     if (!collection || !view) {
       return NextResponse.json({
         success: false,
-        error: "Invalid or private database (missing collection_view).",
+        error: "Cannot fetch database schema",
       });
     }
 
-    // Extract fields
+    // ========== 4. Extract info ==========
     const schema = collection.schema || {};
-    const schemaCount = Object.keys(schema).length;
 
     const titleField = Object.keys(schema).find(
       (k) => schema[k].type === "title"
@@ -118,31 +108,22 @@ export async function POST(req: Request) {
       (k) => schema[k].type === "file"
     );
     const statusField = Object.keys(schema).find(
-      (k) => schema[k].type === "select" || schema[k].type === "status"
+      (k) => ["select", "status"].includes(schema[k].type)
     );
-
-    const publicUrl = `https://www.notion.so/${pageId}?v=${view.id.replace(
-      /-/g,
-      ""
-    )}`;
 
     return NextResponse.json({
       success: true,
-      title,
-      icon: blockValue?.format?.page_icon || null,
+      title: collection.name?.[0]?.[0] ?? "Untitled",
+      icon: block.format?.page_icon ?? null,
       dbId: collection.id,
       viewId: view.id,
       viewType: view.type,
       viewName: view.name,
-      schemaCount,
-      publicUrl,
-      fields: {
-        titleField,
-        imageField,
-        statusField,
-      },
+      schemaCount: Object.keys(schema).length,
+      publicUrl: `https://www.notion.so/${pageId}?v=${cleanId(view.id)}`,
+      fields: { titleField, imageField, statusField },
     });
-  } catch (err) {
+  } catch (e) {
     return NextResponse.json({
       success: false,
       error: "Server error",
