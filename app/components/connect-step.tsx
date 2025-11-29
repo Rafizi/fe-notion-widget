@@ -189,7 +189,6 @@ export function ConnectStep({
         </div>
       )}
 
-      {/* NEXT */}
       <button
         onClick={onNext}
         disabled={!dbInfo}
