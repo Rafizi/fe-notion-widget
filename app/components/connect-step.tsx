@@ -1,11 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
-import {
-  Link2,
-  CheckCircle2,
-  AlertCircle,
-  Loader2,
-} from "lucide-react";
+import { Link2, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 
 interface ConnectStepProps {
   notionUrl: string;
@@ -23,68 +18,46 @@ export function ConnectStep({
   onNext,
 }: ConnectStepProps) {
   const [loadingDetect, setLoadingDetect] = useState(false);
-  const [dbInfo, setDbInfo] = useState<any>(null);
+  const [databases, setDatabases] = useState<any[]>([]);
   const [detectError, setDetectError] = useState<string | null>(null);
+  const [selectedDb, setSelectedDb] = useState<any>(null);
 
-  // VALIDATOR
+  /** VALIDATOR → hanya token ntn_ */
   const validate = (input: string) => {
-    if (!input) return false;
-    if (input.startsWith("ntn_") && input.length > 20) return true;
-
-    const clean = input.replace(/-/g, "");
-    if (clean.length === 32) return true;
-
-    if (input.includes("notion.so") || input.includes("ntn.so")) return true;
-
-    return false;
+    return input.startsWith("ntn_") && input.length > 20;
   };
 
-  // EXTRACT ID (API akan handle detail parsing)
-  const extractId = (input: string): string | null => {
-    return input.trim();
-  };
-
-  // DETECT DATABASE (CALL API)
-  const detectDb = async (id: string) => {
+  /** KIRIM TOKEN ke backend → fetch all databases */
+  const detectDb = async (token: string) => {
     setLoadingDetect(true);
-    setDbInfo(null);
     setDetectError(null);
+    setDatabases([]);
+    setSelectedDb(null);
 
     try {
-      const res = await fetch("/api/notion-detect", {
+      const res = await fetch("/api/notion-list", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id }),
+        body: JSON.stringify({ token }),
       });
 
       const data = await res.json();
       setLoadingDetect(false);
 
-      if (!data.success) {
-        setDetectError(data.error || "Failed to connect.");
+      if (!data.databases) {
+        setDetectError("No databases found or token invalid.");
         return;
       }
 
-      // SAVE FULL NEW FORMAT
-      setDbInfo({
-        title: data.title,
-        icon: data.icon,
-        dbId: data.dbId,
-        viewId: data.viewId,
-        viewType: data.viewType,
-        viewName: data.viewName,
-        schemaCount: data.schemaCount,
-        publicUrl: data.publicUrl,
-        fields: data.fields,
-      });
+      setDatabases(data.databases);
 
     } catch (err) {
-      console.error(err);
       setLoadingDetect(false);
-      setDetectError("Failed to connect.");
+      setDetectError("Failed to fetch databases.");
     }
   };
 
+  /** HANDLE INPUT CHANGE */
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value.trim();
     setNotionUrl(raw);
@@ -93,13 +66,12 @@ export function ConnectStep({
     setIsUrlValid(ok);
 
     if (!ok) {
-      setDbInfo(null);
+      setDatabases([]);
       setDetectError(null);
       return;
     }
 
-    const id = extractId(raw);
-    if (id) detectDb(id);
+    detectDb(raw);
   };
 
   return (
@@ -110,18 +82,14 @@ export function ConnectStep({
           <Link2 className="w-5 h-5 text-purple-600" />
         </div>
         <div>
-          <h2 className="text-2xl text-gray-900">Connect Database</h2>
-          <p className="text-sm text-gray-600">
-            Paste your Notion DB ID — auto-detect will run instantly
-          </p>
+          <h2 className="text-2xl text-gray-900">Connect to Notion</h2>
+          <p className="text-sm text-gray-600">Paste your Notion integration token</p>
         </div>
       </div>
 
-      {/* INPUT */}
+      {/* INPUT TOKEN */}
       <div>
-        <label className="block text-sm text-gray-700 mb-2">
-          Notion Database ID
-        </label>
+        <label className="block text-sm text-gray-700 mb-2">Notion Token</label>
 
         <div className="relative">
           <input
@@ -154,55 +122,41 @@ export function ConnectStep({
           )}
         </div>
 
-        {detectError && (
-          <p className="text-sm text-red-600 mt-2">{detectError}</p>
-        )}
+        {detectError && <p className="text-sm text-red-600 mt-2">{detectError}</p>}
       </div>
 
-      {/* PREVIEW DB */}
-      {dbInfo && (
-        <div className="p-4 rounded-lg border bg-white shadow-sm space-y-3">
-          <div className="flex items-center gap-2">
-            {dbInfo.icon && <span className="text-2xl">{dbInfo.icon}</span>}
-            <h3 className="font-medium text-gray-900 text-lg">
-              {dbInfo.title}
-            </h3>
-          </div>
+      {/* LIST DATABASES */}
+      {databases.length > 0 && (
+        <div className="space-y-3">
+          <p className="text-sm text-gray-700 font-medium">Select Database</p>
 
-          <div className="text-sm text-gray-600 space-y-2">
-
-            <p><strong>View Type:</strong> {dbInfo.viewType}</p>
-
-            <p><strong>Fields:</strong></p>
-            <ul className="ml-4 list-disc">
-              <li>Title: {dbInfo.fields?.titleField || "N/A"}</li>
-              <li>Image: {dbInfo.fields?.imageField || "N/A"}</li>
-              <li>Status: {dbInfo.fields?.statusField || "N/A"}</li>
-            </ul>
-
-            <p>
-              <strong>Database URL:</strong><br />
-              <a
-                href={dbInfo.publicUrl}
-                target="_blank"
-                className="text-blue-600 underline break-all"
-              >
-                {dbInfo.publicUrl}
-              </a>
-            </p>
-
-            <p className="text-green-600 font-medium">
-              Connected via Notion token_v2 (server-side)
-            </p>
-
-          </div>
+          {databases.map((db) => (
+            <div
+              key={db.id}
+              onClick={() => setSelectedDb(db)}
+              className={`p-4 border rounded-lg cursor-pointer transition 
+                ${
+                  selectedDb?.id === db.id
+                    ? "border-purple-500 bg-purple-50"
+                    : "border-gray-300 hover:border-purple-400"
+                }`}
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">{db.icon?.emoji || "📁"}</span>
+                <div>
+                  <p className="text-gray-900 font-medium">{db.name}</p>
+                  <p className="text-gray-600 text-sm">{db.id}</p>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       )}
 
       {/* NEXT BUTTON */}
       <button
         onClick={onNext}
-        disabled={!dbInfo}
+        disabled={!selectedDb}
         className="w-full px-6 py-3 bg-purple-600 hover:bg-purple-700 
         text-white rounded-lg transition-colors disabled:opacity-50
         disabled:cursor-not-allowed"
