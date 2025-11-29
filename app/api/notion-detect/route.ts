@@ -4,42 +4,42 @@ import { NextResponse } from "next/server";
 export async function POST(req: Request) {
   const { token } = await req.json();
 
-  if (!token) {
-    return NextResponse.json({ success: false, error: "Missing Notion token" });
-  }
-
   try {
-    const res = await fetch("https://api.notion.com/v1/search", {
+    const res = await fetch("https://www.notion.so/api/v3/search", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${token}`,
-        "Notion-Version": "2022-06-28",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json;charset=UTF-8",
+        "Cookie": `token_v2=${token}`,
       },
       body: JSON.stringify({
-        filter: {
-          property: "object",
-          value: "database"
-        }
-      })
+        type: "database",
+        limit: 100,
+        query: "",
+        filters: {
+          isNavigable: true,
+          requireEditPermissions: false,
+        },
+      }),
     });
 
     const data = await res.json();
 
-    const databases = data.results.map((db: any) => ({
-      id: db.id,
-      name: db.title?.[0]?.plain_text || "Untitled",
-      url: db.url,
-      last_edited_time: db.last_edited_time,
-      icon: db.icon || null
+    const results = data?.results || [];
+
+    const databases = results.map((item: any) => ({
+      id: item.id,
+      name: item.name,
+      url: item.url,
+      icon: item.icon,
+      last_edited_time: item.last_edited_time,
     }));
 
     return NextResponse.json({
       databases,
-      total: databases.length
+      total: databases.length,
     });
-
-  } catch (e) {
+  } catch (err) {
+    console.error("FETCH ERROR:", err);
     return NextResponse.json({ success: false, error: "Failed to fetch" });
   }
 }
