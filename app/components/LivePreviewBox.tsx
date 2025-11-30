@@ -4,12 +4,7 @@
 import { useEffect, useState } from "react";
 import ClientViewComponent from "@/app/components/ClientViewComponent";
 
-interface Props {
-  token: string | null;
-  db: string | null;
-}
-
-export default function LivePreviewBox({ token, db }: Props) {
+export default function LivePreviewBox({ token, db }: any) {
   const [items, setItems] = useState<any[] | null>(null);
 
   useEffect(() => {
@@ -26,37 +21,40 @@ export default function LivePreviewBox({ token, db }: Props) {
         const json = await res.json();
         if (json.results) setItems(json.results);
       } catch (e) {
-        console.log(e);
+        console.error(e);
       }
     })();
   }, [token, db]);
 
   return (
     <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-      <div className="flex items-center justify-between mb-4">
+
+      <div className="flex justify-between mb-4">
         <h3 className="text-lg font-semibold">Live Preview</h3>
         <span className="px-3 py-1 bg-green-100 text-green-700 text-xs rounded-full">
           Real-time
         </span>
       </div>
 
-      <div className="bg-gray-50 p-5 rounded-xl border border-gray-200">
+      {/* White Canvas Style */}
+      <div className="bg-white rounded-xl border border-gray-100 p-4 shadow-inner">
         {items ? (
           <ClientViewComponent
             filtered={items}
             theme="light"
-            showTitle={true}
+            showTitle={false}
             showMultimedia={true}
             gridColumns={3}
           />
         ) : (
           <div className="grid grid-cols-3 gap-3 animate-pulse">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="h-24 bg-gray-200 rounded-lg" />
+            {Array.from({ length: 9 }).map((_, i) => (
+              <div key={i} className="h-28 bg-gray-200 rounded-lg" />
             ))}
           </div>
         )}
       </div>
+
     </div>
   );
 }
