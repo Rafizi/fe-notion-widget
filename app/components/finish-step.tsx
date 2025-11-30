@@ -67,15 +67,18 @@ export function FinishStep({ onPrev, embedUrl }: FinishStepProps) {
 
   return (
     <div className="space-y-10">
-
       {/* SUCCESS HEADER */}
       <div className="flex items-center gap-3 mb-4">
         <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
           <CheckCircle2 className="w-6 h-6 text-green-600" />
         </div>
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Widget Successfully Created!</h2>
-          <p className="text-sm text-gray-600">Your Notion widget is ready to embed</p>
+          <h2 className="text-2xl font-bold text-gray-900">
+            Widget Successfully Created!
+          </h2>
+          <p className="text-sm text-gray-600">
+            Your Notion widget is ready to embed
+          </p>
         </div>
       </div>
 
@@ -126,7 +129,7 @@ export function FinishStep({ onPrev, embedUrl }: FinishStepProps) {
       </div>
 
       {/* EMBED CODE */}
-      <div>
+      {/* <div>
         <label className="block text-sm text-gray-700 mb-2">Embed Code</label>
         <div className="relative">
           <textarea
@@ -150,16 +153,16 @@ export function FinishStep({ onPrev, embedUrl }: FinishStepProps) {
             )}
           </button>
         </div>
-      </div>
+      </div> */}
 
       {/* DOWNLOAD BUTTON */}
-      <button
+      {/* <button
         onClick={downloadHTML}
         className="w-full px-6 py-3 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
       >
         <Download className="w-4 h-4" />
         Download as HTML File
-      </button>
+      </button> */}
 
       {/* BACK BUTTON */}
       <button
