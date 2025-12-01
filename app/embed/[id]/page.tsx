@@ -13,19 +13,6 @@ export default async function EmbedPage(props: any) {
     const id = paramsObj.id;
     const db = searchObj?.db;
 
-    if (!db) return <p style={{ color: "red" }}>Database ID not valid.</p>;
-
-    // 1️⃣ Get Notion token belonging to widget ID
-    const token = await getToken(id);
-    if (!token) return <p style={{ color: "red" }}>Token not valid.</p>;
-
-    // 2️⃣ Query Notion database
-    const data = await queryDatabase(token, db);
-    let filtered = data.filter(
-      (item: any) => item.properties?.Hide?.checkbox !== true
-    );
-
-    // 3️⃣ Apply filters (status, platform, pillar, pinned)
     const decode = (v: string) => decodeURIComponent(v).replace(/\+/g, " ");
 
     const statusFilter = searchObj?.status ? decode(searchObj.status) : null;
@@ -33,12 +20,27 @@ export default async function EmbedPage(props: any) {
     const pillarFilter = searchObj?.pillar ? decode(searchObj.pillar) : null;
     const pinnedFilter = searchObj?.pinned;
 
+    if (!db) return <p style={{ color: "red" }}>Database ID not valid.</p>;
+
+    // 1️⃣ Ambil Notion token berdasarkan widget ID
+    const token = await getToken(id);
+    if (!token) return <p style={{ color: "red" }}>Token not valid.</p>;
+
+    // 2️⃣ Query Notion database
+    const data = await queryDatabase(token, db);
+
+    let filtered = data.filter(
+      (item: any) => item.properties?.Hide?.checkbox !== true
+    );
+
+    // 3️⃣ Filtering
     if (statusFilter) {
       filtered = filtered.filter((item: any) => {
         const val =
           item.properties?.Status?.status?.name ||
           item.properties?.Status?.select?.name ||
           item.properties?.Status?.multi_select?.[0]?.name;
+
         return val?.toLowerCase() === statusFilter.toLowerCase();
       });
     }
@@ -70,31 +72,48 @@ export default async function EmbedPage(props: any) {
       return B - A;
     });
 
-    // ---------------------------------------
-    // 4️⃣ FETCH PROFILE FOR THIS WIDGET OWNER
-    // ---------------------------------------
+    // -------------------------------------
+    // 4️⃣ FETCH PROFILE CREATOR DARI SUPABASE
+    // -------------------------------------
 
     const supabase = createServerComponentClient({ cookies });
 
-    // Get widget → user_id
+    // Ambil user_id dari tabel widgets
     const { data: widget } = await supabase
       .from("widgets")
       .select("user_id")
       .eq("id", id)
       .single();
 
-    if (!widget)
+    if (!widget) {
       return <p style={{ color: "red" }}>Widget not found.</p>;
+    }
 
-    // Get profile for creator
+    // Ambil profile user
     const { data: profile } = await supabase
       .from("profiles")
       .select("*")
       .eq("id", widget.user_id)
       .single();
 
-    // 5️⃣ PASS filtered + profile to component
-    return <ClientViewComponent filtered={filtered} profile={profile} />;
+    // Pastikan highlights berbentuk array minimal
+    const normalizedProfile = profile
+      ? {
+          name: profile.name,
+          username: profile.username,
+          avatarUrl: profile.avatar_url,
+          bio: profile.bio,
+          highlights: profile.highlights ?? [],
+        }
+      : undefined;
+
+
+    return (
+      <ClientViewComponent
+        filtered={filtered}
+        profile={normalizedProfile}   // <<–– MASUK KE SINI
+      />
+    );
 
   } catch (err: any) {
     return <p style={{ color: "red" }}>{err.message}</p>;
