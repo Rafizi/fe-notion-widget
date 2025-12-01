@@ -7,181 +7,446 @@ import AutoThumbnail from "@/app/components/AutoThumbnail";
 import EmbedFilter from "@/app/components/EmbedFilter";
 import RefreshButton from "@/app/components/RefreshButton";
 
+type Highlight = {
+  title: string;
+  image?: string;
+};
+
+type Profile = {
+  name?: string;
+  username?: string;
+  avatarUrl?: string;
+  bio?: string;
+  highlights?: Highlight[];
+};
+
 interface Props {
   filtered: any[];
+  profile?: Profile;
   theme?: "light" | "dark";
-  showTitle?: boolean;
-  showMultimedia?: boolean;
   gridColumns?: number;
 }
 
 export default function ClientViewComponent({
   filtered,
+  profile,
   theme = "light",
-  showTitle = true,
-  showMultimedia = true,
-  gridColumns = 3,
+  gridColumns = 4,
 }: Props) {
-  const [viewMode, setViewMode] = useState<"visual" | "list">("visual");
+  const [viewMode, setViewMode] = useState<"visual" | "map">("visual");
+  const [showBio, setShowBio] = useState(true);
+  const [showHighlight, setShowHighlight] = useState(true);
 
-  const bg = theme === "light" ? "bg-white text-gray-900" : "bg-black text-white";
+  const bg =
+    theme === "light" ? "bg-white text-gray-900" : "bg-black text-white";
   const cardBg = theme === "light" ? "bg-white" : "bg-gray-900";
+  const subtleBorder =
+    theme === "light" ? "border-gray-200" : "border-gray-800";
 
   return (
-    <main className={`${bg} min-h-screen p-4 rounded-xl`}>
+    <main className={`${bg} min-h-screen w-full flex flex-col`}>
+      {/* TOP BAR / HEADER */}
+      <div
+        className={`sticky top-0 z-30 px-5 py-4 border-b backdrop-blur-md ${
+          theme === "light"
+            ? "bg-white/80 border-gray-200"
+            : "bg-black/70 border-gray-800"
+        }`}
+      >
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <h1 className="text-base font-semibold tracking-tight">
+              Creator Gallery
+            </h1>
+            <p className="text-xs text-gray-500">
+              Curated content from your Notion database
+            </p>
+          </div>
 
-      {/* FILTERS */}
-      <EmbedFilter />
+          <div className="flex items-center gap-2">
+            <RefreshButton />
+          </div>
+        </div>
 
-      {/* TOGGLE VIEW */}
-      <div className="mb-4 flex space-x-2">
-        <button
-          onClick={() => setViewMode("visual")}
-          className={`px-4 py-2 rounded ${
-            viewMode === "visual"
-              ? theme === "light" ? "bg-gray-200" : "bg-gray-700"
-              : theme === "light" ? "bg-gray-100" : "bg-gray-900"
-          }`}
-        >
-          Visual
-        </button>
+        {/* CONTROLS ROW */}
+        <div className="mt-4 flex flex-wrap items-center gap-3 justify-between">
+          {/* View Toggle */}
+          <div className="inline-flex rounded-full border text-xs overflow-hidden">
+            <button
+              onClick={() => setViewMode("visual")}
+              className={`px-4 py-1.5 transition ${
+                viewMode === "visual"
+                  ? theme === "light"
+                    ? "bg-gray-900 text-white"
+                    : "bg-gray-100 text-black"
+                  : theme === "light"
+                  ? "bg-white text-gray-700"
+                  : "bg-black text-gray-300"
+              }`}
+            >
+              Visual
+            </button>
+            <button
+              onClick={() => setViewMode("map")}
+              className={`px-4 py-1.5 transition ${
+                viewMode === "map"
+                  ? theme === "light"
+                    ? "bg-gray-900 text-white"
+                    : "bg-gray-100 text-black"
+                  : theme === "light"
+                  ? "bg-white text-gray-700"
+                  : "bg-black text-gray-300"
+              }`}
+            >
+              Map View
+            </button>
+          </div>
 
-        <button
-          onClick={() => setViewMode("list")}
-          className={`px-4 py-2 rounded ${
-            viewMode === "list"
-              ? theme === "light" ? "bg-gray-200" : "bg-gray-700"
-              : theme === "light" ? "bg-gray-100" : "bg-gray-900"
-          }`}
-        >
-          Map View
-        </button>
+          {/* Toggles show bio / highlight */}
+          <div className="flex flex-wrap items-center gap-3 text-xs">
+            <ToggleChip
+              label="Show bio"
+              active={showBio}
+              onClick={() => setShowBio((prev) => !prev)}
+              theme={theme}
+            />
+            <ToggleChip
+              label="Show highlight"
+              active={showHighlight}
+              onClick={() => setShowHighlight((prev) => !prev)}
+              theme={theme}
+            />
+          </div>
+        </div>
+
+        {/* FILTERS */}
+        <div className="mt-4">
+          <EmbedFilter />
+        </div>
       </div>
 
-      {/* VISUAL GRID */}
-      {viewMode === "visual" && (
-        <div
-          className={`grid gap-3`}
-          style={{ gridTemplateColumns: `repeat(${gridColumns}, 1fr)` }}
-        >
-          {filtered.map((item: any, i: number) => {
-            const name =
-              item.properties?.Name?.title?.[0]?.plain_text || "Untitled";
+      {/* CONTENT AREA */}
+      <div className="p-5 space-y-6">
+        {/* BIO SECTION */}
+        {showBio && profile && (
+          <BioSection profile={profile} theme={theme} />
+        )}
 
-            const url = extractImage(item);
-            const isPinned = item.properties?.Pinned?.checkbox === true;
+        {/* HIGHLIGHT SECTION */}
+        {showHighlight && profile?.highlights && profile.highlights.length > 0 && (
+          <HighlightSection highlights={profile.highlights} theme={theme} />
+        )}
 
-            return (
-              <div
-                key={i}
-                className={`relative group rounded-lg overflow-hidden aspect-square ${cardBg}`}
-              >
-                {/* PIN ICON */}
-                {isPinned && (
-                  <div className="absolute top-2 right-2 z-20">
-                    <Pin
-                      className="w-5 h-5 text-yellow-400 drop-shadow"
-                      fill="yellow"
-                    />
-                  </div>
-                )}
-
-                {/* IMAGE / VIDEO */}
-                {showMultimedia && <AutoThumbnail src={url} />}
-
-                {/* TITLE OVERLAY */}
-                {showTitle && (
-                  <div
-                    className={`absolute inset-0 ${
-                      theme === "light" ? "bg-black/30" : "bg-black/60"
-                    } opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center`}
-                  >
-                    <p className="font-semibold text-center px-2 text-sm text-white">
-                      {name}
-                    </p>
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      )}
-
-      {/* LIST VIEW */}
-      {viewMode === "list" && (
-        <table
-          className={`w-full border-collapse ${
-            theme === "light" ? "text-gray-900" : "text-white"
-          }`}
-        >
-          <thead>
-            <tr
-              className={
-                theme === "light"
-                  ? "border-b border-gray-300"
-                  : "border-b border-gray-600"
-              }
-            >
-              <th className="p-3 text-left">Pin</th>
-              <th className="p-3 text-left">Title</th>
-              <th className="p-3 text-left">Platform</th>
-              <th className="p-3 text-left">Status</th>
-              <th className="p-3 text-left">Pillar</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {filtered.map((item: any, i: number) => {
-              const name =
-                item.properties?.Name?.title?.[0]?.plain_text || "Untitled";
-
-              const platform =
-                item.properties?.Platform?.select?.name || "-";
-              const status =
-                item.properties?.Status?.status?.name ||
-                item.properties?.Status?.select?.name ||
-                item.properties?.Status?.multi_select?.[0]?.name ||
-                "-";
-              const pillar =
-                item.properties?.["Content Pillar"]?.select?.name || "-";
-
-              const isPinned = item.properties?.Pinned?.checkbox === true;
-
-              return (
-                <tr
-                  key={i}
-                  className={
-                    theme === "light"
-                      ? "border-b border-gray-200 hover:bg-gray-100"
-                      : "border-b border-gray-800 hover:bg-gray-900"
-                  }
-                >
-                  <td className="p-3">
-                    {isPinned && (
-                      <Pin
-                        className="w-5 h-5 text-yellow-400 inline-block"
-                        fill="yellow"
-                      />
-                    )}
-                  </td>
-                  <td className="p-3">{name}</td>
-                  <td className="p-3">{platform}</td>
-                  <td className="p-3">{status}</td>
-                  <td className="p-3">{pillar}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      )}
-
-      {/* Refresh */}
-      <RefreshButton />
+        {/* MAIN CONTENT */}
+        {viewMode === "visual" ? (
+          <VisualGrid
+            filtered={filtered}
+            gridColumns={gridColumns}
+            theme={theme}
+            cardBg={cardBg}
+          />
+        ) : (
+          <MapViewList filtered={filtered} theme={theme} borderColor={subtleBorder} />
+        )}
+      </div>
     </main>
   );
 }
 
-/* Image extraction stays same */
+/* ---------------- BIO SECTION ---------------- */
+
+function BioSection({ profile, theme }: { profile: Profile; theme: "light" | "dark" }) {
+  const border =
+    theme === "light" ? "border-gray-200 bg-white" : "border-gray-800 bg-gray-900";
+
+  return (
+    <section
+      className={`w-full border ${border} rounded-2xl p-4 md:p-5 flex items-start gap-4 md:gap-5`}
+    >
+      {/* Avatar */}
+      <div className="shrink-0">
+        {profile.avatarUrl ? (
+          <img
+            src={profile.avatarUrl}
+            alt={profile.name || "avatar"}
+            className="w-16 h-16 md:w-20 md:h-20 rounded-full object-cover border border-gray-200"
+          />
+        ) : (
+          <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 text-lg">
+            {profile.name?.[0]?.toUpperCase() || "?"}
+          </div>
+        )}
+      </div>
+
+      {/* Text */}
+      <div className="flex-1 flex flex-col gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <h2 className="text-base md:text-lg font-semibold">
+            {profile.name || "Unnamed Creator"}
+          </h2>
+          {profile.username && (
+            <span className="text-xs text-gray-500">
+              {profile.username.startsWith("@")
+                ? profile.username
+                : `@${profile.username}`}
+            </span>
+          )}
+
+          {/* fake badge ala highlight / verified */}
+          <span className="inline-flex items-center text-[10px] px-2 py-1 rounded-full bg-purple-100 text-purple-700 font-medium">
+            Creator Highlight
+          </span>
+        </div>
+
+        {profile.bio && (
+          <p className="text-xs md:text-sm text-gray-600 leading-relaxed">
+            {profile.bio}
+          </p>
+        )}
+
+        {/* Stats dummy (optional, bisa di-wire dari data real nanti) */}
+        <div className="mt-1 flex items-center gap-4 text-[11px] text-gray-500">
+          <span>
+            <strong className="text-gray-900 dark:text-gray-100">24</strong> posts
+          </span>
+          <span>
+            <strong className="text-gray-900 dark:text-gray-100">6</strong> highlights
+          </span>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------------- HIGHLIGHT SECTION ---------------- */
+
+function HighlightSection({
+  highlights,
+  theme,
+}: {
+  highlights: Highlight[];
+  theme: "light" | "dark";
+}) {
+  const bg =
+    theme === "light" ? "bg-gray-50 border-gray-200" : "bg-gray-900 border-gray-800";
+
+  return (
+    <section className={`w-full border ${bg} rounded-2xl p-3 md:p-4`}>
+      <div className="flex items-center justify-between mb-3">
+        <p className="text-xs font-semibold tracking-wide text-gray-600 uppercase">
+          Highlights
+        </p>
+        <span className="text-[11px] text-gray-400">
+          {highlights.length} saved
+        </span>
+      </div>
+
+      <div className="flex gap-3 overflow-x-auto no-scrollbar">
+        {highlights.map((h, i) => (
+          <div
+            key={i}
+            className="flex flex-col items-center gap-1 min-w-[70px]"
+          >
+            <div className="w-14 h-14 rounded-full overflow-hidden border border-gray-200 bg-gray-100">
+              {h.image ? (
+                <img
+                  src={h.image}
+                  alt={h.title}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-[11px] text-gray-500">
+                  +
+                </div>
+              )}
+            </div>
+            <p className="text-[11px] text-center text-gray-600 line-clamp-2">
+              {h.title || "Untitled"}
+            </p>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* ---------------- VISUAL GRID ---------------- */
+
+function VisualGrid({
+  filtered,
+  gridColumns,
+  theme,
+  cardBg,
+}: {
+  filtered: any[];
+  gridColumns: number;
+  theme: "light" | "dark";
+  cardBg: string;
+}) {
+  return (
+    <section>
+      <div
+        className={`grid gap-4`}
+        style={{ gridTemplateColumns: `repeat(${gridColumns}, minmax(0, 1fr))` }}
+      >
+        {filtered.map((item: any, i: number) => {
+          const name =
+            item.properties?.Name?.title?.[0]?.plain_text || "Untitled";
+
+          const url = extractImage(item);
+          const isPinned = item.properties?.Pinned?.checkbox === true;
+
+          return (
+            <div
+              key={i}
+              className={`
+                relative group rounded-xl overflow-hidden shadow-md hover:shadow-xl 
+                transition-all duration-300 aspect-[4/5] ${cardBg}
+              `}
+            >
+              {/* PIN ICON */}
+              {isPinned && (
+                <div className="absolute top-3 right-3 z-30">
+                  <Pin
+                    className="w-5 h-5 text-yellow-400 drop-shadow-lg"
+                    fill="yellow"
+                  />
+                </div>
+              )}
+
+              {/* IMAGE / VIDEO */}
+              <AutoThumbnail src={url} />
+
+              {/* HOVER TITLE */}
+              <div
+                className={`absolute inset-0 flex items-end p-3 opacity-0 group-hover:opacity-100 
+                  transition-all duration-300 bg-gradient-to-t 
+                  ${theme === "light" ? "from-black/70" : "from-black/80"} to-transparent`}
+              >
+                <p className="text-white text-xs font-medium line-clamp-2">
+                  {name}
+                </p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+/* ---------------- MAP VIEW LIST ---------------- */
+
+function MapViewList({
+  filtered,
+  theme,
+  borderColor,
+}: {
+  filtered: any[];
+  theme: "light" | "dark";
+  borderColor: string;
+}) {
+  const rowBgHover =
+    theme === "light" ? "hover:bg-gray-50" : "hover:bg-gray-900";
+
+  return (
+    <section className="space-y-2">
+      {filtered.map((item: any, i: number) => {
+        const name =
+          item.properties?.Name?.title?.[0]?.plain_text || "Untitled";
+
+        const platform =
+          item.properties?.Platform?.select?.name || "-";
+        const status =
+          item.properties?.Status?.status?.name ||
+          item.properties?.Status?.select?.name ||
+          item.properties?.Status?.multi_select?.[0]?.name ||
+          "-";
+        const pillar =
+          item.properties?.["Content Pillar"]?.select?.name || "-";
+
+        const isPinned = item.properties?.Pinned?.checkbox === true;
+        const url = extractImage(item);
+
+        return (
+          <div
+            key={i}
+            className={`flex items-center gap-3 border ${borderColor} rounded-xl p-3 text-sm ${rowBgHover} transition`}
+          >
+            {/* Thumbnail */}
+            <div className="w-14 h-14 rounded-lg overflow-hidden bg-gray-200 shrink-0">
+              <AutoThumbnail src={url} />
+            </div>
+
+            {/* Text column */}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1">
+                {isPinned && (
+                  <Pin
+                    className="w-4 h-4 text-yellow-400"
+                    fill="yellow"
+                  />
+                )}
+                <p className="font-medium truncate">{name}</p>
+              </div>
+
+              <div className="flex flex-wrap gap-2 text-[11px] text-gray-500">
+                <span className="px-2 py-0.5 rounded-full bg-gray-100">
+                  {platform}
+                </span>
+                <span className="px-2 py-0.5 rounded-full bg-gray-100">
+                  {status}
+                </span>
+                <span className="px-2 py-0.5 rounded-full bg-gray-100">
+                  {pillar}
+                </span>
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </section>
+  );
+}
+
+/* ---------------- SMALL CHIP TOGGLE ---------------- */
+
+function ToggleChip({
+  label,
+  active,
+  onClick,
+  theme,
+}: {
+  label: string;
+  active: boolean;
+  onClick: () => void;
+  theme: "light" | "dark";
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`inline-flex items-center gap-1 px-3 py-1 rounded-full border text-[11px] transition
+        ${
+          active
+            ? "bg-purple-600 border-purple-600 text-white"
+            : theme === "light"
+            ? "bg-white border-gray-300 text-gray-700"
+            : "bg-black border-gray-700 text-gray-300"
+        }
+      `}
+    >
+      <span
+        className={`w-1.5 h-1.5 rounded-full ${
+          active ? "bg-white" : "bg-gray-400"
+        }`}
+      />
+      {label}
+    </button>
+  );
+}
+
+/* ---------------- IMAGE EXTRACTOR (SAMA) ---------------- */
+
 function extractImage(item: any) {
   const props = item.properties;
   const isVideoUrl = (url: string) => /(mp4|mov|avi|webm|mkv)/i.test(url);
