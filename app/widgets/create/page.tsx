@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "@/app/components/Navbar";
 import { ConnectStep } from "@/app/components/connect-step";
 import FinishStep from "@/app/components/finish-step";
+import { supabase } from "@/app/lib/supabaseClient";
+import { useRouter } from "next/navigation";
 
 export default function CreateWidgetPageMerged() {
   const [step, setStep] = useState(1);
@@ -17,7 +19,15 @@ export default function CreateWidgetPageMerged() {
   const [notionUrl, setNotionUrl] = useState("");
   const [isUrlValid, setIsUrlValid] = useState(false);
 
-  /** GENERATE WIDGET – sekarang dipanggil dari STEP 2 */
+  const router = useRouter();
+
+  // 🚨 USER MUST BE LOGGED IN
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      if (!data.user) router.replace("/login");
+    });
+  }, []);
+
   const handleGenerateWidget = async () => {
     if (!db || !isUrlValid || !notionUrl) return;
 
@@ -36,7 +46,7 @@ export default function CreateWidgetPageMerged() {
 
       if (data.success && data.embedUrl) {
         setEmbedUrl(data.embedUrl);
-        setStep(3); // pindah ke step 3 setelah widget berhasil dibuat
+        setStep(3);
       } else {
         console.error("Failed to create widget:", data);
       }
@@ -74,8 +84,8 @@ export default function CreateWidgetPageMerged() {
           </div>
         </div>
 
+        {/* STEP CONTENT */}
         <div className="max-w-5xl mx-auto bg-gray-50 p-8 rounded-xl shadow">
-          {/* STEP 1 */}
           {step === 1 && (
             <div className="text-center">
               <h1 className="text-2xl font-bold mb-4">
@@ -90,7 +100,6 @@ export default function CreateWidgetPageMerged() {
             </div>
           )}
 
-          {/* STEP 2 */}
           {step === 2 && (
             <ConnectStep
               notionUrl={notionUrl}
@@ -106,7 +115,6 @@ export default function CreateWidgetPageMerged() {
             />
           )}
 
-          {/* STEP 3 — FINISH / RESULT */}
           {step === 3 && db && (
             <FinishStep
               db={db}
