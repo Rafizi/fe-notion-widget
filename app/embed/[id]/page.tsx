@@ -11,21 +11,21 @@ export default async function EmbedPage(props: any) {
     const params = await props.params;
     const search = await props.searchParams;
 
-    const id = params.id;        // widget id
-    const db = search?.db;       // notion database id
+    const id = params.id;        
+    const db = search?.db;
 
     if (!db) return <p style={{ color: "red" }}>Database ID missing.</p>;
 
-    // 1️⃣ GET TOKEN FROM SUPABASE
+    // GET TOKEN FROM SUPABASE
     const token = await getToken(id);
     if (!token) return <p style={{ color: "red" }}>Invalid widget.</p>;
 
-    // 2️⃣ LOAD NOTION DATABASE
+    // LOAD NOTION DATABASE
     let filtered = (await queryDatabase(token, db)).filter(
       (item: any) => item.properties?.Hide?.checkbox !== true
     );
 
-    // --- FILTERS ---
+    // FILTERS
     const decode = (v: string) => decodeURIComponent(v).replace(/\+/g, " ");
     const statusFilter = search?.status ? decode(search.status) : null;
     const platformFilter = search?.platform ? decode(search.platform) : null;
@@ -65,14 +65,16 @@ export default async function EmbedPage(props: any) {
 
     // Sort pinned first
     filtered = filtered.sort((a: any, b: any) => {
-      return (b.properties?.Pinned?.checkbox ? 1 : 0) -
-             (a.properties?.Pinned?.checkbox ? 1 : 0);
+      return (
+        (b.properties?.Pinned?.checkbox ? 1 : 0) -
+        (a.properties?.Pinned?.checkbox ? 1 : 0)
+      );
     });
 
     // ------------------------------------------------------
-    // 3️⃣ LOAD PROFILE CREATOR FROM SUPABASE
+    // LOAD PROFILE CREATOR FROM SUPABASE
     // ------------------------------------------------------
-    const supabase = createServerComponentClient({ cookies });
+    const supabase = createServerComponentClient({ cookies: () => cookies() });
 
     const { data: widget } = await supabase
       .from("widgets")
@@ -80,7 +82,7 @@ export default async function EmbedPage(props: any) {
       .eq("id", id)
       .single();
 
-    let profile = undefined;
+    let profile: any = undefined;
 
     if (widget?.user_id) {
       const { data: p } = await supabase
@@ -89,18 +91,19 @@ export default async function EmbedPage(props: any) {
         .eq("id", widget.user_id)
         .single();
 
-      profile = p
-        ? {
-            name: p.name,
-            username: p.username,
-            avatarUrl: p.avatar_url,
-            bio: p.bio,
-            highlights: Array.isArray(p.highlights) ? p.highlights : [],
-          }
-        : undefined;
+      if (p) {
+        profile = {
+          name: p.name || "",
+          username: p.username || "",
+          avatarUrl: p.avatar_url || "",
+          bio: p.bio ?? "",
+          highlights: Array.isArray(p.highlights) ? p.highlights : [],
+        };
+      }
     }
 
     return <ClientViewComponent filtered={filtered} profile={profile} />;
+
   } catch (err: any) {
     return <p style={{ color: "red" }}>{err.message}</p>;
   }
