@@ -13,17 +13,21 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Missing token/db" }, { status: 400 });
     }
 
+    // Ambil cookie Supabase (NO await)
     const cookieStore = cookies();
     const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
 
+    // Ambil user dari Supabase Auth
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
     const userId = user?.id ?? null;
 
+    // Buat widget ID
     const id = randomUUID().slice(0, 6);
 
+    // Insert ke database
     const { error } = await supabaseAdmin.from("widgets").insert({
       id,
       token,
@@ -53,6 +57,7 @@ export async function POST(req: Request) {
   }
 }
 
+// GET TOKEN (SAFE)
 export async function getToken(id: string) {
   const { data, error } = await supabaseAdmin
     .from("widgets")
