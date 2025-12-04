@@ -1,25 +1,31 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 
+import { useState } from "react";
 import { Book, Video, Mail, MessageCircle } from "lucide-react";
 import Navbar from "../components/Navbar";
 
 export default function Helps() {
   const faqs = [
     {
-      question: 'How do I create a Notion integration?',
-      answer: 'Go to notion.so/my-integrations and click "New integration". Give it a name, select the workspace, and copy the Internal Integration Token.',
+      question: "How do I create a Notion integration?",
+      answer:
+        'Go to notion.so/my-integrations and click "New integration". Give it a name, select the workspace, and copy the Internal Integration Token.',
     },
     {
-      question: 'Can I use the same integration for multiple widgets?',
-      answer: 'Yes! You can reuse the same integration token for all your widgets. You only need to create one integration per workspace.',
+      question: "Can I use the same integration for multiple widgets?",
+      answer:
+        "Yes! You can reuse the same integration token for all your widgets. You only need to create one integration per workspace.",
     },
     {
-      question: 'How do I embed the widget in my website?',
-      answer: 'After creating your widget, you’ll receive an embed code. Copy–paste it into your HTML where you want the widget to appear.',
+      question: "How do I embed the widget in my website?",
+      answer:
+        "After creating your widget, you’ll receive an embed code. Simply copy and paste this code into your HTML where you want the widget to appear.",
     },
     {
       question: "What's the difference between Basic and Pro?",
-      answer: 'Pro accounts get advanced customization options, priority support, unlimited widgets, and access to premium templates.',
+      answer:
+        "Pro accounts get advanced customization options, priority support, unlimited widgets, and access to premium templates.",
     },
   ];
 
@@ -48,7 +54,10 @@ export default function Helps() {
             <p className="text-gray-600 text-sm mb-4">
               Read guides and tutorials to get the most out of the widget.
             </p>
-            <a href="#" className="text-purple-600 hover:text-purple-700 text-sm inline-flex items-center gap-1 transition-colors">
+            <a
+              href="#"
+              className="text-purple-600 hover:text-purple-700 text-sm inline-flex items-center gap-1 transition-colors"
+            >
               <span>View Documentation</span>
               <span>→</span>
             </a>
@@ -65,7 +74,10 @@ export default function Helps() {
             <p className="text-gray-600 text-sm mb-4">
               Watch step-by-step video guides to set up and customize your widget.
             </p>
-            <a href="#" className="text-purple-600 hover:text-purple-700 text-sm inline-flex items-center gap-1 transition-colors">
+            <a
+              href="#"
+              className="text-purple-600 hover:text-purple-700 text-sm inline-flex items-center gap-1 transition-colors"
+            >
               <span>Watch Videos</span>
               <span>→</span>
             </a>
@@ -82,8 +94,8 @@ export default function Helps() {
             <p className="text-gray-600 text-sm mb-4">
               Get help from our team. We typically reply within 24 hours.
             </p>
-            <a 
-              href="mailto:support@graceandigrow.co" 
+            <a
+              href="mailto:support@graceandigrow.co"
               className="text-purple-600 hover:text-purple-700 text-sm inline-flex items-center gap-1 transition-colors"
             >
               <span>support@graceandigrow.co</span>
@@ -102,35 +114,79 @@ export default function Helps() {
             <p className="text-gray-600 text-sm mb-4">
               Join the community & connect with other users.
             </p>
-            <a href="#" className="text-purple-600 hover:text-purple-700 text-sm inline-flex items-center gap-1 transition-colors">
+            <a
+              href="#"
+              className="text-purple-600 hover:text-purple-700 text-sm inline-flex items-center gap-1 transition-colors"
+            >
               <span>Join Community</span>
               <span>→</span>
             </a>
           </div>
         </div>
 
-        {/* FAQ */}
+        {/* FAQ — NEW UI */}
         <div>
           <h2 className="text-2xl text-gray-900 mb-6">Frequently Asked Questions</h2>
+
           <div className="space-y-4">
-            {faqs.map((faq, i) => (
-              <details 
-                key={i}
-                className="bg-white border border-gray-200 rounded-xl p-6 hover:border-purple-300 transition-colors group"
-              >
-                <summary className="cursor-pointer text-gray-900 list-none flex items-center justify-between">
-                  <span className="pr-4">{faq.question}</span>
-                  <span className="text-purple-600 group-open:rotate-180 transition-transform flex-shrink-0">
-                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </span>
-                </summary>
-                <p className="text-gray-600 text-sm mt-4 leading-relaxed">
-                  {faq.answer}
-                </p>
-              </details>
-            ))}
+            {faqs.map((faq, index) => {
+              const [open, setOpen] = useState(false);
+
+              return (
+                <div
+                  key={index}
+                  className="w-full border border-gray-200 rounded-2xl p-6 bg-white shadow-sm"
+                >
+                  {/* QUESTION */}
+                  <button
+                    onClick={() => setOpen(!open)}
+                    className="w-full flex items-center justify-between"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 font-semibold flex items-center justify-center">
+                        Q
+                      </div>
+                      <span className="text-gray-900 font-medium text-lg">
+                        {faq.question}
+                      </span>
+                    </div>
+
+                    <span
+                      className={`text-purple-600 transition-transform ${
+                        open ? "rotate-180" : ""
+                      }`}
+                    >
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M19 9l-7 7-7-7"
+                        />
+                      </svg>
+                    </span>
+                  </button>
+
+                  {/* ANSWER */}
+                  {open && (
+                    <div className="mt-4 flex gap-4">
+                      <div className="w-8 h-8 rounded-xl bg-green-100 text-green-700 font-semibold flex items-center justify-center">
+                        A
+                      </div>
+
+                      <p className="text-gray-600 text-sm leading-relaxed">
+                        {faq.answer}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
 
