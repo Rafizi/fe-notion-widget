@@ -23,7 +23,6 @@ export default function AccountsPage() {
   useEffect(() => {
     const loadUser = async () => {
       const { data } = await supabase.auth.getUser();
-
       if (!data.user) {
         router.replace("/login");
         return;
@@ -31,14 +30,31 @@ export default function AccountsPage() {
 
       setUser(data.user);
 
-      // Load profile data from Supabase
-      const { data: profile } = await supabase
+      // 🔥 LOAD PROFILE
+      const { data: profile, error } = await supabase
         .from("profiles")
         .select("*")
         .eq("id", data.user.id)
-        .single();
+        .maybeSingle();
 
-      if (profile) {
+      // 🔥 If profile does NOT exist → create it automatically
+      if (!profile) {
+        await supabase.from("profiles").insert({
+          id: data.user.id,
+          name: "",
+          username: "",
+          bio: "",
+          avatar_url: "",
+          highlights: [],
+        });
+
+        setName("");
+        setUsername("");
+        setBio("");
+        setAvatarUrl("");
+        setHighlights([]);
+      } else {
+        // Fill existing profile
         setName(profile.name || "");
         setUsername(profile.username || "");
         setBio(profile.bio || "");
@@ -57,7 +73,7 @@ export default function AccountsPage() {
 
     setLoading(true);
 
-    await supabase.from("profiles").upsert({
+    const { error } = await supabase.from("profiles").upsert({
       id: user.id,
       name,
       username,
@@ -65,6 +81,8 @@ export default function AccountsPage() {
       avatar_url: avatarUrl,
       highlights,
     });
+
+    if (error) console.error(error);
 
     setLoading(false);
   };
