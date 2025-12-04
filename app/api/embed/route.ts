@@ -6,77 +6,50 @@ import { cookies } from "next/headers";
 
 export async function POST(req: Request) {
   try {
-    // ==== SAFE PARSE BODY ====
-    let body: any = null;
-    try {
-      body = await req.json();
-    } catch {
-      return NextResponse.json(
-        { error: "Invalid JSON body" }, 
-        { status: 400 }
-      );
-    }
-
-    const { token, db } = body;
+    const { token, db } = await req.json();
 
     if (!token || !db) {
-      return NextResponse.json(
-        { error: "Missing token or db" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Missing token/db" }, { status: 400 });
     }
 
-    // ==== GET USER ID ====
+    const id = randomUUID().slice(0, 6);
+
     const cookieStore = await cookies();
     const accessToken = cookieStore.get("sb-access-token")?.value;
 
     let userId: string | null = null;
+
     if (accessToken) {
       try {
         const payload = JSON.parse(
           Buffer.from(accessToken.split(".")[1], "base64").toString()
         );
         userId = payload.sub;
-      } catch (e) {
-        console.error("JWT decode failed:", e);
+      } catch (err) {
+        console.error("JWT decode error:", err);
       }
     }
 
-    const id = randomUUID().slice(0, 6);
-
-    // ==== INSERT WIDGET ====
     const { error } = await supabaseAdmin.from("widgets").insert({
       id,
       token,
       db,
       user_id: userId,
-      created_at: new Date().toISOString(),  // PASTI KOMPATIBEL
+      created_at: Date.now(),
     });
 
     if (error) {
-      console.error("WIDGET INSERT ERROR:", error);
+      console.error("INSERT ERROR:", error);
       return NextResponse.json(
-        { error: "Failed to store widget", detail: error.message },
+        { error: "Failed to store widget" },
         { status: 500 }
       );
     }
 
-    // ==== BASE URL ====
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-    if (!baseUrl) {
-      return NextResponse.json(
-        { error: "Missing NEXT_PUBLIC_BASE_URL in env" },
-        { status: 500 }
-      );
-    }
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL!;
+    const embedUrl = `${baseUrl}/embed/${id}?db=${db}`;
 
-    return NextResponse.json({
-      success: true,
-      embedUrl: `${baseUrl}/embed/${id}?db=${db}`,
-      id,
-      db,
-    });
-
+    return NextResponse.json({ success: true, embedUrl });
   } catch (err: any) {
     console.error("SERVER ERROR:", err);
     return NextResponse.json(
@@ -87,11 +60,12 @@ export async function POST(req: Request) {
 }
 
 export async function getToken(id: string) {
-  const { data } = await supabaseAdmin
+  const { data, error } = await supabaseAdmin
     .from("widgets")
     .select("token")
     .eq("id", id)
     .maybeSingle();
 
-  return data?.token ?? null;
+  if (error || !data) return null;
+  return data.token;
 }
