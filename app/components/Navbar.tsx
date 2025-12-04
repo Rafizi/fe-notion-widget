@@ -13,7 +13,7 @@ export default function Navbar() {
   const menuItems = [
     { id: "/welcome", label: "Welcome", icon: Home },
     { id: "/widgets/create", label: "Setup", icon: Settings },
-    { id: "/help", label: "Help", icon: HelpCircle },
+    { id: "/helps", label: "Help", icon: HelpCircle },
     { id: "/accounts", label: "Account", icon: User },
   ];
 
