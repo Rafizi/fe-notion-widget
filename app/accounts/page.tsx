@@ -11,7 +11,7 @@ export default function AccountsPage() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  // PROFILE FIELDS
+  // PROFILE DATA
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
   const [bio, setBio] = useState("");
@@ -23,24 +23,26 @@ export default function AccountsPage() {
   useEffect(() => {
     const loadUser = async () => {
       const { data } = await supabase.auth.getUser();
+
       if (!data.user) {
         router.replace("/login");
         return;
       }
 
+      const userId = data.user.id;
       setUser(data.user);
 
-      // 🔥 LOAD PROFILE
-      const { data: profile, error } = await supabase
+      // LOAD PROFILE
+      const { data: profile } = await supabase
         .from("profiles")
         .select("*")
-        .eq("id", data.user.id)
+        .eq("id", userId)
         .maybeSingle();
 
-      // 🔥 If profile does NOT exist → create it automatically
       if (!profile) {
+        // auto create
         await supabase.from("profiles").insert({
-          id: data.user.id,
+          id: userId,
           name: "",
           username: "",
           bio: "",
@@ -54,7 +56,6 @@ export default function AccountsPage() {
         setAvatarUrl("");
         setHighlights([]);
       } else {
-        // Fill existing profile
         setName(profile.name || "");
         setUsername(profile.username || "");
         setBio(profile.bio || "");
@@ -68,12 +69,13 @@ export default function AccountsPage() {
     loadUser();
   }, []);
 
+  // SAVE PROFILE
   const handleSave = async () => {
     if (!user) return;
 
     setLoading(true);
 
-    const { error } = await supabase.from("profiles").upsert({
+    await supabase.from("profiles").upsert({
       id: user.id,
       name,
       username,
@@ -82,19 +84,18 @@ export default function AccountsPage() {
       highlights,
     });
 
-    if (error) console.error(error);
-
     setLoading(false);
   };
 
+  // HIGHLIGHT HANDLERS
   const addHighlight = () => {
     setHighlights([...highlights, { title: "", image: "" }]);
   };
 
   const updateHighlight = (index: number, field: string, value: string) => {
-    const updated = [...highlights];
-    updated[index][field] = value;
-    setHighlights(updated);
+    const copy = [...highlights];
+    copy[index][field] = value;
+    setHighlights(copy);
   };
 
   const removeHighlight = (index: number) => {
@@ -116,8 +117,8 @@ export default function AccountsPage() {
           <input
             value={avatarUrl}
             onChange={(e) => setAvatarUrl(e.target.value)}
-            placeholder="https://example.com/avatar.jpg"
             className="w-full px-4 py-2 border rounded-lg"
+            placeholder="https://example.com/avatar.jpg"
           />
 
           {avatarUrl && (
@@ -144,8 +145,8 @@ export default function AccountsPage() {
           <input
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            placeholder="@yourname"
             className="w-full px-4 py-2 border rounded-lg"
+            placeholder="@yourname"
           />
         </div>
 
@@ -155,8 +156,8 @@ export default function AccountsPage() {
           <textarea
             value={bio}
             onChange={(e) => setBio(e.target.value)}
-            rows={3}
             className="w-full px-4 py-2 border rounded-lg"
+            rows={3}
           />
         </div>
 
@@ -174,10 +175,7 @@ export default function AccountsPage() {
 
           <div className="space-y-4">
             {highlights.map((h, i) => (
-              <div
-                key={i}
-                className="p-4 border rounded-lg bg-gray-50 relative"
-              >
+              <div key={i} className="p-4 border rounded-lg bg-gray-50 relative">
                 <button
                   onClick={() => removeHighlight(i)}
                   className="absolute right-3 top-3 text-red-500"
@@ -188,11 +186,9 @@ export default function AccountsPage() {
                 <div className="space-y-2">
                   <input
                     value={h.title}
-                    onChange={(e) =>
-                      updateHighlight(i, "title", e.target.value)
-                    }
-                    placeholder="Highlight title"
+                    onChange={(e) => updateHighlight(i, "title", e.target.value)}
                     className="w-full px-4 py-2 border rounded-lg"
+                    placeholder="Highlight title"
                   />
 
                   <input
@@ -200,8 +196,8 @@ export default function AccountsPage() {
                     onChange={(e) =>
                       updateHighlight(i, "image", e.target.value)
                     }
-                    placeholder="Image URL"
                     className="w-full px-4 py-2 border rounded-lg"
+                    placeholder="Image URL"
                   />
 
                   {h.image && (
@@ -216,12 +212,11 @@ export default function AccountsPage() {
           </div>
         </div>
 
-        {/* SAVE BUTTON */}
         <button
           onClick={handleSave}
           className="w-full py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
         >
-          {loading ? "Saving..." : "Save Profile"}
+          Save Profile
         </button>
       </div>
     </>
