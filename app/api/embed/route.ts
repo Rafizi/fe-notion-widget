@@ -4,9 +4,6 @@ import { randomUUID } from "crypto";
 import { supabaseAdmin } from "@/app/lib/supabaseAdmin";
 import { cookies } from "next/headers";
 
-// Wajib untuk route handlers
-import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
-
 export async function POST(req: Request) {
   try {
     const { token, db } = await req.json();
@@ -20,24 +17,34 @@ export async function POST(req: Request) {
 
     const id = randomUUID().slice(0, 6);
 
-    // ✅ FIX PENTING: cookies harus dibungkus menjadi function sesuai docs
-    const supabase = createRouteHandlerClient({
-      cookies: () => cookies(),
-    });
+    // ==========================================================
+    // 🔥 FIX UTAMA: Ambil user dari SUPABASE AUTH API MANUAL
+    // ==========================================================
+    const cookieStore = await cookies();
 
-    // 🔥 Ambil user via Supabase session di server
-    const {
-      data: { user },
-      error: userErr,
-    } = await supabase.auth.getUser();
+    const access_token =
+      cookieStore.get("sb-access-token")?.value ??
+      cookieStore.get("sb-access_token")?.value; // backup keys
 
-    console.log("USER FROM ROUTE:", user, userErr);
+    let userId = null;
 
-    const userId = user?.id ?? null;
+    if (access_token) {
+      const userRes = await fetch(
+        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/user`,
+        {
+          headers: { Authorization: `Bearer ${access_token}` },
+        }
+      );
 
-    // =========================================
-    // SIMPAN WIDGET KE DATABASE
-    // =========================================
+      const user = await userRes.json();
+      console.log("USER FROM AUTH API:", user);
+
+      userId = user?.id ?? null;
+    }
+
+    // ==========================================================
+    // SIMPAN WIDGET
+    // ==========================================================
     const { error } = await supabaseAdmin.from("widgets").insert({
       id,
       db,
@@ -54,7 +61,6 @@ export async function POST(req: Request) {
       );
     }
 
-    // URL embed final
     const embedUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/embed/${id}?db=${db}`;
 
     return NextResponse.json({ success: true, embedUrl });
@@ -66,10 +72,6 @@ export async function POST(req: Request) {
     );
   }
 }
-
-// =========================================
-// HELPER BUAT AMBIL TOKEN DARI DB
-// =========================================
 
 export async function getToken(id: string) {
   const { data } = await supabaseAdmin
