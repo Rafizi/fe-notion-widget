@@ -2,58 +2,53 @@
 import { NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import { supabaseAdmin } from "@/app/lib/supabaseAdmin";
-import { cookies } from "next/headers";
 
 export async function POST(req: Request) {
   try {
-    const { token, db } = await req.json();
+    const { token, db, accessToken } = await req.json();
 
     if (!token || !db) {
       return NextResponse.json({ error: "Missing token/db" }, { status: 400 });
     }
 
-    const id = randomUUID().slice(0, 6);
-
-    // ==========================================================
-    // 🔥 FIX UTAMA: Ambil user dari SUPABASE AUTH API MANUAL
-    // ==========================================================
-    const cookieStore = await cookies();
-
-    const access_token =
-      cookieStore.get("sb-access-token")?.value ??
-      cookieStore.get("sb-access_token")?.value; // backup keys
+    console.log("ACCESS TOKEN SERVER:", accessToken);
 
     let userId = null;
 
-    if (access_token) {
+    // 🔥 Decode token langsung dari API Supabase
+    if (accessToken) {
       const userRes = await fetch(
         `${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/user`,
         {
-          headers: { Authorization: `Bearer ${access_token}` },
+          headers: { Authorization: `Bearer ${accessToken}` },
         }
       );
 
       const user = await userRes.json();
-      console.log("USER FROM AUTH API:", user);
+      console.log("USER FROM SUPABASE AUTH API:", user);
 
       userId = user?.id ?? null;
     }
 
-    // ==========================================================
-    // SIMPAN WIDGET
-    // ==========================================================
+    const id = randomUUID().slice(0, 6);
+
+    // ✔ Insert dengan user_id yang benar
     const { error } = await supabaseAdmin.from("widgets").insert({
       id,
       db,
       token,
       user_id: userId,
-      created_at: Date.now(),
+      created_at: new Date().toISOString(),
     });
 
     if (error) {
-      console.error("INSERT ERROR:", error); // LIHAT ERROR ASLI DI LOG
+      console.error("INSERT ERROR:", error);
       return NextResponse.json(
-        { error: "Failed to store widget", detail: error.message, full: error },
+        {
+          error: "Failed to store widget",
+          detail: error.message,
+          full: error,
+        },
         { status: 500 }
       );
     }

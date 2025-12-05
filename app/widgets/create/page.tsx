@@ -34,11 +34,21 @@ export default function CreateWidgetPageMerged() {
     setLoading(true);
     setToken(notionUrl);
 
+    // 🔥 AMBIL ACCESS TOKEN DI CLIENT (WAJIB)
+    const { data: session } = await supabase.auth.getSession();
+    const accessToken = session.session?.access_token || null;
+
+    console.log("CLIENT ACCESS TOKEN:", accessToken);
+
     try {
       const res = await fetch("/api/embed", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token: notionUrl, db }),
+        body: JSON.stringify({
+          token: notionUrl,
+          db,
+          accessToken, // 🔥 FIX: KIRIM KE SERVER
+        }),
       });
 
       const data = await res.json();
