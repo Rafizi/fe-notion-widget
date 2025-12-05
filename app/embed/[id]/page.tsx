@@ -96,6 +96,7 @@ export default async function EmbedPage(props: any) {
       .maybeSingle();
 
     let profile = null;
+    console.log("WIDGET:", widget);
 
     if (widget?.user_id) {
       const { data: p } = await supabaseAdmin
