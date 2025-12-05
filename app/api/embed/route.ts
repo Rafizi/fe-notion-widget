@@ -9,10 +9,7 @@ export async function POST(req: Request) {
     const { token, db } = await req.json();
 
     if (!token || !db) {
-      return NextResponse.json(
-        { error: "Missing token/db" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Missing token/db" }, { status: 400 });
     }
 
     const id = randomUUID().slice(0, 6);
@@ -54,9 +51,9 @@ export async function POST(req: Request) {
     });
 
     if (error) {
-      console.error("INSERT ERROR:", error);
+      console.error("INSERT ERROR:", error); // LIHAT ERROR ASLI DI LOG
       return NextResponse.json(
-        { error: "Failed to store widget" },
+        { error: "Failed to store widget", detail: error.message, full: error },
         { status: 500 }
       );
     }
