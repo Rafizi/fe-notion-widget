@@ -4,6 +4,7 @@ import { randomUUID } from "crypto";
 import { supabaseAdmin } from "@/app/lib/supabaseAdmin";
 import { cookies } from "next/headers";
 
+// FIX SEBENARNYA!!!
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 
 export async function POST(req: Request) {
@@ -19,21 +20,22 @@ export async function POST(req: Request) {
 
     const id = randomUUID().slice(0, 6);
 
-    // ⭐ FIX UTAMA → HARUS PAKAI cookies: () => cookies()
+    // FIX PALING KRITIS ⚠️
+    // HARUS begini untuk Route Handler:
     const supabase = createRouteHandlerClient({
-      cookies: () => cookies(),
+      cookies,
     });
 
     const {
       data: { user },
-      error: userErr
+      error: userErr,
     } = await supabase.auth.getUser();
 
-    console.log("SERVER USER:", user, userErr);
+    console.log("USER FROM ROUTE:", user, userErr);
 
     const userId = user?.id ?? null;
 
-    // INSERT WIDGET
+    // SIMPAN WIDGET
     const { error } = await supabaseAdmin.from("widgets").insert({
       id,
       db,
@@ -53,7 +55,6 @@ export async function POST(req: Request) {
     const embedUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/embed/${id}?db=${db}`;
 
     return NextResponse.json({ success: true, embedUrl });
-
   } catch (err: any) {
     console.error("SERVER ERROR:", err);
     return NextResponse.json(
