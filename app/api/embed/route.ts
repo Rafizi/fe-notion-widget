@@ -2,40 +2,30 @@
 import { NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import { supabaseAdmin } from "@/app/lib/supabaseAdmin";
+import { cookies } from "next/headers";
+import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 
 export async function POST(req: Request) {
   try {
-    const { token, db, accessToken } = await req.json();
+    const { token, db } = await req.json();
 
     if (!token || !db) {
       return NextResponse.json({ error: "Missing token/db" }, { status: 400 });
     }
 
-    console.log("ACCESS TOKEN SERVER:", accessToken);
+    // ✅ Gunakan Supabase Auth resmi untuk ambil logged-in user
+    const supabase = createRouteHandlerClient({ cookies });
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-    let userId = null;
+    console.log("SERVER USER:", user);
 
-    // 🔥 Decode token langsung ke Supabase Auth server
-    if (accessToken) {
-      const userRes = await fetch(
-        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/user`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, // 🔥 WAJIB
-          },
-        }
-      );
-
-      const user = await userRes.json();
-      console.log("USER FROM SUPABASE AUTH API:", user);
-
-      userId = user?.id ?? null;
-    }
+    const userId = user?.id ?? null;
 
     const id = randomUUID().slice(0, 6);
 
-    // Insert ke DB
+    // Insert widget
     const { error } = await supabaseAdmin.from("widgets").insert({
       id,
       db,
@@ -50,14 +40,12 @@ export async function POST(req: Request) {
         {
           error: "Failed to store widget",
           detail: error.message,
-          full: error,
         },
         { status: 500 }
       );
     }
 
     const embedUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/embed/${id}?db=${db}`;
-
     return NextResponse.json({ success: true, embedUrl });
   } catch (err: any) {
     console.error("SERVER ERROR:", err);
