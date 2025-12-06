@@ -15,7 +15,7 @@ export async function POST(req: Request) {
 
     let userId = null;
 
-    // 🔥 Decode token langsung dari API Supabase
+    // 🔥 Decode token langsung ke Supabase Auth server
     if (accessToken) {
       const userRes = await fetch(
         `${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/user`,
@@ -32,7 +32,7 @@ export async function POST(req: Request) {
 
     const id = randomUUID().slice(0, 6);
 
-    // ✔ Insert dengan user_id yang benar
+    // Insert ke DB
     const { error } = await supabaseAdmin.from("widgets").insert({
       id,
       db,

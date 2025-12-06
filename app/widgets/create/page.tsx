@@ -21,7 +21,7 @@ export default function CreateWidgetPageMerged() {
 
   const router = useRouter();
 
-  // 🚨 USER MUST BE LOGGED IN
+  // 🚨 Ensure logged in
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
       if (!data.user) router.replace("/login");
@@ -34,9 +34,9 @@ export default function CreateWidgetPageMerged() {
     setLoading(true);
     setToken(notionUrl);
 
-    // 🔥 AMBIL ACCESS TOKEN DI CLIENT (WAJIB)
-    const { data: session } = await supabase.auth.getSession();
-    const accessToken = session.session?.access_token || null;
+    // ✅ FIX PALING PENTING — view session struct-nya benar
+    const { data: { session } } = await supabase.auth.getSession();
+    const accessToken = session?.access_token || null;
 
     console.log("CLIENT ACCESS TOKEN:", accessToken);
 
@@ -47,7 +47,7 @@ export default function CreateWidgetPageMerged() {
         body: JSON.stringify({
           token: notionUrl,
           db,
-          accessToken, // 🔥 FIX: KIRIM KE SERVER
+          accessToken, // send valid token
         }),
       });
 
@@ -71,7 +71,8 @@ export default function CreateWidgetPageMerged() {
       <Navbar />
 
       <div className="w-full min-h-screen bg-white text-black p-10">
-        {/* STEP HEADER */}
+
+        {/* Step Indicator */}
         <div className="flex justify-center mb-10">
           <div className="flex items-center gap-10">
             {[1, 2, 3].map((id) => (
@@ -94,7 +95,7 @@ export default function CreateWidgetPageMerged() {
           </div>
         </div>
 
-        {/* STEP CONTENT */}
+        {/* Step Content */}
         <div className="max-w-5xl mx-auto bg-gray-50 p-8 rounded-xl shadow">
           {step === 1 && (
             <div className="text-center">
