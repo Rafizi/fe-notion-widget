@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { queryDatabase } from "@/app/lib/notion-server";
-import { getToken } from "@/app/api/embed/route";
+import { getToken } from "@/app/lib/getToken";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);

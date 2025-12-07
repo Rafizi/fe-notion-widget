@@ -1,7 +1,7 @@
 /* eslint-disable prefer-const */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { getToken } from "@/app/api/embed/route";
+import { getToken } from "@/app/lib/getToken";
 import ClientViewComponent from "@/app/components/ClientViewComponent";
 import { queryDatabase } from "@/app/lib/notion-server";
 import { supabaseAdmin } from "@/app/lib/supabaseAdmin"; // 🔥 WAJIB ADMIN
