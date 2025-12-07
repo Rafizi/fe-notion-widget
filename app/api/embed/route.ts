@@ -1,6 +1,4 @@
-export const dynamic = "force-dynamic";
-export const fetchCache = "force-no-store";
-export const revalidate = 0;
+export const runtime = "nodejs";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextResponse } from "next/server";
@@ -31,7 +29,7 @@ export async function POST(req: Request) {
 
     const userId = user?.id ?? null;
 
-    // Generate ID aman non-Node
+    // Generate ID aman
     const id = Math.random().toString(36).substring(2, 8);
 
     // Insert widget
@@ -59,7 +57,7 @@ export async function POST(req: Request) {
     return NextResponse.json({
       success: true,
       embedUrl,
-      userId, // Debug
+      userId, 
     });
   } catch (err: any) {
     console.error("SERVER ERROR:", err);
