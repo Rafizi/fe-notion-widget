@@ -17,63 +17,36 @@ export async function POST(req: Request) {
       );
     }
 
-    // Ambil user dari Supabase session (via cookie)
     const supabase = createRouteHandlerClient({ cookies });
-    const {
-      data: { user },
-      error: userErr,
-    } = await supabase.auth.getUser();
-
-    console.log("SERVER USER:", user);
-    console.log("USER ERROR:", userErr);
+    const { data: { user } } = await supabase.auth.getUser();
 
     const userId = user?.id ?? null;
 
-    // Generate ID aman
+    // Generate random ID
     const id = Math.random().toString(36).substring(2, 8);
 
-    // Insert widget
     const { error } = await supabaseAdmin.from("widgets").insert({
       id,
       db,
       token,
       user_id: userId,
-      created_at: Date.now()
+      created_at: Date.now(),
     });
 
     if (error) {
-      console.error("INSERT ERROR:", error);
       return NextResponse.json(
-        {
-          error: "Failed to store widget",
-          detail: error.message,
-        },
+        { error: "Failed to store widget", detail: error.message },
         { status: 500 }
       );
     }
 
     const embedUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/embed/${id}?db=${db}`;
 
-    return NextResponse.json({
-      success: true,
-      embedUrl,
-      userId, 
-    });
+    return NextResponse.json({ success: true, embedUrl });
   } catch (err: any) {
-    console.error("SERVER ERROR:", err);
     return NextResponse.json(
       { error: "Server error", detail: err.message },
       { status: 500 }
     );
   }
-}
-
-export async function getToken(id: string) {
-  const { data } = await supabaseAdmin
-    .from("widgets")
-    .select("token")
-    .eq("id", id)
-    .maybeSingle();
-
-  return data?.token ?? null;0
 }
