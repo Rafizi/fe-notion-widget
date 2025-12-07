@@ -75,5 +75,5 @@ export async function getToken(id: string) {
     .eq("id", id)
     .maybeSingle();
 
-  return data?.token ?? null;
+  return data?.token ?? null;0
 }
