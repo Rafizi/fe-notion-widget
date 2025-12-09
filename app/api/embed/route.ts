@@ -3,7 +3,7 @@ export const runtime = "nodejs";
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/app/lib/supabaseAdmin";
 import { cookies } from "next/headers";
-import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
+import { createServerClient } from "@supabase/ssr";
 
 export async function POST(req: Request) {
   try {
@@ -16,15 +16,23 @@ export async function POST(req: Request) {
       );
     }
 
-    // ⬅️ FIX UTAMA: cukup passing cookies (BUKAN cookies())
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          async get(name: string) {
+            return (await cookies()).get(name)?.value;
+          },
+          async set() {},
+          async remove() {},
+        },
+      }
+    );
 
-    // ⬅️ UPDATED: panggil getUser
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
 
-    console.log("USER FROM SERVER:", user);
+    console.log("USER:", user);
 
     const id = Math.random().toString(36).substring(2, 8);
 
@@ -49,7 +57,6 @@ export async function POST(req: Request) {
     });
 
   } catch (err: any) {
-    console.error("SERVER ERROR:", err.message);
     return NextResponse.json(
       { error: "Server error", detail: err.message },
       { status: 500 }
