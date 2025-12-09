@@ -9,26 +9,15 @@ export default function CallbackBody() {
 
   useEffect(() => {
     const finish = async () => {
-      try {
-        const url = window.location.href;
+      // Supabase otomatis handle PKCE di URL
+      const { data } = await supabase.auth.getUser();
 
-        console.log("CALLBACK URL:", url);
-
-        // Tukar auth code → Supabase session
-        const { data, error } = await supabase.auth.exchangeCodeForSession(url);
-
-        if (error) {
-          console.error("Exchange error:", error);
-          router.replace("/auth/login");
-          return;
-        }
-
-        console.log("SESSION CREATED:", data);
-
+      if (data.user) {
+        console.log("LOGIN SUCCESS:", data.user);
         router.replace("/welcome");
-      } catch (err) {
-        console.error("Callback error:", err);
-        router.replace("/auth/login");
+      } else {
+        console.log("NOT LOGGED IN");
+        router.replace("/login");
       }
     };
 

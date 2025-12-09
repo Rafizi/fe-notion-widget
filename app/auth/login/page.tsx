@@ -9,7 +9,7 @@ export default function LoginPage() {
 
   const handleLogin = async () => {
     if (!email) {
-      alert("Masukin email dulu bro 😭");
+      alert("Masukin email dulu bro ");
       return;
     }
 
@@ -18,30 +18,29 @@ export default function LoginPage() {
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: `${location.origin}/auth/callback`,
+        emailRedirectTo: "https://khalify-notion-widgets.vercel.app/auth/callback",
       },
     });
 
     setLoading(false);
 
     if (error) {
-      console.error("OTP ERROR:", error);
-      alert("Gagal ngirim magic link bro 😢");
+      console.error(error.message);
+      alert("Gagal ngirim email bro ");
       return;
     }
 
-    alert("🔥 Magic link sudah dikirim, cek email lo bro!");
+    alert("Cek email lo bro! Magic link sudah dikirim ");
   };
 
   return (
     <div className="p-10 flex flex-col gap-4 max-w-sm mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Login</h1>
+      <h1 className="text-2xl font-bold">Login</h1>
 
       <input
         type="email"
         placeholder="email lo bro..."
         className="border p-2 rounded"
-        value={email}
         onChange={(e) => setEmail(e.target.value)}
       />
 
