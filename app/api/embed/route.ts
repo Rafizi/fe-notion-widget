@@ -41,7 +41,7 @@ export async function POST(req: Request) {
       db,
       token,
       user_id: user?.id ?? null,
-      created_at: new Date().toISOString(),
+      created_at: Date.now(),
     });
 
     if (error) {
