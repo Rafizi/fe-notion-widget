@@ -82,7 +82,6 @@ export default function FinishStep({
         </button>
       </div>
 
-      {/* RIGHT — LIVE PREVIEW */}
       <LivePreviewBox token={token} db={db} embedUrl={embedUrl ?? undefined} />
     </div>
   );
