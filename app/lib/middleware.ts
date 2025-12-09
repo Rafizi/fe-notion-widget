@@ -1,17 +1,15 @@
-import { NextResponse } from "next/server";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
-import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 
-export async function middleware(req: NextRequest) {
+interface MiddlewareRequest extends NextRequest {
+  // Extends NextRequest for type safety
+}
+
+export async function middleware(req: MiddlewareRequest) {
   const res = NextResponse.next();
   const supabase = createMiddlewareClient({ req, res });
 
-  // Refresh session biar cookie selalu valid
   await supabase.auth.getSession();
-
   return res;
 }
-
-export const config = {
-  matcher: ["/((?!_next|.*\\..*).*)"],
-};
