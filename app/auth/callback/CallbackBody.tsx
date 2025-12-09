@@ -9,15 +9,26 @@ export default function CallbackBody() {
 
   useEffect(() => {
     const finish = async () => {
-      // Supabase otomatis handle PKCE di URL
-      const { data } = await supabase.auth.getUser();
+      try {
+        // URL lengkap dari magic link
+        const url = window.location.href;
 
-      if (data.user) {
-        console.log("LOGIN SUCCESS:", data.user);
+        // WAJIB: Tukar authorization code ---> session (cookie Supabase dibuat di sini)
+        const { data, error } = await supabase.auth.exchangeCodeForSession(url);
+
+        if (error) {
+          console.error("Exchange error:", error);
+          router.replace("/auth/login");
+          return;
+        }
+
+        console.log("SESSION CREATED:", data);
+
+        // Sekarang Supabase sudah punya sb-access-token & sb-refresh-token di cookie
         router.replace("/welcome");
-      } else {
-        console.log("NOT LOGGED IN");
-        router.replace("/login");
+      } catch (err) {
+        console.error("Callback error:", err);
+        router.replace("/auth/login");
       }
     };
 
