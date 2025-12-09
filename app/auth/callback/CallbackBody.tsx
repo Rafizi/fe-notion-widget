@@ -9,20 +9,15 @@ export default function CallbackBody() {
 
   useEffect(() => {
     const finish = async () => {
-      // WAJIB!! tukar code PKCE menjadi session cookie
-      const { data, error } = await supabase.auth.exchangeCodeForSession(
-        window.location.href
-      );
+      const { data } = await supabase.auth.getUser();
 
-      if (error) {
-        console.error("LOGIN ERROR:", error);
+      if (data.user) {
+        console.log("LOGIN SUCCESS:", data.user);
+        router.replace("/welcome");
+      } else {
+        console.log("NOT LOGGED IN");
         router.replace("/login");
-        return;
       }
-
-      console.log("SESSION CREATED:", data);
-
-      router.replace("/welcome"); // atau ke /accounts
     };
 
     finish();
