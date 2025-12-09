@@ -8,30 +8,31 @@ import { createServerClient } from "@supabase/ssr";
 export async function POST(req: Request) {
   try {
     const { token, db } = await req.json();
-    if (!token || !db) {
-      return NextResponse.json({ error: "Missing token/db" }, { status: 400 });
-    }
 
-    // ✅ FIX: cookies() must be awaited in Next.js 16 !!!
-    const cookieStore = await cookies();
+    if (!token || !db) {
+      return NextResponse.json(
+        { error: "Missing token/db" },
+        { status: 400 }
+      );
+    }
 
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       {
         cookies: {
-          get(name: string) {
-            return cookieStore.get(name)?.value;
+          async get(name: string) {
+            return (await cookies()).get(name)?.value;
           },
+          async set() {},
+          async remove() {},
         },
       }
     );
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
 
-    const userId = user?.id ?? null;
+    console.log("USER:", user);
 
     const id = Math.random().toString(36).substring(2, 8);
 
@@ -39,8 +40,8 @@ export async function POST(req: Request) {
       id,
       db,
       token,
-      user_id: userId,
-      created_at: Date.now(),
+      user_id: user?.id ?? null,
+      created_at: new Date().toISOString(),
     });
 
     if (error) {
@@ -50,9 +51,11 @@ export async function POST(req: Request) {
       );
     }
 
-    const embedUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/embed/${id}?db=${db}`;
+    return NextResponse.json({
+      success: true,
+      embedUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/embed/${id}?db=${db}`,
+    });
 
-    return NextResponse.json({ success: true, embedUrl });
   } catch (err: any) {
     return NextResponse.json(
       { error: "Server error", detail: err.message },
