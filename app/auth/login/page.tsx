@@ -9,28 +9,30 @@ export default function LoginPage() {
 
   const handleLogin = async () => {
     if (!email) {
-      alert("Masukin email dulu bro ");
+      alert("Masukin email dulu bro 😭");
       return;
     }
 
     setLoading(true);
 
-    const { error } = await supabase.auth.signInWithOtp({
+    const { data, error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: "https://khalify-notion-widgets.vercel.app/auth/callback",
+        // WAJIB match dengan callback page lo
+        emailRedirectTo:
+          "https://khalify-notion-widgets.vercel.app/auth/callback",
       },
     });
 
     setLoading(false);
 
     if (error) {
-      console.error(error.message);
-      alert("Gagal ngirim email bro ");
+      console.error("OTP ERROR:", error);
+      alert("Gagal ngirim magic link 😥");
       return;
     }
 
-    alert("Cek email lo bro! Magic link sudah dikirim ");
+    alert("Cek email lo bro! Magic link udah dikirim 🚀");
   };
 
   return (
@@ -41,6 +43,7 @@ export default function LoginPage() {
         type="email"
         placeholder="email lo bro..."
         className="border p-2 rounded"
+        value={email}
         onChange={(e) => setEmail(e.target.value)}
       />
 
