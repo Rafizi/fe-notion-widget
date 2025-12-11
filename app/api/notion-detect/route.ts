@@ -25,6 +25,7 @@ export async function POST(req: Request) {
     });
 
     const data = await res.json();
+    console.log("data:" + data);
 
     const databases = data.results.map((db: any) => ({
       id: db.id,
