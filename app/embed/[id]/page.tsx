@@ -4,38 +4,48 @@
 import { getToken } from "@/app/lib/getToken";
 import ClientViewComponent from "@/app/components/ClientViewComponent";
 import { queryDatabase } from "@/app/lib/notion-server";
-import { supabaseAdmin } from "@/app/lib/supabaseAdmin"; // 🔥 WAJIB ADMIN
+import { supabaseAdmin } from "@/app/lib/supabaseAdmin"; // 🔥 ADMIN CLIENT
 
 export default async function EmbedPage(props: any) {
   try {
     const params = await props.params;
     const search = await props.searchParams;
 
-    const id = params.id; // widget ID (contoh: abc123)
-    const db = search?.db; // Notion database ID
+    const id = params.id; // widget ID
+    const db = search?.db; // Notion DB ID
 
     if (!db) {
       return <p style={{ color: "red" }}>Database ID missing.</p>;
     }
 
-    // =======================================
-    // 1️⃣ GET TOKEN FOR THIS WIDGET
-    // =======================================
+    /* ===============================
+       THEME (dark | light)
+       =============================== */
+    const theme: "light" | "dark" =
+      search?.theme === "dark" || search?.theme === "light"
+        ? search.theme
+        : "light";
+
+    /* ===============================
+       1️⃣ GET TOKEN
+       =============================== */
     const token = await getToken(id);
     if (!token) {
       return <p style={{ color: "red" }}>Invalid widget.</p>;
     }
 
-    // =======================================
-    // 2️⃣ FETCH NOTION DATABASE
-    // =======================================
+    /* ===============================
+       2️⃣ FETCH NOTION DATA
+       =============================== */
     let notionData = await queryDatabase(token, db);
 
     let filtered = notionData.filter(
       (i: any) => i.properties?.Hide?.checkbox !== true
     );
 
-    // FILTERS
+    /* ===============================
+       FILTERS
+       =============================== */
     const decode = (v: string) =>
       decodeURIComponent(v).replace(/\+/g, " ");
 
@@ -74,26 +84,28 @@ export default async function EmbedPage(props: any) {
     if (pinned === "true") {
       filtered = filtered.filter((i: any) => i.properties?.Pinned?.checkbox);
     }
+
     if (pinned === "false") {
       filtered = filtered.filter((i: any) => !i.properties?.Pinned?.checkbox);
     }
 
+    /* ===============================
+       SORT: PINNED FIRST
+       =============================== */
     filtered = filtered.sort((a: any, b: any) => {
       const A = a.properties?.Pinned?.checkbox ? 1 : 0;
       const B = b.properties?.Pinned?.checkbox ? 1 : 0;
       return B - A;
     });
 
-    // =======================================
-    // 3️⃣ LOAD PROFILE USING ADMIN CLIENT
-    // =======================================
+    /* ===============================
+       3️⃣ LOAD PROFILE (ADMIN)
+       =============================== */
     const { data: widget } = await supabaseAdmin
       .from("widgets")
       .select("user_id")
       .eq("id", id)
       .maybeSingle();
-
-    console.log("WIDGET RECORD:", widget);
 
     let profile = null;
 
@@ -103,8 +115,6 @@ export default async function EmbedPage(props: any) {
         .select("*")
         .eq("id", widget.user_id)
         .maybeSingle();
-
-      console.log("PROFILE RECORD:", p);
 
       if (p) {
         profile = {
@@ -117,11 +127,16 @@ export default async function EmbedPage(props: any) {
       }
     }
 
-    console.log("PROFILE FINAL:", profile);
-
-
-    return <ClientViewComponent filtered={filtered} profile={profile} />;
-
+    /* ===============================
+       RENDER
+       =============================== */
+    return (
+      <ClientViewComponent
+        filtered={filtered}
+        profile={profile}
+        theme={theme}
+      />
+    );
   } catch (err: any) {
     console.error("EMBED ERROR:", err);
     return <p style={{ color: "red" }}>{err.message}</p>;

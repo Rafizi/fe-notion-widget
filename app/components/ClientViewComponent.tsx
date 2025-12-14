@@ -23,7 +23,7 @@ type Profile = {
 
 interface Props {
   filtered: any[];
-  profile?: Profile | null; // 🔥 perbaikan penting
+  profile?: Profile | null;
   theme?: "light" | "dark";
   gridColumns?: number;
 }
