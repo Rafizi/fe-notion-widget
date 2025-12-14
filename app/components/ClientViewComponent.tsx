@@ -6,7 +6,8 @@ import { Pin } from "lucide-react";
 import AutoThumbnail from "@/app/components/AutoThumbnail";
 import EmbedFilter from "@/app/components/EmbedFilter";
 import RefreshButton from "@/app/components/RefreshButton";
-import { section } from "framer-motion/client";
+
+/* ================= TYPES ================= */
 
 type Highlight = {
   title: string;
@@ -24,12 +25,14 @@ type Profile = {
 interface Props {
   filtered: any[];
   profile?: Profile | null;
-  theme?: "light" | "dark";
+  theme?: "light" | "dark"; // initial theme dari server
   gridColumns?: number;
 }
 
+/* ================= MAIN ================= */
+
 export default function ClientViewComponent({
-  filtered,
+  filtered = [],
   profile,
   theme = "light",
   gridColumns = 3,
@@ -37,23 +40,35 @@ export default function ClientViewComponent({
   const [viewMode, setViewMode] = useState<"visual" | "map">("visual");
   const [showBio, setShowBio] = useState(true);
   const [showHighlight, setShowHighlight] = useState(true);
+  const [currentTheme, setCurrentTheme] =
+    useState<"light" | "dark">(theme);
 
+  /* sync kalau theme dari server berubah */
   useEffect(() => {
-    console.log("PROFILE RECEIVED:", profile);
-  }, [profile]);
+    setCurrentTheme(theme);
+  }, [theme]);
+
+  /* ================= THEME STYLES ================= */
 
   const bg =
-    theme === "light" ? "bg-white text-gray-900" : "bg-black text-white";
-  const cardBg = theme === "light" ? "bg-white" : "bg-gray-900";
+    currentTheme === "light"
+      ? "bg-white text-gray-900"
+      : "bg-black text-white";
+
+  const cardBg =
+    currentTheme === "light" ? "bg-white" : "bg-gray-900";
+
   const subtleBorder =
-    theme === "light" ? "border-gray-200" : "border-gray-800";
+    currentTheme === "light"
+      ? "border-gray-200"
+      : "border-gray-800";
 
   return (
     <main className={`${bg} min-h-screen w-full flex flex-col`}>
-      {/* TOP BAR */}
+      {/* ================= TOP BAR ================= */}
       <div
         className={`sticky top-0 z-30 px-5 py-4 border-b backdrop-blur-md ${
-          theme === "light"
+          currentTheme === "light"
             ? "bg-white/80 border-gray-200"
             : "bg-black/70 border-gray-800"
         }`}
@@ -69,11 +84,27 @@ export default function ClientViewComponent({
           </div>
 
           <div className="flex items-center gap-2">
+            {/* 🌙☀️ THEME TOGGLE */}
+            <button
+              onClick={() =>
+                setCurrentTheme((t) =>
+                  t === "light" ? "dark" : "light"
+                )
+              }
+              className={`px-3 py-1.5 rounded-full text-xs border transition ${
+                currentTheme === "dark"
+                  ? "bg-gray-800 text-white border-gray-700"
+                  : "bg-white text-gray-700 border-gray-300"
+              }`}
+            >
+              {currentTheme === "dark" ? "🌙 Dark" : "☀️ Light"}
+            </button>
+
             <RefreshButton />
           </div>
         </div>
 
-        {/* CONTROL ROW */}
+        {/* ================= CONTROLS ================= */}
         <div className="mt-4 flex flex-wrap items-center gap-3 justify-between">
           <div className="inline-flex rounded-full border text-xs overflow-hidden">
             <button
@@ -81,7 +112,9 @@ export default function ClientViewComponent({
               className={`px-4 py-1.5 transition ${
                 viewMode === "visual"
                   ? "bg-gray-900 text-white"
-                  : "bg-white text-gray-700"
+                  : currentTheme === "light"
+                  ? "bg-white text-gray-700"
+                  : "bg-black text-gray-300"
               }`}
             >
               Visual
@@ -91,7 +124,9 @@ export default function ClientViewComponent({
               className={`px-4 py-1.5 transition ${
                 viewMode === "map"
                   ? "bg-gray-900 text-white"
-                  : "bg-white text-gray-700"
+                  : currentTheme === "light"
+                  ? "bg-white text-gray-700"
+                  : "bg-black text-gray-300"
               }`}
             >
               Map View
@@ -102,14 +137,14 @@ export default function ClientViewComponent({
             <ToggleChip
               label="Show bio"
               active={showBio}
-              onClick={() => setShowBio((prev) => !prev)}
-              theme={theme}
+              onClick={() => setShowBio((v) => !v)}
+              theme={currentTheme}
             />
             <ToggleChip
               label="Show highlight"
               active={showHighlight}
-              onClick={() => setShowHighlight((prev) => !prev)}
-              theme={theme}
+              onClick={() => setShowHighlight((v) => !v)}
+              theme={currentTheme}
             />
           </div>
         </div>
@@ -119,25 +154,26 @@ export default function ClientViewComponent({
         </div>
       </div>
 
-      {/* CONTENT AREA */}
+      {/* ================= CONTENT ================= */}
       <div className="p-5 space-y-6">
-        {/* BIO SECTION */}
         {showBio && profile && (profile.bio || profile.name) && (
-          <BioSection profile={profile} theme={theme} />
+          <BioSection profile={profile} theme={currentTheme} />
         )}
 
-        {/* HIGHLIGHTS SECTION */}
         {showHighlight &&
           profile?.highlights &&
           profile.highlights.length > 0 && (
-            <HighlightSection highlights={profile.highlights} theme={theme} />
+            <HighlightSection
+              highlights={profile.highlights}
+              theme={currentTheme}
+            />
           )}
 
         {viewMode === "visual" ? (
           <VisualGrid
             filtered={filtered}
             gridColumns={gridColumns}
-            theme={theme}
+            theme={currentTheme}
             cardBg={cardBg}
           />
         ) : (
@@ -148,7 +184,7 @@ export default function ClientViewComponent({
   );
 }
 
-/* ---------------- BIO SECTION ---------------- */
+/* ================= BIO ================= */
 
 function BioSection({
   profile,
@@ -157,45 +193,19 @@ function BioSection({
   profile: Profile;
   theme: "light" | "dark";
 }) {
-  const border =
-    theme === "light"
-      ? "border-gray-200 bg-white"
-      : "border-gray-800 bg-gray-900";
-
   return (
     <section
-      className={`w-full border ${border} rounded-2xl p-4 md:p-5 flex items-start gap-4 md:gap-5`}
+      className={`w-full border rounded-2xl p-4 flex gap-4 ${
+        theme === "light"
+          ? "bg-white border-gray-200"
+          : "bg-gray-900 border-gray-800"
+      }`}
     >
-      {/* AVATAR */}
-      <div className="shrink-0">
-        {profile.avatarUrl ? (
-          <img
-            src={profile.avatarUrl}
-            className="w-16 h-16 md:w-20 md:h-20 rounded-full object-cover border border-gray-200"
-          />
-        ) : (
-          <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gray-200 flex items-center justify-center  text-gray-500">
-            {profile.name?.[0]?.toUpperCase() || "?"}
-          </div>
-        )}
-      </div>
-
-      <div className="flex-1 flex flex-col gap-2">
-        <div className="flex items-center gap-2">
-          <h2 className="text-base md:text-lg font-semibold">
-            {profile.name || "Untitled Creator"}
-          </h2>
-          {profile.username && (
-            <span className="text-xs text-gray-500">
-              {profile.username.startsWith("@")
-                ? profile.username
-                : "@" + profile.username}
-            </span>
-          )}
-        </div>
-
+      <div className="w-16 h-16 rounded-full bg-gray-300" />
+      <div>
+        <h2 className="font-semibold">{profile.name}</h2>
         {profile.bio && (
-          <p className="text-xs md:text-sm text-gray-600 leading-relaxed">
+          <p className="text-xs text-gray-500 mt-1">
             {profile.bio}
           </p>
         )}
@@ -204,7 +214,7 @@ function BioSection({
   );
 }
 
-/* ---------------- HIGHLIGHT SECTION ---------------- */
+/* ================= HIGHLIGHT ================= */
 
 function HighlightSection({
   highlights,
@@ -215,40 +225,17 @@ function HighlightSection({
 }) {
   return (
     <section
-      className={`w-full border rounded-2xl ${
+      className={`border rounded-2xl p-4 ${
         theme === "light"
           ? "bg-gray-50 border-gray-200"
           : "bg-gray-900 border-gray-800"
-      } p-4`}
+      }`}
     >
-      <div className="flex items-center justify-between mb-3">
-        <p className="text-xs font-semibold tracking-wide text-gray-600 uppercase">
-          Highlights
-        </p>
-
-        <span className="text-[11px] text-gray-400">
-          {highlights.length} saved
-        </span>
-      </div>
-
-      <div className="flex gap-3 overflow-x-auto no-scrollbar">
+      <div className="flex gap-3 overflow-x-auto">
         {highlights.map((h, i) => (
-          <div
-            key={i}
-            className="flex flex-col items-center gap-1 min-w-[70px]"
-          >
-            <div className="w-14 h-14 rounded-full overflow-hidden border bg-gray-100">
-              {h.image ? (
-                <img src={h.image} className="w-full h-full object-cover" />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-gray-500 text-xs">
-                  +
-                </div>
-              )}
-            </div>
-            <p className="text-[11px] line-clamp-2 text-center text-gray-600">
-              {h.title || "Untitled"}
-            </p>
+          <div key={i} className="min-w-[72px] text-center">
+            <div className="w-14 h-14 rounded-full bg-gray-300 mx-auto mb-1" />
+            <p className="text-[11px]">{h.title}</p>
           </div>
         ))}
       </div>
@@ -256,116 +243,102 @@ function HighlightSection({
   );
 }
 
-/* ---------------- GRID + MAP VIEW (SAMA, TAK DIUBAH) ---------------- */
+/* ================= VISUAL GRID ================= */
 
 function VisualGrid({ filtered, gridColumns, theme, cardBg }: any) {
   return (
-    <section>
-      <div
-        className="grid gap-4"
-        style={{
-          gridTemplateColumns: `repeat(${gridColumns}, minmax(0, 1fr))`,
-        }}
-      >
-        {filtered.map((item: any, i: number) => {
-          const name =
-            item.properties?.Name?.title?.[0]?.plain_text || "Untitled";
+    <div
+      className="grid gap-4"
+      style={{
+        gridTemplateColumns: `repeat(${gridColumns}, minmax(0, 1fr))`,
+      }}
+    >
+      {filtered.map((item: any, i: number) => {
+        const name =
+          item.properties?.Name?.title?.[0]?.plain_text ||
+          "Untitled";
+        const image = extractImage(item);
+        const pinned = item.properties?.Pinned?.checkbox;
 
-          const image = extractImage(item);
-          const isPinned = item.properties?.Pinned?.checkbox;
+        return (
+          <div
+            key={i}
+            className={`relative group rounded-xl overflow-hidden aspect-[4/5] ${cardBg}`}
+          >
+            {pinned && (
+              <Pin className="absolute top-3 right-3 text-yellow-400" />
+            )}
 
-          return (
+            <AutoThumbnail src={image} />
+
             <div
-              key={i}
-              className={`relative group rounded-xl overflow-hidden shadow hover:shadow-xl transition ${cardBg} aspect-[4/5]`}
+              className={`absolute inset-0 flex items-end p-3 opacity-0 group-hover:opacity-100 transition bg-gradient-to-t ${
+                theme === "light"
+                  ? "from-black/70"
+                  : "from-black/80"
+              } to-transparent`}
             >
-              {isPinned && (
-                <div className="absolute top-3 right-3 z-10">
-                  <Pin className="w-5 h-5 text-yellow-400" fill="yellow" />
-                </div>
-              )}
-
-              <AutoThumbnail src={image} />
-
-              <div
-                className={`absolute inset-0 flex items-end p-3 opacity-0 group-hover:opacity-100 transition bg-gradient-to-t ${
-                  theme === "light" ? "from-black/70" : "from-black/80"
-                } to-transparent`}
-              >
-                <p className="text-white text-xs">{name}</p>
-              </div>
+              <p className="text-white text-xs">{name}</p>
             </div>
-          );
-        })}
-      </div>
-    </section>
+          </div>
+        );
+      })}
+    </div>
   );
 }
+
+/* ================= MAP VIEW ================= */
 
 function MapViewGrid({ filtered }: any) {
   const colors = [
     "bg-[#A3A18C]",
     "bg-[#CFC6A8]",
     "bg-[#9FA29A]",
-    "bg-[#B8B8B8]",
-    "bg-[#4B4F3E]",
-    "bg-[#AEB7B6]",
   ];
 
   return (
-    <section
-      className="grid gap-px bg-gray-200"
-      style={{
-        gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-      }}
-    >
+    <div className="grid grid-cols-3 gap-px bg-gray-200">
       {filtered.map((item: any, i: number) => {
         const name =
-          item.properties?.Name?.title?.[0]?.plain_text || "Untitled";
-
+          item.properties?.Name?.title?.[0]?.plain_text ||
+          "Untitled";
         const pillar =
-          item.properties?.["Content Pillar"]?.select?.name || "";
-
-        const isPinned = item.properties?.Pinned?.checkbox;
-        const bgColor = colors[i % colors.length];
+          item.properties?.["Content Pillar"]?.select?.name ||
+          "";
+        const pinned = item.properties?.Pinned?.checkbox;
 
         return (
           <div
             key={i}
-            className={`relative group aspect-square ${bgColor} flex items-center justify-center text-center p-6 overflow-hidden`}
+            className={`relative group aspect-square flex items-center justify-center ${
+              colors[i % colors.length]
+            }`}
           >
-            {/* PIN */}
-            {isPinned && (
-              <Pin className="absolute top-3 right-3 w-4 h-4 text-white opacity-80 z-10" />
+            {pinned && (
+              <Pin className="absolute top-3 right-3 text-white" />
             )}
-
-            {/* TITLE (always visible) */}
-            <h3 className="relative z-10 text-white font-semibold text-2xl leading-snug max-w-[90%]">
-
+            <h3 className="text-white text-sm text-center px-4">
               {name}
             </h3>
-
-            {/* HOVER OVERLAY (same pattern as VisualGrid) */}
-            <div className="absolute inset-0 flex items-end p-4 opacity-0 group-hover:opacity-100 transition bg-gradient-to-t from-black/70 to-transparent">
-              <p className="text-white text-[15px] uppercase tracking-wide">
-               Content Pillar: {pillar}
+            <div className="absolute inset-0 flex items-end p-3 opacity-0 group-hover:opacity-100 bg-gradient-to-t from-black/70 to-transparent">
+              <p className="text-white text-[11px] uppercase">
+                {pillar}
               </p>
             </div>
           </div>
         );
       })}
-    </section>
+    </div>
   );
 }
 
-
-/* ---------------- SMALL CHIP ---------------- */
+/* ================= CHIP ================= */
 
 function ToggleChip({ label, active, onClick, theme }: any) {
   return (
     <button
       onClick={onClick}
-      className={`inline-flex items-center gap-1 px-3 py-1 rounded-full border text-[11px] ${
+      className={`px-3 py-1 rounded-full border text-[11px] ${
         active
           ? "bg-purple-600 border-purple-600 text-white"
           : theme === "light"
@@ -373,34 +346,18 @@ function ToggleChip({ label, active, onClick, theme }: any) {
           : "bg-black border-gray-700 text-gray-300"
       }`}
     >
-      <span
-        className={`w-1.5 h-1.5 rounded-full ${
-          active ? "bg-white" : "bg-gray-400"
-        }`}
-      />
       {label}
     </button>
   );
 }
 
-/* ---------------- IMAGE EXTRACTOR ---------------- */
+/* ================= IMAGE ================= */
 
 function extractImage(item: any) {
-  const props = item.properties;
-
-  if (props.Attachment?.files?.length > 0) {
-    const file = props.Attachment.files[0];
-    const url = file.file?.url || file.external?.url;
-    return url;
-  }
-
-  if (props["*Link"]?.rich_text?.length > 0) {
-    return props["*Link"].rich_text[0].plain_text;
-  }
-
-  if (props["*Canva Link"]?.url) {
-    return props["*Canva Link"].url;
-  }
-
-  return "/placeholder.png";
+  const p = item.properties;
+  return (
+    p.Attachment?.files?.[0]?.file?.url ||
+    p.Attachment?.files?.[0]?.external?.url ||
+    "/placeholder.png"
+  );
 }
