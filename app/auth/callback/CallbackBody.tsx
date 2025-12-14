@@ -17,7 +17,7 @@ export default function CallbackBody() {
         router.replace("/welcome");
       } else {
         console.log("NOT LOGGED IN");
-        router.replace("/login");
+        router.replace("/auth/login");
       }
     };
 
