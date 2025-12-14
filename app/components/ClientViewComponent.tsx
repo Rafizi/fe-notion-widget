@@ -311,12 +311,11 @@ function MapViewGrid({ filtered }: any) {
     "bg-[#B8B8B8]",
     "bg-[#4B4F3E]",
     "bg-[#AEB7B6]",
-    "bg-[#A3A18C]",
   ];
 
   return (
     <section
-      className="grid  gap-px bg-gray-200"
+      className="grid gap-px bg-gray-200"
       style={{
         gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
       }}
@@ -325,35 +324,40 @@ function MapViewGrid({ filtered }: any) {
         const name =
           item.properties?.Name?.title?.[0]?.plain_text || "Untitled";
 
-        const pillar = item.properties?.["Content Pillar"]?.select?.name || "";
+        const pillar =
+          item.properties?.["Content Pillar"]?.select?.name || "";
 
         const isPinned = item.properties?.Pinned?.checkbox;
-
         const bgColor = colors[i % colors.length];
 
         return (
           <div
             key={i}
-            className={`relative aspect-square ${bgColor} flex flex-col items-center justify-center text-center p-6`}
+            className={`relative group aspect-square ${bgColor} flex items-center justify-center text-center p-6 overflow-hidden`}
           >
+            {/* PIN */}
             {isPinned && (
-              <Pin className="absolute top-3 right-3 w-4 h-4 text-white opacity-80" />
+              <Pin className="absolute top-3 right-3 w-4 h-4 text-white opacity-80 z-10" />
             )}
 
-            <h3 className="text-white font-medium text-sm leading-snug max-w-[90%]">
+            {/* TITLE (always visible) */}
+            <h3 className="relative z-10 text-white font-medium text-sm leading-snug max-w-[90%] transition-opacity group-hover:opacity-0">
               {name}
             </h3>
-            {pillar && (
-              <p className="mt-2 text-[11px] text-white/70 uppercase tracking-wide">
+
+            {/* HOVER OVERLAY (same pattern as VisualGrid) */}
+            <div className="absolute inset-0 flex items-end p-4 opacity-0 group-hover:opacity-100 transition bg-gradient-to-t from-black/70 to-transparent">
+              <p className="text-white text-[11px] uppercase tracking-wide">
                 {pillar}
               </p>
-            )}
+            </div>
           </div>
         );
       })}
     </section>
   );
 }
+
 
 /* ---------------- SMALL CHIP ---------------- */
 
