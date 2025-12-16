@@ -14,6 +14,8 @@ export default function AuthEmbedClient() {
   useEffect(() => {
     const token = searchParams.get("token");
     const email = cookies.get("login_email");
+    console.log("token: ", token);
+    console.log("email: ", email);
 
     if (!token || !email) {
       router.replace("/auth/login");
