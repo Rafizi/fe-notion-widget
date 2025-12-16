@@ -23,7 +23,7 @@ export default function AuthEmbedClient() {
         await api.post("/auth/verify-token", { token, email });
 
         // hapus cookie setelah sukses
-        Cookies.remove("login_email");
+        // Cookies.remove("login_email");
 
         router.replace("/welcome");
       } catch (err) {
