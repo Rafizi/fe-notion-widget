@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/app/lib/supabaseClient";
 import Navbar from "../components/Navbar";
+import cookies from "js-cookie";
 import {
   Edit2,
   Eye,
@@ -44,21 +45,33 @@ export default function AccountsPage() {
   /* =======================
      LOAD USER (Supabase)
   ======================= */
+  // useEffect(() => {
+  //   const loadUser = async () => {
+  //     const { data } = await supabase.auth.getUser();
+
+  //     if (!data.user) {
+  //       router.replace("/auth/login");
+  //       return;
+  //     }
+
+  //     setUser(data.user);
+  //     setLoading(false);
+  //   };
+
+  //   loadUser();
+  // }, [router]);
+
   useEffect(() => {
-    const loadUser = async () => {
-      const { data } = await supabase.auth.getUser();
+    const token = cookies.get("login_token");
 
-      if (!data.user) {
-        router.replace("/auth/login");
-        return;
-      }
+    if (!token) {
+      router.replace("/auth/login");
+      return;
+    }
 
-      setUser(data.user);
-      setLoading(false);
-    };
-
-    loadUser();
-  }, [router]);
+    setUser({ token });
+    cookies.remove("login_email");
+  }, []);
 
   /* =======================
      LOAD WIDGETS (STATIC, VIA useEffect)
