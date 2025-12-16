@@ -2,7 +2,9 @@
 
 import { api } from "@/app/lib/axios";
 import { useState } from "react";
+import bcrypt from "bcryptjs";
 import cookies from "js-cookie";
+
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -17,12 +19,17 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      await api.post("/auth/magic-link", { email});
 
-      // localStorage.setItem("login_email", email);
+      // const token = await bcrypt.hash(email, 10);
 
-      cookies.set("login_email", email);
+      // cookies.set("login_token", token, { expires: 1 / 24 });
 
+
+      const res = await api.post("/auth/magic-link", { email});
+
+
+
+      cookies.set("login_email", email, { expires: 1 / 24 }); // 1 jam
 
       alert("Cek email lo bro, magic link udah dikirim ✨");
     } catch (err: any) {
