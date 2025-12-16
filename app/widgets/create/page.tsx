@@ -6,6 +6,7 @@ import { ConnectStep } from "@/app/components/connect-step";
 import FinishStep from "@/app/components/finish-step";
 import { supabase } from "@/app/lib/supabaseClient";
 import { useRouter } from "next/navigation";
+import cookies from "js-cookie";
 
 export default function CreateWidgetPageMerged() {
   const [step, setStep] = useState(1);
@@ -18,14 +19,27 @@ export default function CreateWidgetPageMerged() {
 
   const [notionUrl, setNotionUrl] = useState("");
   const [isUrlValid, setIsUrlValid] = useState(false);
+    const [user, setUser] = useState<any>(null);
+
 
   const router = useRouter();
 
-  // 🔐 Pastikan user logged in
+  // useEffect(() => {
+  //   supabase.auth.getUser().then(({ data }) => {
+  //     if (!data.user) router.replace("/auth/login");
+  //   });
+  // }, []);
+
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      if (!data.user) router.replace("/auth/login");
-    });
+    const token = cookies.get("login_token");
+
+    if (!token) {
+      router.replace("/auth/login");
+      return;
+    }
+
+    setUser({ token });
+    cookies.remove("login_email");
   }, []);
 
   const handleGenerateWidget = async () => {
