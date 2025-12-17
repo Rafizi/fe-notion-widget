@@ -62,7 +62,8 @@ export default function CreateWidgetPageMerged() {
       email: user.jwt, 
     });
 
-    setEmbedUrl(data.data.embedUrl);
+    setEmbedUrl(data.data.embedLink);
+
     setStep(3);
   } catch (err) {
     console.error("Error creating widget:", err);
