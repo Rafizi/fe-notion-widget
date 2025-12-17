@@ -3,9 +3,10 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/app/lib/supabaseClient";
 import Navbar from "../components/Navbar";
 import cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
+
 import {
   Edit2,
   Eye,
@@ -16,9 +17,6 @@ import {
   User as UserIcon,
 } from "lucide-react";
 
-/* =======================
-   TYPES
-======================= */
 interface Widget {
   id: string;
   name: string;
@@ -26,6 +24,13 @@ interface Widget {
   database: string;
   url: string;
 }
+
+type JwtPayload = {
+  email?: string;
+  sub?: string;
+  iat?: number;
+  exp?: number;
+};
 
 export default function AccountsPage() {
   const router = useRouter();
@@ -42,25 +47,6 @@ export default function AccountsPage() {
   const [widgets, setWidgets] = useState<Widget[]>([]);
   const [showTokens, setShowTokens] = useState<{ [key: string]: boolean }>({});
 
-  /* =======================
-     LOAD USER (Supabase)
-  ======================= */
-  // useEffect(() => {
-  //   const loadUser = async () => {
-  //     const { data } = await supabase.auth.getUser();
-
-  //     if (!data.user) {
-  //       router.replace("/auth/login");
-  //       return;
-  //     }
-
-  //     setUser(data.user);
-  //     setLoading(false);
-  //   };
-
-  //   loadUser();
-  // }, [router]);
-
   useEffect(() => {
     const token = cookies.get("login_token");
 
@@ -69,14 +55,18 @@ export default function AccountsPage() {
       return;
     }
 
-    setUser({ token });
-    cookies.remove("login_email");
-  }, []);
+    try {
+      const decoded = jwtDecode<JwtPayload>(token);
 
-  /* =======================
-     LOAD WIDGETS (STATIC, VIA useEffect)
-     → nanti gampang ganti ke Supabase
-  ======================= */
+      setUser({
+        email: decoded.email,
+      });
+    } catch (err) {
+      console.error("Invalid JWT", err);
+      router.replace("/auth/login");
+    }
+  }, [router]);
+
   useEffect(() => {
     const loadWidgets = async () => {
       setWidgets([
@@ -139,9 +129,7 @@ export default function AccountsPage() {
                 <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                   <UserIcon className="w-5 h-5 text-blue-600" />
                 </div>
-                <h2 className="text-xl text-gray-900">
-                  Personal Information
-                </h2>
+                <h2 className="text-xl text-gray-900">Personal Information</h2>
               </div>
 
               <div className="space-y-5">
@@ -187,9 +175,7 @@ export default function AccountsPage() {
               <h3 className="text-sm text-gray-600 mb-4">Quick Stats</h3>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-2xl text-purple-600">
-                    {widgets.length}
-                  </p>
+                  <p className="text-2xl text-purple-600">{widgets.length}</p>
                   <p className="text-xs text-gray-600">Active Widgets</p>
                 </div>
                 <div>
@@ -223,9 +209,7 @@ export default function AccountsPage() {
                       </div>
                       <div>
                         <h3 className="text-gray-900">{widget.name}</h3>
-                        <p className="text-xs text-gray-500">
-                          ID: {widget.id}
-                        </p>
+                        <p className="text-xs text-gray-500">ID: {widget.id}</p>
                       </div>
                     </div>
                     <MoreVertical className="w-4 h-4 text-gray-600" />
@@ -242,11 +226,7 @@ export default function AccountsPage() {
                           ? "ntn_38356847923abcdef..."
                           : widget.integrationToken}
                       </p>
-                      <button
-                        onClick={() =>
-                          toggleTokenVisibility(widget.id)
-                        }
-                      >
+                      <button onClick={() => toggleTokenVisibility(widget.id)}>
                         {showTokens[widget.id] ? (
                           <EyeOff className="w-4 h-4" />
                         ) : (
@@ -258,9 +238,7 @@ export default function AccountsPage() {
 
                   {/* DATABASE */}
                   <div className="mb-4">
-                    <label className="text-xs text-gray-500">
-                      Database
-                    </label>
+                    <label className="text-xs text-gray-500">Database</label>
                     <p className="font-mono text-sm bg-gray-50 px-2 py-1 rounded truncate">
                       {widget.database}
                     </p>
