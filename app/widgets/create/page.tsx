@@ -7,7 +7,7 @@ import FinishStep from "@/app/components/finish-step";
 import { supabase } from "@/app/lib/supabaseClient";
 import { useRouter } from "next/navigation";
 import cookies from "js-cookie";
-import { jwtDecode } from "jwt-decode";
+// import { jwtDecode } from "jwt-decode";
 import { createWidget } from "@/app/lib/widget.api";
 
 export default function CreateWidgetPageMerged() {
@@ -25,40 +25,52 @@ export default function CreateWidgetPageMerged() {
 
   const router = useRouter();
 
+  // useEffect(() => {
+  //   const token = cookies.get("login_token");
+
+  //   if (!token) {
+  //     router.replace("/auth/login");
+  //     return;
+  //   }
+
+  //   const decoded: any = jwtDecode(token);
+  //   setUser({ email: decoded.email });
+  // }, [router]);
+
   useEffect(() => {
-    const token = cookies.get("login_token");
+  const jwt = cookies.get("login_token");
 
-    if (!token) {
-      router.replace("/auth/login");
-      return;
-    }
+  if (!jwt) {
+    router.replace("/auth/login");
+    return;
+  }
 
-    const decoded: any = jwtDecode(token);
-    setUser({ email: decoded.email });
-  }, [router]);
+  // simpan JWT MENTAH
+  setUser({ jwt });
+}, [router]);
+
 
   const handleGenerateWidget = async () => {
-    if (!db || !isUrlValid || !notionUrl) return;
+  if (!db || !isUrlValid || !notionUrl || !user?.jwt) return;
 
-    setLoading(true);
+  setLoading(true);
 
-    try {
-      const data = await createWidget({
-        token: notionUrl,
-        dbID: db,
-        email: user.email,
-      });
+  try {
+    const data = await createWidget({
+      token: notionUrl,
+      dbID: db,
+      email: user.jwt, 
+    });
 
-      setLoading(false);
+    setEmbedUrl(data.data.embedUrl);
+    setStep(3);
+  } catch (err) {
+    console.error("Error creating widget:", err);
+  } finally {
+    setLoading(false);
+  }
+};
 
-      setEmbedUrl(data.data.embedUrl);
-      setStep(3);
-    } catch (err) {
-      console.error("Error creating widget:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <>
