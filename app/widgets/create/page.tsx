@@ -25,17 +25,6 @@ export default function CreateWidgetPageMerged() {
 
   const router = useRouter();
 
-  // useEffect(() => {
-  //   const token = cookies.get("login_token");
-
-  //   if (!token) {
-  //     router.replace("/auth/login");
-  //     return;
-  //   }
-
-  //   const decoded: any = jwtDecode(token);
-  //   setUser({ email: decoded.email });
-  // }, [router]);
 
   useEffect(() => {
   const jwt = cookies.get("login_token");
@@ -56,13 +45,21 @@ export default function CreateWidgetPageMerged() {
   setLoading(true);
 
   try {
-    const data = await createWidget({
+    const res = await createWidget({
       token: notionUrl,
       dbID: db,
       email: user.jwt, 
     });
 
-    setEmbedUrl(data.data.embedLink);
+    console.log("res: ", res);
+    const embedLink = res?.data.embedUrl;
+
+    if (!embedLink) {
+      console.log("Embed link Not found", res);
+      return;
+    }
+
+    setEmbedUrl(embedLink);
 
     setStep(3);
   } catch (err) {
