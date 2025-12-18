@@ -18,9 +18,11 @@ export default async function EmbedPage({
 
     // 🔥 ini DB ID dari ?db=xxxx
     const dbID =
-      typeof searchParams?.db === "string"
-        ? decodeURIComponent(searchParams.db)
-        : null;
+  (typeof searchParams?.db === "string"
+    ? decodeURIComponent(searchParams.db)
+    : null) ??
+  "2a5ad402-6b83-81f2-a5f2-d8e71a60864e";
+
 
     console.log("widgetId:", widgetId);
     console.log("dbID:", dbID);
