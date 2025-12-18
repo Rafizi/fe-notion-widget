@@ -4,24 +4,27 @@ import ClientViewComponent from "@/app/components/ClientViewComponent";
 import { queryDatabase } from "@/app/lib/notion-server";
 
 interface EmbedPageProps {
-  searchParams: {
-    db?: string;
-  };
+  searchParams?: Record<string, string | string[] | undefined>;
 }
 
 export default async function EmbedPage({ searchParams }: EmbedPageProps) {
   try {
-    const dbID = searchParams.db;
+    const dbID =
+      typeof searchParams?.db === "string"
+        ? decodeURIComponent(searchParams.db)
+        : null;
 
     if (!dbID) {
       return <p style={{ color: "red" }}>Database ID missing.</p>;
     }
 
-    // 🔥 FETCH WIDGET BERDASARKAN dbID
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_BE_URL}/widgets/embed/by-db/${dbID}`,
       { cache: "no-store" }
     );
+
+    console.log("searchParams:", searchParams);
+
 
     const json = await res.json();
 
@@ -41,6 +44,7 @@ export default async function EmbedPage({ searchParams }: EmbedPageProps) {
       />
     );
   } catch (err: any) {
+    console.error("EMBED ERROR:", err);
     return <p style={{ color: "red" }}>{err.message}</p>;
   }
 }
