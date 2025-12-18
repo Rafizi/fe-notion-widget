@@ -4,27 +4,32 @@ import ClientViewComponent from "@/app/components/ClientViewComponent";
 import { queryDatabase } from "@/app/lib/notion-server";
 
 interface EmbedPageProps {
+  params: { id: string };
   searchParams?: Record<string, string | string[] | undefined>;
 }
 
-export default async function EmbedPage({ searchParams }: EmbedPageProps) {
+export default async function EmbedPage({
+  params,
+  searchParams,
+}: EmbedPageProps) {
   try {
+    // 🔥 ini ID dari /embed/678216
+    const widgetId = params.id;
+
+    // 🔥 ini DB ID dari ?db=xxxx
     const dbID =
       typeof searchParams?.db === "string"
         ? decodeURIComponent(searchParams.db)
         : null;
 
-    if (!dbID) {
-      return <p style={{ color: "red" }}>Database ID missing.</p>;
+    if (!widgetId || !dbID) {
+      return <p style={{ color: "red" }}>Invalid embed params</p>;
     }
 
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_BE_URL}/widgets/embed/by-db/${dbID}`,
       { cache: "no-store" }
     );
-
-    console.log("searchParams:", searchParams);
-
 
     const json = await res.json();
 
