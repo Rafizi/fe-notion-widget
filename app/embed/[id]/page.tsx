@@ -22,6 +22,9 @@ export default async function EmbedPage({
         ? decodeURIComponent(searchParams.db)
         : null;
 
+    console.log("widgetId:", widgetId);
+    console.log("dbID:", dbID);
+
     if (!widgetId || !dbID) {
       return <p style={{ color: "red" }}>Invalid embed params</p>;
     }
