@@ -5,17 +5,18 @@ import { queryDatabase } from "@/app/lib/notion-server";
 import axios from "axios";
 
 interface EmbedPageProps {
-  params: { id: string };
-  searchParams: { db?: string };
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ db?: string }>;
 }
 
-export default async function EmbedPage({
-  params,
-  searchParams,
-}: EmbedPageProps) {
+export default async function EmbedPage(props: EmbedPageProps) {
   try {
-    console.log("PARAMS RAW:", params);
-    console.log("SEARCH PARAMS RAW:", searchParams);
+    // 🔥 UNWRAP PROMISE
+    const params = await props.params;
+    const searchParams = await props.searchParams;
+
+    console.log("PARAMS:", params);
+    console.log("SEARCH PARAMS:", searchParams);
 
     const widgetId = params.id;
     const dbID = searchParams.db;
@@ -24,26 +25,44 @@ export default async function EmbedPage({
     console.log("dbID:", dbID);
 
     if (!widgetId || !dbID) {
-      return <p style={{ color: "red" }}>Invalid embed params</p>;
+      return (
+        <p className="text-red-500 text-center mt-10">
+          Invalid embed params
+        </p>
+      );
     }
 
+    // 🔥 ambil widget
     const widgetRes = await axios.get(
       `${process.env.NEXT_PUBLIC_BE_URL}/widgets/${dbID}`
     );
 
-    if (!widgetRes.data.success || !widgetRes.data.data.length) {
-      return <p style={{ color: "red" }}>Widget not found</p>;
+    if (!widgetRes.data?.success || !widgetRes.data?.data?.length) {
+      return (
+        <p className="text-red-500 text-center mt-10">
+          Widget not found
+        </p>
+      );
     }
 
     const token = widgetRes.data.data[0].token;
 
+    // 🔥 query notion
     const notionData = await queryDatabase(token, dbID);
 
     return (
-      <ClientViewComponent filtered={notionData} profile={null} theme="light" />
+      <ClientViewComponent
+        filtered={notionData}
+        profile={null}
+        theme="light"
+      />
     );
   } catch (err) {
     console.error("EMBED ERROR:", err);
-    return <p style={{ color: "red" }}>Embed failed</p>;
+    return (
+      <p className="text-red-500 text-center mt-10">
+        Embed failed
+      </p>
+    );
   }
 }
