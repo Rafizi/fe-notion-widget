@@ -6,7 +6,7 @@ import axios from "axios";
 
 interface EmbedPageProps {
   params: { id: string };
-  searchParams?: Record<string, string | string[] | undefined>;
+  searchParams: { db?: string };
 }
 
 export default async function EmbedPage({
@@ -14,12 +14,8 @@ export default async function EmbedPage({
   searchParams,
 }: EmbedPageProps) {
   try {
-    const widgetId = params?.id;
-
-    const dbID =
-      typeof searchParams?.db === "string"
-        ? decodeURIComponent(searchParams.db)
-        : null;
+    const widgetId = params.id;
+    const dbID = searchParams.db;
 
     console.log("widgetId:", widgetId);
     console.log("dbID:", dbID);
@@ -28,29 +24,26 @@ export default async function EmbedPage({
       return <p style={{ color: "red" }}>Invalid embed params</p>;
     }
 
-    if (!widgetId || !dbID) {
-      return <p style={{ color: "red" }}>Invalid embed params</p>;
-    }
-
     const widgetRes = await axios.get(
-      `${process.env.NEXT_PUBLIC_BE_URL}/widgets/${dbID}`,
-      { headers: { "Content-Type": "application/json" } }
+      `${process.env.NEXT_PUBLIC_BE_URL}/widgets/${dbID}`
     );
 
     if (!widgetRes.data.success || !widgetRes.data.data.length) {
       return <p style={{ color: "red" }}>Widget not found</p>;
     }
 
-    const widget = widgetRes.data.data[0];
-    const token = widget.token;
+    const token = widgetRes.data.data[0].token;
 
-    // 🔥 query notion
     const notionData = await queryDatabase(token, dbID);
 
     return (
-      <ClientViewComponent filtered={notionData} profile={null} theme="light" />
+      <ClientViewComponent
+        filtered={notionData}
+        profile={null}
+        theme="light"
+      />
     );
-  } catch (err: any) {
+  } catch (err) {
     console.error("EMBED ERROR:", err);
     return <p style={{ color: "red" }}>Embed failed</p>;
   }
