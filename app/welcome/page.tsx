@@ -151,7 +151,6 @@ export default function WelcomePage() {
           </div>
         </div>
 
-        {/* CTA BUTTON BAWAH – posisi benar di luar grid */}
         <div className="flex justify-center md:justify-end mt-6">
           <button
             onClick={() => router.push("/widget/create")}
