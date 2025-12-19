@@ -14,18 +14,24 @@ export default async function EmbedPage({
   searchParams,
 }: EmbedPageProps) {
   try {
-    const widgetId = params.id;
+    const widgetId = params?.id;
 
     const dbID =
       typeof searchParams?.db === "string"
         ? decodeURIComponent(searchParams.db)
         : null;
 
+    console.log("widgetId:", widgetId);
+    console.log("dbID:", dbID);
+
     if (!widgetId || !dbID) {
       return <p style={{ color: "red" }}>Invalid embed params</p>;
     }
 
-    // 🔥 ambil widget dari BE
+    if (!widgetId || !dbID) {
+      return <p style={{ color: "red" }}>Invalid embed params</p>;
+    }
+
     const widgetRes = await axios.get(
       `${process.env.NEXT_PUBLIC_BE_URL}/widget/${dbID}`,
       { headers: { "Content-Type": "application/json" } }
@@ -42,11 +48,7 @@ export default async function EmbedPage({
     const notionData = await queryDatabase(token, dbID);
 
     return (
-      <ClientViewComponent
-        filtered={notionData}
-        profile={null}
-        theme="light"
-      />
+      <ClientViewComponent filtered={notionData} profile={null} theme="light" />
     );
   } catch (err: any) {
     console.error("EMBED ERROR:", err);
