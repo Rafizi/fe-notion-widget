@@ -29,7 +29,6 @@ interface Props {
   gridColumns?: number;
 }
 
-/* ================= MAIN ================= */
 
 export default function ClientViewComponent({
   filtered = [],
@@ -47,7 +46,6 @@ export default function ClientViewComponent({
     setCurrentTheme(theme);
   }, [theme]);
 
-  /* ================= THEME STYLES ================= */
 
   const bg =
     currentTheme === "light" ? "bg-white text-gray-900" : "bg-black text-white";
@@ -59,7 +57,6 @@ export default function ClientViewComponent({
 
   return (
     <main className={`${bg} min-h-screen w-full flex flex-col`}>
-      {/* ================= TOP BAR ================= */}
       <div
         className={`sticky top-0 z-30 px-5 py-4 border-b backdrop-blur-md ${
           currentTheme === "light"
@@ -98,7 +95,6 @@ export default function ClientViewComponent({
           <RefreshButton />
         </div>
 
-        {/* ================= CONTROLS ================= */}
         <div className="mt-4 flex flex-wrap items-center gap-3 justify-between">
           <div className="inline-flex rounded-full border text-xs overflow-hidden">
             <button
@@ -148,7 +144,6 @@ export default function ClientViewComponent({
         </div>
       </div>
 
-      {/* ================= CONTENT ================= */}
       <div className="p-5 space-y-6">
         {showBio && profile && (profile.bio || profile.name) && (
           <BioSection profile={profile} theme={currentTheme} />
@@ -178,7 +173,6 @@ export default function ClientViewComponent({
   );
 }
 
-/* ================= BIO ================= */
 
 function BioSection({
   profile,

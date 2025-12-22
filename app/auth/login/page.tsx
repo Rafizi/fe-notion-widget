@@ -22,7 +22,7 @@ export default function LoginPage() {
 
       cookies.set("login_email", email, { expires: 1 / 24 });
 
-      toast.success("Magic link terkirim ✨ Cek email lo");
+      toast.success("Magic link terkirim  Cek email lo");
     } catch (err: any) {
       toast.error("Gagal kirim magic link 😵");
       console.error(err);

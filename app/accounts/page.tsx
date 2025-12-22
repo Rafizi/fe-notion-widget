@@ -41,21 +41,12 @@ type JwtPayload = {
 export default function AccountsPage() {
   const router = useRouter();
 
-  /* =======================
-     AUTH STATE
-  ======================= */
   const [user, setUser] = useState<{ email?: string } | null>(null);
   const [loading, setLoading] = useState(true);
 
-  /* =======================
-     WIDGET STATE
-  ======================= */
   const [widgets, setWidgets] = useState<Widget[]>([]);
   const [showTokens, setShowTokens] = useState<Record<string, boolean>>({});
 
-  /* =======================
-     CHECK AUTH
-  ======================= */
   useEffect(() => {
     const token = cookies.get("login_token");
     if (!token) {

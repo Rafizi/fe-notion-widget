@@ -27,7 +27,7 @@ export default function AuthEmbedClient() {
       try {
         const res = await api.post("/auth/verify-token", { token, email });
 
-        cookies.set("login_token", res.data.data.jwt, { expires: 30, secure: true, sameSite: "strict" });
+        cookies.set("login_token", res.data.data.jwt, { expires: 30, secure: true, sameSite: "strict",  });
 
         setStatus("success");
 
@@ -47,7 +47,6 @@ export default function AuthEmbedClient() {
     verify();
   }, [router, searchParams]);
 
-  // 🔥 UI NYATA ADA DI SINI
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-white px-4">
       <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-sm text-center">
