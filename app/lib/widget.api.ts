@@ -18,3 +18,13 @@ export const getWidgetByDbID = async (dbID: string) => {
   const res = await api.get(`/widgets/${dbID}`);
   return res.data;
 };
+
+
+export const getWidgetsByUser = async (jwt: string) => {
+  const res = await api.get("/widgets/list", {
+    headers: {
+      "khalify-token": jwt,
+    }
+  });
+  return res.data;
+}

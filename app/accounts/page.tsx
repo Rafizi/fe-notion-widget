@@ -17,12 +17,17 @@ import {
   User as UserIcon,
 } from "lucide-react";
 
+import { getWidgetsByUser } from "../lib/widget.api";
+
+/* =======================
+   TYPES
+======================= */
 interface Widget {
   id: string;
-  name: string;
-  integrationToken: string;
-  database: string;
-  url: string;
+  token: string;
+  dbID: string;
+  create_at: string;
+  profileId: string;
 }
 
 type JwtPayload = {
@@ -36,20 +41,22 @@ export default function AccountsPage() {
   const router = useRouter();
 
   /* =======================
-     AUTH / PROFILE STATE
+     AUTH STATE
   ======================= */
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<{ email?: string } | null>(null);
   const [loading, setLoading] = useState(true);
 
   /* =======================
      WIDGET STATE
   ======================= */
   const [widgets, setWidgets] = useState<Widget[]>([]);
-  const [showTokens, setShowTokens] = useState<{ [key: string]: boolean }>({});
+  const [showTokens, setShowTokens] = useState<Record<string, boolean>>({});
 
+  /* =======================
+     CHECK AUTH
+  ======================= */
   useEffect(() => {
     const token = cookies.get("login_token");
-
     if (!token) {
       router.replace("/auth/login");
       return;
@@ -57,43 +64,30 @@ export default function AccountsPage() {
 
     try {
       const decoded = jwtDecode<JwtPayload>(token);
-
-      setUser({
-        email: decoded.email,
-      });
-    } catch (err) {
-      console.error("Invalid JWT", err);
+      setUser({ email: decoded.email });
+    } catch (e) {
       router.replace("/auth/login");
     } finally {
       setLoading(false);
     }
   }, [router]);
 
+  /* =======================
+     LOAD WIDGETS FROM BE
+  ======================= */
   useEffect(() => {
     const loadWidgets = async () => {
-      setWidgets([
-        {
-          id: "O2EOKV",
-          name: "Widget #O2EOKV",
-          integrationToken: "••••••••••••••••••••••••••••••••",
-          database: "2eebd26b4b98367d12771cec1",
-          url: "https://www.graceandigrow.co/o2okV",
-        },
-        {
-          id: "Ob2J3h",
-          name: "iglayout",
-          integrationToken: "••••••••••••••••••••••••••••••••",
-          database: "2e43dd8799dd8ebb42cf6b5c8fb591",
-          url: "https://www.graceandigrow.co/Ob2J3h",
-        },
-        {
-          id: "er8u0T",
-          name: "Widget #er8u0T",
-          integrationToken: "••••••••••••••••••••••••••••••••",
-          database: "2e0c026d94b91e5af7e89f7abd94de",
-          url: "https://www.graceandigrow.co/er#u8T",
-        },
-      ]);
+      try {
+        const jwt = cookies.get("login_token");
+        if (!jwt) return;
+
+        const res = await getWidgetsByUser(jwt);
+        if (res?.success) {
+          setWidgets(res.data);
+        }
+      } catch (e) {
+        console.error("LOAD WIDGET ERROR:", e);
+      }
     };
 
     loadWidgets();
@@ -123,61 +117,48 @@ export default function AccountsPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* ================= LEFT COLUMN ================= */}
+          {/* ================= LEFT ================= */}
           <div className="space-y-6">
-            {/* PERSONAL INFO */}
-            <div className="bg-white border border-gray-200 rounded-xl p-6">
+            {/* PROFILE */}
+            <div className="bg-white border rounded-xl p-6">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                   <UserIcon className="w-5 h-5 text-blue-600" />
                 </div>
-                <h2 className="text-xl text-gray-900">Personal Information</h2>
+                <h2 className="text-xl">Personal Information</h2>
               </div>
 
               <div className="space-y-5">
-                <div className="pb-4 border-b border-gray-100">
-                  <label className="block text-xs text-gray-500 mb-2">
-                    Email
-                  </label>
-                  <div className="flex items-center justify-between">
-                    <p className="text-gray-900">{user.email}</p>
-                    <button className="text-sm text-purple-600 flex items-center gap-1">
-                      <Edit2 className="w-3 h-3" />
-                      Edit
-                    </button>
-                  </div>
+                <div className="border-b pb-4">
+                  <label className="text-xs text-gray-500">Email</label>
+                  <p className="text-gray-900">{user?.email}</p>
                 </div>
 
-                <div className="pb-4 border-b border-gray-100">
-                  <label className="block text-xs text-gray-500 mb-2">
-                    Name
-                  </label>
-                  <p className="text-gray-500 text-sm">No name</p>
+                <div className="border-b pb-4">
+                  <label className="text-xs text-gray-500">Name</label>
+                  <p className="text-gray-400">No name</p>
                 </div>
 
-                <div>
-                  <label className="block text-xs text-gray-500 mb-2">
-                    Account Type
-                  </label>
-                  <div className="flex items-center justify-between">
-                    <span className="px-3 py-1 bg-gray-100 text-xs rounded-full">
-                      Basic Account
-                    </span>
-                    <button className="text-sm text-purple-600 flex items-center gap-1">
-                      <Crown className="w-4 h-4" />
-                      Upgrade to Pro
-                    </button>
-                  </div>
+                <div className="flex items-center justify-between">
+                  <span className="px-3 py-1 bg-gray-100 text-xs rounded-full">
+                    Basic Account
+                  </span>
+                  <button className="text-purple-600 text-sm flex items-center gap-1">
+                    <Crown className="w-4 h-4" />
+                    Upgrade
+                  </button>
                 </div>
               </div>
             </div>
 
-            {/* QUICK STATS */}
-            <div className="bg-white border border-gray-200 rounded-xl p-6">
+            {/* STATS */}
+            <div className="bg-white border rounded-xl p-6">
               <h3 className="text-sm text-gray-600 mb-4">Quick Stats</h3>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-2xl text-purple-600">{widgets.length}</p>
+                  <p className="text-2xl text-purple-600">
+                    {widgets.length}
+                  </p>
                   <p className="text-xs text-gray-600">Active Widgets</p>
                 </div>
                 <div>
@@ -188,11 +169,11 @@ export default function AccountsPage() {
             </div>
           </div>
 
-          {/* ================= RIGHT COLUMN ================= */}
+          {/* ================= RIGHT ================= */}
           <div>
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl text-gray-900">Your Widgets</h2>
-              <span className="px-3 py-1 bg-purple-100 text-purple-700 text-sm rounded-full">
+            <div className="flex justify-between mb-6">
+              <h2 className="text-xl">Your Widgets</h2>
+              <span className="bg-purple-100 text-purple-700 text-sm px-3 py-1 rounded-full">
                 {widgets.length} Active
               </span>
             </div>
@@ -201,34 +182,38 @@ export default function AccountsPage() {
               {widgets.map((widget) => (
                 <div
                   key={widget.id}
-                  className="bg-white border border-gray-200 rounded-xl p-6 hover:border-purple-300 transition"
+                  className="bg-white border rounded-xl p-6"
                 >
                   {/* HEADER */}
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-center gap-3">
+                  <div className="flex justify-between mb-4">
+                    <div className="flex gap-3">
                       <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center text-white">
-                        {widget.id.slice(0, 2)}
+                        {widget.id.slice(0, 2).toUpperCase()}
                       </div>
                       <div>
-                        <h3 className="text-gray-900">{widget.name}</h3>
-                        <p className="text-xs text-gray-500">ID: {widget.id}</p>
+                        <h3 className="text-gray-900">Widget</h3>
+                        <p className="text-xs text-gray-500">
+                          ID: {widget.id}
+                        </p>
                       </div>
                     </div>
-                    <MoreVertical className="w-4 h-4 text-gray-600" />
+                    <MoreVertical className="w-4 h-4" />
                   </div>
 
                   {/* TOKEN */}
-                  <div className="mb-3 pb-3 border-b border-gray-100">
-                    <label className="block text-xs text-gray-500 mb-2">
+                  <div className="border-b pb-3 mb-3">
+                    <label className="text-xs text-gray-500">
                       Integration Token
                     </label>
                     <div className="flex items-center gap-2">
                       <p className="font-mono text-sm truncate flex-1">
                         {showTokens[widget.id]
-                          ? "ntn_38356847923abcdef..."
-                          : widget.integrationToken}
+                          ? widget.token
+                          : "••••••••••••••••••••••"}
                       </p>
-                      <button onClick={() => toggleTokenVisibility(widget.id)}>
+                      <button
+                        onClick={() => toggleTokenVisibility(widget.id)}
+                      >
                         {showTokens[widget.id] ? (
                           <EyeOff className="w-4 h-4" />
                         ) : (
@@ -238,22 +223,23 @@ export default function AccountsPage() {
                     </div>
                   </div>
 
-                  {/* DATABASE */}
+                  {/* DB */}
                   <div className="mb-4">
-                    <label className="text-xs text-gray-500">Database</label>
+                    <label className="text-xs text-gray-500">
+                      Database ID
+                    </label>
                     <p className="font-mono text-sm bg-gray-50 px-2 py-1 rounded truncate">
-                      {widget.database}
+                      {widget.dbID}
                     </p>
                   </div>
 
-                  {/* URL */}
+                  {/* LINK */}
                   <a
-                    href={widget.url}
+                    href={`https://yourdomain.com/widget/${widget.id}`}
                     target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm text-purple-600 flex items-center justify-between"
+                    className="text-sm text-purple-600 flex justify-between"
                   >
-                    <span className="truncate">{widget.url}</span>
+                    Open Widget
                     <ExternalLink className="w-4 h-4" />
                   </a>
                 </div>
