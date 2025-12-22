@@ -26,52 +26,52 @@ export default function CreateWidgetPageMerged() {
 
   const router = useRouter();
 
-
   useEffect(() => {
-  const jwt = cookies.get("login_token");
+    const jwt = cookies.get("login_token");
 
-  if (!jwt) {
-    router.replace("/auth/login");
-    return;
-  }
-
-  // simpan JWT MENTAH
-  setUser({ jwt });
-}, [router]);
-
-
-  const handleGenerateWidget = async () => {
-  if (!db || !isUrlValid || !notionUrl || !user?.jwt) return;
-
-  setLoading(true);
-
-  try {
-    const res = await createWidget({
-      token: notionUrl,
-      dbID: db,
-      email: user.jwt,
-      name: dbname || "My Notion Widget", 
-    });
-
-    console.log("res: ", res);
-    const embedLink = res?.data?.embedLink;
-
-
-    if (!embedLink) {
-      console.log("Embed link Not found", res);
+    if (!jwt) {
+      router.replace("/auth/login");
       return;
     }
 
-    setEmbedUrl(embedLink);
+    // simpan JWT MENTAH
+    setUser({ jwt });
+  }, [router]);
 
-    setStep(3);
-  } catch (err) {
-    console.error("Error creating widget:", err);
-  } finally {
-    setLoading(false);
-  }
-};
+  const handleGenerateWidget = async () => {
+    if (!db || !isUrlValid || !notionUrl || !user?.jwt) return;
 
+    setLoading(true);
+
+    try {
+      const res = await createWidget({
+        token: notionUrl,
+        dbID: db,
+        email: user.jwt,
+        name: dbname || "My Notion Widget",
+      });
+
+      console.log('res: ', res);
+      console.log("DB NAME:", dbname);
+      console.log("DB ID:", db);
+
+      console.log("res: ", res);
+      const embedLink = res?.data?.embedLink;
+
+      if (!embedLink) {
+        console.log("Embed link Not found", res);
+        return;
+      }
+
+      setEmbedUrl(embedLink);
+
+      setStep(3);
+    } catch (err) {
+      console.error("Error creating widget:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <>
