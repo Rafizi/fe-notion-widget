@@ -28,6 +28,8 @@ interface Widget {
   dbID: string;
   create_at: string;
   profileId: string;
+  name: string;
+  link: string;
 }
 
 type JwtPayload = {
@@ -156,9 +158,7 @@ export default function AccountsPage() {
               <h3 className="text-sm text-gray-600 mb-4">Quick Stats</h3>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-2xl text-purple-600">
-                    {widgets.length}
-                  </p>
+                  <p className="text-2xl text-purple-600">{widgets.length}</p>
                   <p className="text-xs text-gray-600">Active Widgets</p>
                 </div>
                 <div>
@@ -180,10 +180,7 @@ export default function AccountsPage() {
 
             <div className="space-y-4">
               {widgets.map((widget) => (
-                <div
-                  key={widget.id}
-                  className="bg-white border rounded-xl p-6"
-                >
+                <div key={widget.id} className="bg-white border rounded-xl p-6">
                   {/* HEADER */}
                   <div className="flex justify-between mb-4">
                     <div className="flex gap-3">
@@ -191,10 +188,10 @@ export default function AccountsPage() {
                         {widget.id.slice(0, 2).toUpperCase()}
                       </div>
                       <div>
-                        <h3 className="text-gray-900">Widget</h3>
-                        <p className="text-xs text-gray-500">
-                          ID: {widget.id}
-                        </p>
+                        <h3 className="text-gray-900">
+                          {widget.name || "my widget"}
+                        </h3>
+                        <p className="text-xs text-gray-500">ID: {widget.id}</p>
                       </div>
                     </div>
                     <MoreVertical className="w-4 h-4" />
@@ -211,9 +208,7 @@ export default function AccountsPage() {
                           ? widget.token
                           : "••••••••••••••••••••••"}
                       </p>
-                      <button
-                        onClick={() => toggleTokenVisibility(widget.id)}
-                      >
+                      <button onClick={() => toggleTokenVisibility(widget.id)}>
                         {showTokens[widget.id] ? (
                           <EyeOff className="w-4 h-4" />
                         ) : (
@@ -225,9 +220,7 @@ export default function AccountsPage() {
 
                   {/* DB */}
                   <div className="mb-4">
-                    <label className="text-xs text-gray-500">
-                      Database ID
-                    </label>
+                    <label className="text-xs text-gray-500">Database ID</label>
                     <p className="font-mono text-sm bg-gray-50 px-2 py-1 rounded truncate">
                       {widget.dbID}
                     </p>
@@ -235,11 +228,12 @@ export default function AccountsPage() {
 
                   {/* LINK */}
                   <a
-                    href={`https://yourdomain.com/widget/${widget.id}`}
+                    href={widget.link}
                     target="_blank"
-                    className="text-sm text-purple-600 flex justify-between"
+                    rel="noopener noreferrer"
+                    className="text-sm text-purple-600 flex items-center justify-between"
                   >
-                    Open Widget
+                    <span className="truncate">{widget.link}</span>
                     <ExternalLink className="w-4 h-4" />
                   </a>
                 </div>
