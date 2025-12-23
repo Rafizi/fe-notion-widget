@@ -144,44 +144,57 @@ export default function AccountsPage() {
   if (loading) return <div className="p-10">Loading...</div>;
 
   return (
-    <>
-      <Navbar />
+  <>
+    <Navbar />
 
-      <div className="max-w-7xl mx-auto px-12 py-12">
+    <div className="min-h-screen bg-slate-50">
+      <div className="max-w-7xl mx-auto px-6 py-12">
         {/* HEADER */}
-        <div className="mb-8">
-          <h1 className="text-4xl text-gray-900 mb-2">Account Details</h1>
-          <p className="text-gray-600">Manage your profile and widgets</p>
+        <div className="mb-12">
+          <h1 className="text-4xl font-semibold text-slate-900">
+            Account
+          </h1>
+          <p className="text-slate-500 mt-2">
+            Manage your profile and widgets in one place
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* ================= LEFT ================= */}
-          <div className="space-y-6">
+          <div className="lg:col-span-1 space-y-6">
             {/* PROFILE */}
-            <div className="bg-white border rounded-xl p-6">
+            <div className="bg-white rounded-2xl border shadow-sm p-6">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <UserIcon className="w-5 h-5 text-blue-600" />
+                <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white">
+                  <UserIcon className="w-5 h-5" />
                 </div>
-                <h2 className="text-xl">Personal Information</h2>
+                <div>
+                  <h2 className="text-lg font-medium">Personal Info</h2>
+                  <p className="text-xs text-slate-500">
+                    Account details
+                  </p>
+                </div>
               </div>
 
-              <div className="space-y-5">
-                <div className="border-b pb-4">
-                  <label className="text-xs text-gray-500">Email</label>
-                  <p className="text-gray-900">{user?.email}</p>
+              <div className="space-y-4">
+                <div>
+                  <p className="text-xs text-slate-500">Email</p>
+                  <p className="text-sm text-slate-900">
+                    {user?.email}
+                  </p>
                 </div>
 
-                <div className="border-b pb-4">
-                  <label className="text-xs text-gray-500">Name</label>
-                  <p className="text-gray-400">No name</p>
+                <div>
+                  <p className="text-xs text-slate-500">Name</p>
+                  <p className="text-sm text-slate-400">No name</p>
                 </div>
 
-                <div className="flex items-center justify-between">
-                  <span className="px-3 py-1 bg-gray-100 text-xs rounded-full">
+                <div className="flex items-center justify-between pt-2">
+                  <span className="px-3 py-1 text-xs rounded-full bg-purple-100 text-purple-700">
                     Basic Account
                   </span>
-                  <button className="text-purple-600 text-sm flex items-center gap-1">
+
+                  <button className="flex items-center gap-1 text-sm text-purple-600 hover:underline">
                     <Crown className="w-4 h-4" />
                     Upgrade
                   </button>
@@ -189,8 +202,7 @@ export default function AccountsPage() {
 
                 <button
                   onClick={handleLogout}
-                  className="w-full mt-4 rounded-xl border border-red-200 
-             text-red-600 py-2 text-sm hover:bg-red-50 transition"
+                  className="w-full mt-4 rounded-xl border border-red-200 text-red-600 py-2 text-sm hover:bg-red-50 transition"
                 >
                   Logout
                 </button>
@@ -198,68 +210,94 @@ export default function AccountsPage() {
             </div>
 
             {/* STATS */}
-            <div className="bg-white border rounded-xl p-6">
-              <h3 className="text-sm text-gray-600 mb-4">Quick Stats</h3>
+            <div className="bg-white rounded-2xl border shadow-sm p-6">
+              <p className="text-sm text-slate-500 mb-4">Quick Stats</p>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-2xl text-purple-600">{widgets.length}</p>
-                  <p className="text-xs text-gray-600">Active Widgets</p>
+                  <p className="text-2xl font-semibold text-purple-600">
+                    {widgets.length}
+                  </p>
+                  <p className="text-xs text-slate-500">
+                    Active Widgets
+                  </p>
                 </div>
                 <div>
-                  <p className="text-2xl text-purple-600">∞</p>
-                  <p className="text-xs text-gray-600">API Calls</p>
+                  <p className="text-2xl font-semibold text-purple-600">
+                    ∞
+                  </p>
+                  <p className="text-xs text-slate-500">
+                    API Calls
+                  </p>
                 </div>
               </div>
             </div>
           </div>
 
-          <div>
-            <div className="flex justify-between mb-6">
-              <h2 className="text-xl">Your Widgets</h2>
-              <span className="bg-purple-100 text-purple-700 text-sm px-3 py-1 rounded-full">
+          {/* ================= RIGHT ================= */}
+          <div className="lg:col-span-2">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-medium text-slate-900">
+                Your Widgets
+              </h2>
+              <span className="text-sm bg-purple-100 text-purple-700 px-3 py-1 rounded-full">
                 {widgets.length} Active
               </span>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-5">
               {widgets.map((widget) => (
-                <div key={widget.id} className="bg-white border rounded-xl p-6">
+                <div
+                  key={widget.id}
+                  className="bg-white rounded-2xl border shadow-sm p-6 hover:shadow-md transition"
+                >
                   {/* HEADER */}
-                  <div className="flex justify-between mb-4">
-                    <div className="flex gap-3">
-                      <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center text-white">
-                        {widget.id.slice(0, 2).toUpperCase()}
+                  <div className="flex items-start justify-between mb-5">
+                    <div className="flex gap-4">
+                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 text-white flex items-center justify-center font-semibold">
+                        {widget.name?.[0]?.toUpperCase() || "W"}
                       </div>
+
                       <div>
-                        <h3 className="text-gray-900">
-                          {widget.name || "my widget"}
+                        <h3 className="font-medium text-slate-900">
+                          {widget.name || "My Widget"}
                         </h3>
-                        <p className="text-xs text-gray-500">ID: {widget.id}</p>
+                        <p className="text-xs text-slate-500">
+                          ID: {widget.id}
+                        </p>
                       </div>
                     </div>
-                    <MoreVertical className="w-4 h-4" />
-                    <Trash2Icon
-                      className="w-4 h-4"
-                      onClick={() => handleDeleteWidget(widget.id)}
-                    />
+
+                    <div className="flex items-center gap-3">
+                      <Trash2Icon
+                        className="w-4 h-4 text-slate-400 hover:text-red-500 cursor-pointer"
+                        onClick={() =>
+                          handleDeleteWidget(widget.id)
+                        }
+                      />
+                      <MoreVertical className="w-4 h-4 text-slate-400" />
+                    </div>
                   </div>
 
                   {/* TOKEN */}
-                  <div className="border-b pb-3 mb-3">
-                    <label className="text-xs text-gray-500">
+                  <div className="mb-4">
+                    <p className="text-xs text-slate-500 mb-1">
                       Integration Token
-                    </label>
-                    <div className="flex items-center gap-2">
-                      <p className="font-mono text-sm truncate flex-1">
+                    </p>
+                    <div className="flex items-center gap-2 bg-slate-50 rounded-lg px-3 py-2">
+                      <p className="font-mono text-xs truncate flex-1">
                         {showTokens[widget.id]
                           ? widget.token
-                          : "••••••••••••••••••••••"}
+                          : "••••••••••••••••••"}
                       </p>
-                      <button onClick={() => toggleTokenVisibility(widget.id)}>
+                      <button
+                        onClick={() =>
+                          toggleTokenVisibility(widget.id)
+                        }
+                      >
                         {showTokens[widget.id] ? (
-                          <EyeOff className="w-4 h-4" />
+                          <EyeOff className="w-4 h-4 text-slate-500" />
                         ) : (
-                          <Eye className="w-4 h-4" />
+                          <Eye className="w-4 h-4 text-slate-500" />
                         )}
                       </button>
                     </div>
@@ -267,8 +305,10 @@ export default function AccountsPage() {
 
                   {/* DB */}
                   <div className="mb-4">
-                    <label className="text-xs text-gray-500">Database ID</label>
-                    <p className="font-mono text-sm bg-gray-50 px-2 py-1 rounded truncate">
+                    <p className="text-xs text-slate-500 mb-1">
+                      Database ID
+                    </p>
+                    <p className="font-mono text-xs bg-slate-50 rounded-lg px-3 py-2 truncate">
                       {widget.dbID}
                     </p>
                   </div>
@@ -277,10 +317,9 @@ export default function AccountsPage() {
                   <a
                     href={widget.link}
                     target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm text-purple-600 flex items-center justify-between"
+                    className="inline-flex items-center gap-2 text-sm text-purple-600 hover:underline"
                   >
-                    <span className="truncate">{widget.link}</span>
+                    View Widget
                     <ExternalLink className="w-4 h-4" />
                   </a>
                 </div>
@@ -289,6 +328,8 @@ export default function AccountsPage() {
           </div>
         </div>
       </div>
-    </>
-  );
+    </div>
+  </>
+);
+
 }
