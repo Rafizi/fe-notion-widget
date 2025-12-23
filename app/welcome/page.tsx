@@ -4,7 +4,6 @@
 import Navbar from "@/app/components/Navbar";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/app/lib/supabaseClient";
 import { CheckCircle2 } from "lucide-react";
 import cookies from "js-cookie";
 export default function WelcomePage() {
