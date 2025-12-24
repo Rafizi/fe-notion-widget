@@ -126,7 +126,7 @@ export default function ClientViewComponent({
     </div>
   </div>
 
-  <div className="mt-4">
+  <div className="mt-4 relative z-50">
     <EmbedFilter />
   </div>
 </div>
