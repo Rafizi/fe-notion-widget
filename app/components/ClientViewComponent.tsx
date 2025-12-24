@@ -133,7 +133,8 @@ export default function ClientViewComponent({
 
 
       {/* ================= CONTENT ================= */}
-      <div className="p-5 pt-8 space-y-6">
+      <div className="p-5 space-y-6 mt-[140px]">
+
 
         {showBio && profile && (
           <BioSection profile={profile} theme={currentTheme} />
