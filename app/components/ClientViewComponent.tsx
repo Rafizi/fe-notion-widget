@@ -62,24 +62,17 @@ export default function ClientViewComponent({
             : "bg-black/70 border-gray-800"
         }`}
       >
-        <div className="flex items-center justify-between gap-4">
-          <div>
-            <h1 className="text-base font-semibold">Creator Gallery</h1>
-            <p className="text-xs text-gray-500">
-              Curated content from your Notion database
-            </p>
-          </div>
-
+        <div className="flex items-center gap-2">
           <button
             onClick={() =>
               setCurrentTheme((t) => (t === "light" ? "dark" : "light"))
             }
-            className={`px-4 py-2 rounded-full text-xs ring-1 mr-40
-              ${
-                currentTheme === "dark"
-                  ? "bg-gray-800 text-white ring-gray-600"
-                  : "bg-gray-100 text-gray-900 ring-gray-300"
-              }`}
+            className={`px-4 py-2 rounded-full text-xs ring-1
+      ${
+        currentTheme === "dark"
+          ? "bg-gray-800 text-white ring-gray-600"
+          : "bg-gray-100 text-gray-900 ring-gray-300"
+      }`}
           >
             {currentTheme === "dark" ? "🌙 Dark" : "☀️ Light"}
           </button>
@@ -102,9 +95,7 @@ export default function ClientViewComponent({
             <button
               onClick={() => setViewMode("map")}
               className={`px-4 py-1.5 ${
-                viewMode === "map"
-                  ? "bg-gray-900 text-white"
-                  : "bg-transparent"
+                viewMode === "map" ? "bg-gray-900 text-white" : "bg-transparent"
               }`}
             >
               Map
@@ -134,7 +125,9 @@ export default function ClientViewComponent({
 
       {/* ================= CONTENT ================= */}
       <div className="p-5 space-y-6">
-        {showBio && profile && <BioSection profile={profile} theme={currentTheme} />}
+        {showBio && profile && (
+          <BioSection profile={profile} theme={currentTheme} />
+        )}
 
         {showHighlight && profile?.highlights && (
           <HighlightSection
@@ -212,13 +205,7 @@ function HighlightSection({ highlights, theme }: any) {
 
 /* ================= GRID ================= */
 
-function VisualGrid({
-  filtered,
-  gridColumns,
-  theme,
-  cardBg,
-  onSelect,
-}: any) {
+function VisualGrid({ filtered, gridColumns, theme, cardBg, onSelect }: any) {
   return (
     <div
       className="grid gap-4"
@@ -307,8 +294,7 @@ function DetailModal({ item, theme, onClose }: any) {
     };
   }, []);
 
-  const name =
-    item.properties?.Name?.title?.[0]?.plain_text || "Untitled";
+  const name = item.properties?.Name?.title?.[0]?.plain_text || "Untitled";
   const image = extractImage(item);
 
   return (
