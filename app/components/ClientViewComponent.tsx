@@ -2,7 +2,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Pin, X, ExternalLink } from "lucide-react";
+import { Pin, X, ExternalLink, Tag } from "lucide-react";
+import AutoThumbnail from "@/app/components/AutoThumbnail";
 import EmbedFilter from "@/app/components/EmbedFilter";
 import RefreshButton from "@/app/components/RefreshButton";
 
@@ -47,9 +48,9 @@ export default function ClientViewComponent({
   }, [theme]);
 
   const bg =
-    currentTheme === "light"
-      ? "bg-white text-gray-900"
-      : "bg-black text-white";
+    currentTheme === "light" ? "bg-white text-gray-900" : "bg-black text-white";
+
+  const cardBg = currentTheme === "light" ? "bg-white" : "bg-gray-900";
 
   return (
     <main className={`${bg} min-h-screen w-full flex flex-col`}>
@@ -73,11 +74,12 @@ export default function ClientViewComponent({
             onClick={() =>
               setCurrentTheme((t) => (t === "light" ? "dark" : "light"))
             }
-            className={`px-4 py-2 rounded-full text-xs ring-1 mr-40 ${
-              currentTheme === "dark"
-                ? "bg-gray-800 text-white ring-gray-600"
-                : "bg-gray-100 text-gray-900 ring-gray-300"
-            }`}
+            className={`px-4 py-2 rounded-full text-xs ring-1 mr-40
+              ${
+                currentTheme === "dark"
+                  ? "bg-gray-800 text-white ring-gray-600"
+                  : "bg-gray-100 text-gray-900 ring-gray-300"
+              }`}
           >
             {currentTheme === "dark" ? "🌙 Dark" : "☀️ Light"}
           </button>
@@ -132,12 +134,21 @@ export default function ClientViewComponent({
 
       {/* ================= CONTENT ================= */}
       <div className="p-5 space-y-6">
+        {showBio && profile && <BioSection profile={profile} theme={currentTheme} />}
+
+        {showHighlight && profile?.highlights && (
+          <HighlightSection
+            highlights={profile.highlights}
+            theme={currentTheme}
+          />
+        )}
+
         {viewMode === "visual" ? (
           <VisualGrid
             filtered={filtered}
             gridColumns={gridColumns}
-            showBio={showBio}
-            showHighlight={showHighlight}
+            theme={currentTheme}
+            cardBg={cardBg}
             onSelect={setSelectedItem}
           />
         ) : (
@@ -156,13 +167,56 @@ export default function ClientViewComponent({
   );
 }
 
+/* ================= SECTIONS ================= */
+
+function BioSection({ profile, theme }: any) {
+  return (
+    <section
+      className={`border rounded-2xl p-4 flex gap-4 ${
+        theme === "light"
+          ? "bg-white border-gray-200"
+          : "bg-gray-900 border-gray-800"
+      }`}
+    >
+      <div className="w-16 h-16 rounded-full bg-gray-300" />
+      <div>
+        <h2 className="font-semibold">{profile.name}</h2>
+        {profile.bio && (
+          <p className="text-xs text-gray-500 mt-1">{profile.bio}</p>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function HighlightSection({ highlights, theme }: any) {
+  return (
+    <section
+      className={`border rounded-2xl p-4 ${
+        theme === "light"
+          ? "bg-gray-50 border-gray-200"
+          : "bg-gray-900 border-gray-800"
+      }`}
+    >
+      <div className="flex gap-3 overflow-x-auto">
+        {highlights.map((h: any, i: number) => (
+          <div key={i} className="min-w-[72px] text-center">
+            <div className="w-14 h-14 rounded-full bg-gray-300 mx-auto mb-1" />
+            <p className="text-[11px]">{h.title}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 /* ================= GRID ================= */
 
 function VisualGrid({
   filtered,
   gridColumns,
-  showBio,
-  showHighlight,
+  theme,
+  cardBg,
   onSelect,
 }: any) {
   return (
@@ -170,87 +224,38 @@ function VisualGrid({
       className="grid gap-4"
       style={{ gridTemplateColumns: `repeat(${gridColumns}, 1fr)` }}
     >
-      {filtered.map((item: any, i: number) => (
-        <GalleryCard
-          key={i}
-          item={item}
-          showBio={showBio}
-          showHighlight={showHighlight}
-          onClick={() => onSelect(item)}
-        />
-      ))}
+      {filtered.map((item: any, i: number) => {
+        const name =
+          item.properties?.Name?.title?.[0]?.plain_text || "Untitled";
+        const image = extractImage(item);
+        const pinned = item.properties?.Pinned?.checkbox;
+
+        return (
+          <div
+            key={i}
+            onClick={() => onSelect(item)}
+            className={`relative group rounded-xl overflow-hidden aspect-[4/5] cursor-pointer
+              hover:-translate-y-1 transition ${cardBg}`}
+          >
+            {pinned && (
+              <Pin className="absolute top-3 right-3 text-yellow-400 z-10" />
+            )}
+
+            <AutoThumbnail src={image} />
+
+            <div
+              className={`absolute inset-0 flex items-end p-3 opacity-0 group-hover:opacity-100 transition bg-gradient-to-t ${
+                theme === "light" ? "from-black/70" : "from-black/80"
+              }`}
+            >
+              <p className="text-white text-xs">{name}</p>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }
-
-/* ================= CARD ================= */
-
-function GalleryCard({
-  item,
-  showBio,
-  showHighlight,
-  onClick,
-}: any) {
-  const [hovered, setHovered] = useState(false);
-
-  const name =
-    item.properties?.Name?.title?.[0]?.plain_text || "Untitled";
-  const image = extractImage(item);
-  const pinned = item.properties?.Pinned?.checkbox;
-  const featured = showHighlight && pinned;
-
-  return (
-    <div
-      onClick={onClick}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      className={`group relative rounded-[12px] overflow-hidden cursor-pointer
-        transition-all duration-300 shadow-md hover:shadow-xl
-        ${featured ? "ring-4 ring-purple-600" : ""}
-        ${hovered ? "-translate-y-1" : ""}
-      `}
-      style={{ height: "450px" }}
-    >
-      <img
-        src={image}
-        alt={name}
-        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-      />
-
-      {showBio && (
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 z-10">
-          <p className="text-white text-sm">{name}</p>
-        </div>
-      )}
-
-      {featured && (
-        <div className="absolute top-2 right-2 z-20">
-          <div className="bg-purple-600 text-white text-[10px] px-2 py-1 rounded-full">
-            ⭐ Featured
-          </div>
-        </div>
-      )}
-
-      {hovered && (
-        <>
-          <div className="absolute inset-0 bg-black/20 z-20" />
-
-          <div className="absolute top-4 right-4 bg-white rounded-full p-2 shadow-lg z-30 animate-in fade-in slide-in-from-top-2 duration-200">
-            <ExternalLink className="w-5 h-5 text-purple-600" />
-          </div>
-
-          <div className="absolute bottom-4 left-4 right-4 bg-white/95 px-4 py-2 rounded-lg shadow-lg z-30 animate-in fade-in slide-in-from-bottom-2 duration-200">
-            <p className="text-gray-900 text-sm font-medium">
-              Click to view details
-            </p>
-          </div>
-        </>
-      )}
-    </div>
-  );
-}
-
-/* ================= MAP VIEW ================= */
 
 function MapViewGrid({ filtered }: any) {
   const colors = ["bg-[#A3A18C]", "bg-[#CFC6A8]", "bg-[#9FA29A]"];
@@ -313,7 +318,7 @@ function DetailModal({ item, theme, onClose }: any) {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className={`relative w-full max-w-5xl rounded-2xl overflow-hidden ${
+        className={`w-full max-w-5xl rounded-2xl overflow-hidden ${
           theme === "light" ? "bg-white" : "bg-gray-900"
         }`}
       >
