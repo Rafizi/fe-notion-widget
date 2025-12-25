@@ -9,20 +9,18 @@ export default function RefreshButton() {
   return (
     <button
       onClick={() => router.refresh()}
+      title="Refresh"
       className="
-        inline-flex items-center gap-2
-        px-4 py-2 rounded-full text-xs font-medium
-        transition-all active:scale-95
-        bg-gray-100 text-gray-900
-        hover:bg-gray-200
-        dark:bg-gray-800 dark:text-white
-        dark:hover:bg-gray-700
-        ring-1 ring-gray-300 dark:ring-gray-600
+        w-9 h-9
+        flex items-center justify-center
+        rounded-full
+        border
+        transition
+        hover:bg-gray-100
+        dark:hover:bg-gray-800
       "
-      title="Refresh content"
     >
-      <RotateCw className="w-4 h-4" />
-      Refresh
+      <RotateCw size={16} />
     </button>
   );
 }

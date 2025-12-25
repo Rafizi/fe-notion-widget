@@ -2,13 +2,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  Pin,
-  X,
-  ExternalLink,
-  Settings,
-  Menu,
-} from "lucide-react";
+import { Pin, X, ExternalLink, Settings, Menu } from "lucide-react";
 import AutoThumbnail from "@/app/components/AutoThumbnail";
 import EmbedFilter from "@/app/components/EmbedFilter";
 import RefreshButton from "@/app/components/RefreshButton";
@@ -47,10 +41,8 @@ export default function ClientViewComponent({
   const [viewMode] = useState<"visual" | "map">("visual");
   const [showBio, setShowBio] = useState(true);
   const [showHighlight, setShowHighlight] = useState(true);
-  const [currentTheme, setCurrentTheme] =
-    useState<"light" | "dark">(theme);
-  const [selectedItem, setSelectedItem] =
-    useState<any | null>(null);
+  const [currentTheme, setCurrentTheme] = useState<"light" | "dark">(theme);
+  const [selectedItem, setSelectedItem] = useState<any | null>(null);
 
   const [openFilter, setOpenFilter] = useState(false);
   const [openSetting, setOpenSetting] = useState(false);
@@ -62,12 +54,9 @@ export default function ClientViewComponent({
   }, [theme]);
 
   const bg =
-    currentTheme === "light"
-      ? "bg-white text-gray-900"
-      : "bg-black text-white";
+    currentTheme === "light" ? "bg-white text-gray-900" : "bg-black text-white";
 
-  const cardBg =
-    currentTheme === "light" ? "bg-white" : "bg-gray-900";
+  const cardBg = currentTheme === "light" ? "bg-white" : "bg-gray-900";
 
   /* ================= FILTER LOGIC ================= */
 
@@ -79,20 +68,16 @@ export default function ClientViewComponent({
     const props = item.properties;
 
     if (platform && platform !== "All Platform") {
-      if (props.Platform?.select?.name !== platform)
-        return false;
+      if (props.Platform?.select?.name !== platform) return false;
     }
 
     if (status && status !== "All Status") {
-      if (props.Status?.select?.name !== status)
-        return false;
+      if (props.Status?.select?.name !== status) return false;
     }
 
-    if (pinned === "true" && props.Pinned?.checkbox !== true)
-      return false;
+    if (pinned === "true" && props.Pinned?.checkbox !== true) return false;
 
-    if (pinned === "false" && props.Pinned?.checkbox !== false)
-      return false;
+    if (pinned === "false" && props.Pinned?.checkbox !== false) return false;
 
     return true;
   });
@@ -112,6 +97,9 @@ export default function ClientViewComponent({
   <span className="font-semibold text-sm">khaslify</span>
 
   <div className="flex items-center gap-2">
+    {/* 🔥 REFRESH ICON */}
+    <RefreshButton />
+
     <IconButton onClick={() => setOpenFilter(true)}>
       <Menu size={16} />
     </IconButton>
@@ -140,17 +128,13 @@ export default function ClientViewComponent({
           <SettingToggle
             label="Show Highlight"
             value={showHighlight}
-            onChange={() =>
-              setShowHighlight(!showHighlight)
-            }
+            onChange={() => setShowHighlight(!showHighlight)}
           />
           <SettingToggle
             label="Dark Mode"
             value={currentTheme === "dark"}
             onChange={() =>
-              setCurrentTheme((t) =>
-                t === "light" ? "dark" : "light"
-              )
+              setCurrentTheme((t) => (t === "light" ? "dark" : "light"))
             }
           />
         </div>
@@ -166,18 +150,12 @@ export default function ClientViewComponent({
 
           <div
             className={`absolute right-0 top-0 h-full w-[320px] p-4 overflow-y-auto ${
-              currentTheme === "light"
-                ? "bg-white"
-                : "bg-gray-900"
+              currentTheme === "light" ? "bg-white" : "bg-gray-900"
             }`}
           >
             <div className="flex justify-between items-center mb-4">
-              <h3 className="font-semibold text-sm">
-                Filter
-              </h3>
-              <button
-                onClick={() => setOpenFilter(false)}
-              >
+              <h3 className="font-semibold text-sm">Filter</h3>
+              <button onClick={() => setOpenFilter(false)}>
                 <X size={18} />
               </button>
             </div>
@@ -190,10 +168,7 @@ export default function ClientViewComponent({
       {/* ================= CONTENT ================= */}
       <div className="p-5 space-y-6">
         {showBio && profile && (
-          <BioSection
-            profile={profile}
-            theme={currentTheme}
-          />
+          <BioSection profile={profile} theme={currentTheme} />
         )}
 
         {showHighlight && profile?.highlights && (
@@ -238,11 +213,7 @@ function IconButton({ children, onClick }: any) {
   );
 }
 
-function SettingToggle({
-  label,
-  value,
-  onChange,
-}: any) {
+function SettingToggle({ label, value, onChange }: any) {
   return (
     <button
       onClick={onChange}
@@ -256,9 +227,7 @@ function SettingToggle({
       >
         <span
           className={`block w-4 h-4 bg-white rounded-full translate-y-0.5 transition ${
-            value
-              ? "translate-x-4"
-              : "translate-x-1"
+            value ? "translate-x-4" : "translate-x-1"
           }`}
         />
       </span>
@@ -281,9 +250,7 @@ function BioSection({ profile, theme }: any) {
       <div>
         <h2 className="font-semibold">{profile.name}</h2>
         {profile.bio && (
-          <p className="text-xs text-gray-500 mt-1">
-            {profile.bio}
-          </p>
+          <p className="text-xs text-gray-500 mt-1">{profile.bio}</p>
         )}
       </div>
     </section>
@@ -313,13 +280,7 @@ function HighlightSection({ highlights, theme }: any) {
 
 /* ================= GRID ================= */
 
-function VisualGrid({
-  filtered,
-  gridColumns,
-  theme,
-  cardBg,
-  onSelect,
-}: any) {
+function VisualGrid({ filtered, gridColumns, theme, cardBg, onSelect }: any) {
   return (
     <div
       className="grid gap-4"
@@ -329,11 +290,9 @@ function VisualGrid({
     >
       {filtered.map((item: any, i: number) => {
         const name =
-          item.properties?.Name?.title?.[0]?.plain_text ||
-          "Untitled";
+          item.properties?.Name?.title?.[0]?.plain_text || "Untitled";
         const image = extractImage(item);
-        const pinned =
-          item.properties?.Pinned?.checkbox;
+        const pinned = item.properties?.Pinned?.checkbox;
 
         return (
           <div
@@ -349,14 +308,10 @@ function VisualGrid({
 
             <div
               className={`absolute inset-0 flex items-end p-3 opacity-0 group-hover:opacity-100 transition bg-gradient-to-t ${
-                theme === "light"
-                  ? "from-black/70"
-                  : "from-black/80"
+                theme === "light" ? "from-black/70" : "from-black/80"
               }`}
             >
-              <p className="text-white text-xs">
-                {name}
-              </p>
+              <p className="text-white text-xs">{name}</p>
             </div>
           </div>
         );
@@ -375,9 +330,7 @@ function DetailModal({ item, theme, onClose }: any) {
     };
   }, []);
 
-  const name =
-    item.properties?.Name?.title?.[0]?.plain_text ||
-    "Untitled";
+  const name = item.properties?.Name?.title?.[0]?.plain_text || "Untitled";
   const image = extractImage(item);
 
   return (
@@ -388,9 +341,7 @@ function DetailModal({ item, theme, onClose }: any) {
       <div
         onClick={(e) => e.stopPropagation()}
         className={`w-full max-w-5xl rounded-2xl overflow-hidden ${
-          theme === "light"
-            ? "bg-white"
-            : "bg-gray-900"
+          theme === "light" ? "bg-white" : "bg-gray-900"
         }`}
       >
         <button
@@ -402,17 +353,11 @@ function DetailModal({ item, theme, onClose }: any) {
 
         <div className="flex flex-col lg:flex-row">
           <div className="lg:w-2/3 bg-black flex items-center justify-center">
-            <img
-              src={image}
-              alt={name}
-              className="object-contain h-full"
-            />
+            <img src={image} alt={name} className="object-contain h-full" />
           </div>
 
           <div className="lg:w-1/3 p-6 space-y-4">
-            <h2 className="text-xl font-semibold">
-              {name}
-            </h2>
+            <h2 className="text-xl font-semibold">{name}</h2>
 
             <button className="w-full bg-purple-600 text-white py-2 rounded-lg flex items-center justify-center gap-2">
               <ExternalLink size={16} />
