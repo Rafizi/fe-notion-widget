@@ -88,55 +88,53 @@ export default function ClientViewComponent({
     <main className={`${bg} min-h-screen w-full`}>
       {/* ================= HEADER BAR ================= */}
       <header
-  className={`sticky top-0 z-40 px-4 py-3 flex items-center justify-between border-b backdrop-blur ${
-    currentTheme === "light"
-      ? "bg-white/80 border-gray-200"
-      : "bg-black/70 border-gray-800"
-  }`}
->
-  <span className="font-semibold text-sm">khaslify</span>
-
-  <div className="flex items-center gap-2">
-    {/* 🔥 REFRESH ICON */}
-    <RefreshButton />
-
-    <div className="relative">
-  <IconButton onClick={() => setOpenFilter((s) => !s)}>
-    <Menu size={16} />
-  </IconButton>
-
-  {openFilter && (
-    <div
-      className={`
-        absolute
-        top-full mt-3
-        left-1/2 -translate-x-1/2
-        z-50
-        w-[320px]
-        rounded-xl
-        border
-        shadow-xl
-        ${
+        className={`sticky top-0 z-40 px-4 py-3 flex items-center justify-between border-b backdrop-blur ${
           currentTheme === "light"
-            ? "bg-white border-gray-200"
-            : "bg-gray-900 border-gray-800"
-        }
-      `}
-    >
-      <div className="p-4">
-        <EmbedFilter />
-      </div>
-    </div>
-  )}
-</div>
+            ? "bg-white/80 border-gray-200"
+            : "bg-black/70 border-gray-800"
+        }`}
+      >
+        <span className="font-semibold text-sm">khaslify</span>
 
+        <div className="flex items-center gap-2">
+          {/* 🔥 REFRESH ICON */}
+          <RefreshButton />
 
-    <IconButton onClick={() => setOpenSetting((s) => !s)}>
-      <Settings size={16} />
-    </IconButton>
-  </div>
-</header>
+          <div className="relative">
+            <IconButton onClick={() => setOpenFilter((s) => !s)}>
+              <Menu size={16} />
+            </IconButton>
 
+            {openFilter && (
+              <div
+                className={`
+      fixed
+      top-[64px]   /* tinggi header */
+      left-1/2 -translate-x-1/2
+      z-50
+      w-[360px]
+      rounded-xl
+      border
+      shadow-xl
+      ${
+        currentTheme === "light"
+          ? "bg-white border-gray-200"
+          : "bg-gray-900 border-gray-800"
+      }
+    `}
+              >
+                <div className="p-4">
+                  <EmbedFilter />
+                </div>
+              </div>
+            )}
+          </div>
+
+          <IconButton onClick={() => setOpenSetting((s) => !s)}>
+            <Settings size={16} />
+          </IconButton>
+        </div>
+      </header>
 
       {openSetting && (
         <div
@@ -165,8 +163,6 @@ export default function ClientViewComponent({
           />
         </div>
       )}
-
-      
 
       {/* ================= CONTENT ================= */}
       <div className="p-5 space-y-6">
