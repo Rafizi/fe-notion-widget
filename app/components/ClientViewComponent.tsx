@@ -6,6 +6,7 @@ import { Pin, X, ExternalLink, Tag } from "lucide-react";
 import AutoThumbnail from "@/app/components/AutoThumbnail";
 import EmbedFilter from "@/app/components/EmbedFilter";
 import RefreshButton from "@/app/components/RefreshButton";
+import { useSearchParams } from "next/navigation";
 
 /* ================= TYPES ================= */
 
@@ -43,6 +44,8 @@ export default function ClientViewComponent({
   const [currentTheme, setCurrentTheme] = useState<"light" | "dark">(theme);
   const [selectedItem, setSelectedItem] = useState<any | null>(null);
 
+  const params = useSearchParams();
+
   useEffect(() => {
     setCurrentTheme(theme);
   }, [theme]);
@@ -52,90 +55,101 @@ export default function ClientViewComponent({
 
   const cardBg = currentTheme === "light" ? "bg-white" : "bg-gray-900";
 
+  const filteredData = filtered.filter((item) => {
+  const platform = params.get("platform");
+  const status = params.get("status");
+
+  if (platform && platform !== "All Platform") {
+    if (item.platform !== platform) return false;
+  }
+
+  if (status && status !== "All Status") {
+    if (item.status !== status) return false;
+  }
+
+  return true;
+});
+
+
   return (
     <main className={`${bg} min-h-screen w-full flex flex-col`}>
       {/* ================= HEADER ================= */}
       <div
-  className={`sticky top-0 z-40 px-5 py-4 border-b backdrop-blur-md ${
-    currentTheme === "light"
-      ? "bg-white/80 border-gray-200"
-      : "bg-black/70 border-gray-800"
-  }`}
->
-  {/* ROW ATAS */}
-  <div className="flex items-center justify-between gap-3">
-    {/* KIRI */}
-    <div className="inline-flex rounded-full border overflow-hidden text-xs">
-      <button
-        onClick={() => setViewMode("visual")}
-        className={`px-4 py-1.5 ${
-          viewMode === "visual"
-            ? "bg-gray-900 text-white"
-            : "bg-transparent"
+        className={`sticky top-0 z-40 px-5 py-4 border-b backdrop-blur-md ${
+          currentTheme === "light"
+            ? "bg-white/80 border-gray-200"
+            : "bg-black/70 border-gray-800"
         }`}
       >
-        Visual
-      </button>
-      <button
-        onClick={() => setViewMode("map")}
-        className={`px-4 py-1.5 ${
-          viewMode === "map"
-            ? "bg-gray-900 text-white"
-            : "bg-transparent"
-        }`}
-      >
-        Map
-      </button>
-    </div>
+        {/* ROW ATAS */}
+        <div className="flex items-center justify-between gap-3">
+          {/* KIRI */}
+          <div className="inline-flex rounded-full border overflow-hidden text-xs">
+            <button
+              onClick={() => setViewMode("visual")}
+              className={`px-4 py-1.5 ${
+                viewMode === "visual"
+                  ? "bg-gray-900 text-white"
+                  : "bg-transparent"
+              }`}
+            >
+              Visual
+            </button>
+            <button
+              onClick={() => setViewMode("map")}
+              className={`px-4 py-1.5 ${
+                viewMode === "map" ? "bg-gray-900 text-white" : "bg-transparent"
+              }`}
+            >
+              Map
+            </button>
+          </div>
 
-    {/* KANAN */}
-    <div className="flex items-center gap-2">
-      <button
-        onClick={() =>
-          setCurrentTheme((t) => (t === "light" ? "dark" : "light"))
-        }
-        className={`px-4 py-2 rounded-full text-xs ring-1
+          {/* KANAN */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() =>
+                setCurrentTheme((t) => (t === "light" ? "dark" : "light"))
+              }
+              className={`px-4 py-2 rounded-full text-xs ring-1
           ${
             currentTheme === "dark"
               ? "bg-gray-800 text-white ring-gray-600"
               : "bg-gray-100 text-gray-900 ring-gray-300"
           }`}
-      >
-        {currentTheme === "dark" ? "🌙 Dark" : "☀️ Light"}
-      </button>
+            >
+              {currentTheme === "dark" ? "🌙 Dark" : "☀️ Light"}
+            </button>
 
-      <RefreshButton />
-    </div>
-  </div>
+            <RefreshButton />
+          </div>
+        </div>
 
-  {/* ROW BAWAH */}
-  <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-    <div className="flex gap-2">
-      <ToggleChip
-        label="Show bio"
-        active={showBio}
-        onClick={() => setShowBio(!showBio)}
-        theme={currentTheme}
-      />
-      <ToggleChip
-        label="Show highlight"
-        active={showHighlight}
-        onClick={() => setShowHighlight(!showHighlight)}
-        theme={currentTheme}
-      />
-    </div>
-  </div>
+        {/* ROW BAWAH */}
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+          <div className="flex gap-2">
+            <ToggleChip
+              label="Show bio"
+              active={showBio}
+              onClick={() => setShowBio(!showBio)}
+              theme={currentTheme}
+            />
+            <ToggleChip
+              label="Show highlight"
+              active={showHighlight}
+              onClick={() => setShowHighlight(!showHighlight)}
+              theme={currentTheme}
+            />
+          </div>
+        </div>
 
-  <div className="mt-4 relative">
-    <EmbedFilter />
-  </div>
-</div>
-
+        <div className="mt-4 relative">
+          <EmbedFilter />
+        </div>
+      </div>
 
       {/* ================= CONTENT ================= */}
-     <div className="p-5 space-y-6">
-
-
+      <div className="p-5 space-y-6">
         {showBio && profile && (
           <BioSection profile={profile} theme={currentTheme} />
         )}
@@ -149,7 +163,7 @@ export default function ClientViewComponent({
 
         {viewMode === "visual" ? (
           <VisualGrid
-            filtered={filtered}
+            filtered={filteredData}
             gridColumns={gridColumns}
             theme={currentTheme}
             cardBg={cardBg}
