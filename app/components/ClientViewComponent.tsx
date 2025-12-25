@@ -103,32 +103,25 @@ export default function ClientViewComponent({
     <main className={`${bg} min-h-screen w-full`}>
       {/* ================= HEADER BAR ================= */}
       <header
-        className={`sticky top-0 z-40 px-4 py-3 flex items-center justify-between border-b backdrop-blur ${
-          currentTheme === "light"
-            ? "bg-white/80 border-gray-200"
-            : "bg-black/70 border-gray-800"
-        }`}
-      >
-        <span className="font-semibold text-sm">
-          khaslify
-        </span>
+  className={`sticky top-0 z-40 px-4 py-3 flex items-center justify-between border-b backdrop-blur ${
+    currentTheme === "light"
+      ? "bg-white/80 border-gray-200"
+      : "bg-black/70 border-gray-800"
+  }`}
+>
+  <span className="font-semibold text-sm">khaslify</span>
 
-        <div className="flex items-center gap-2">
-          <IconButton>
-            <RefreshButton />
-          </IconButton>
+  <div className="flex items-center gap-2">
+    <IconButton onClick={() => setOpenFilter(true)}>
+      <Menu size={16} />
+    </IconButton>
 
-          <IconButton onClick={() => setOpenFilter(true)}>
-            <Menu size={16} />
-          </IconButton>
+    <IconButton onClick={() => setOpenSetting((s) => !s)}>
+      <Settings size={16} />
+    </IconButton>
+  </div>
+</header>
 
-          <IconButton
-            onClick={() => setOpenSetting((s) => !s)}
-          >
-            <Settings size={16} />
-          </IconButton>
-        </div>
-      </header>
 
       {/* ================= SETTINGS POPOVER ================= */}
       {openSetting && (
