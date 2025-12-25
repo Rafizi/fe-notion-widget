@@ -56,20 +56,35 @@ export default function ClientViewComponent({
   const cardBg = currentTheme === "light" ? "bg-white" : "bg-gray-900";
 
   const filteredData = filtered.filter((item) => {
-  const platform = params.get("platform");
-  const status = params.get("status");
+    const platform = params.get("platform");
+    const status = params.get("status");
+    const pinned = params.get("pinned");
 
-  if (platform && platform !== "All Platform") {
-    if (item.platform !== platform) return false;
-  }
+    const props = item.properties;
 
-  if (status && status !== "All Status") {
-    if (item.status !== status) return false;
-  }
+    // PLATFORM
+    if (platform && platform !== "All Platform") {
+      const itemPlatform = props.Platform?.select?.name;
+      if (itemPlatform !== platform) return false;
+    }
 
-  return true;
-});
+    // STATUS
+    if (status && status !== "All Status") {
+      const itemStatus = props.Status?.select?.name;
+      if (itemStatus !== status) return false;
+    }
 
+    // PINNED
+    if (pinned === "true") {
+      if (props.Pinned?.checkbox !== true) return false;
+    }
+
+    if (pinned === "false") {
+      if (props.Pinned?.checkbox !== false) return false;
+    }
+
+    return true;
+  });
 
   return (
     <main className={`${bg} min-h-screen w-full flex flex-col`}>
