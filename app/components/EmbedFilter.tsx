@@ -90,8 +90,8 @@ export default function EmbedFilter() {
 
             {open === key && (
               <>
-                <div className="fixed inset-0 z-10" onClick={() => setOpen(null)} />
-                <div className="absolute z-20 mt-2 w-full bg-white border border-gray-200 rounded-lg shadow">
+                <div className="fixed inset-0 z-40" onClick={() => setOpen(null)} />
+                <div className="absolute z-50 mt-2 w-full bg-white border border-gray-200 rounded-lg shadow">
                   {filterOptions[key as keyof typeof filterOptions].map(
                     (opt) => (
                       <button

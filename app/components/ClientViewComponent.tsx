@@ -56,7 +56,7 @@ export default function ClientViewComponent({
     <main className={`${bg} min-h-screen w-full flex flex-col`}>
       {/* ================= HEADER ================= */}
       <div
-  className={`sticky top-0 px-5 py-4 border-b backdrop-blur-md ${
+  className={`sticky top-0 z-40 px-5 py-4 border-b backdrop-blur-md ${
     currentTheme === "light"
       ? "bg-white/80 border-gray-200"
       : "bg-black/70 border-gray-800"
@@ -126,14 +126,14 @@ export default function ClientViewComponent({
     </div>
   </div>
 
-  <div className="mt-4 relative z-50">
+  <div className="mt-4 relative">
     <EmbedFilter />
   </div>
 </div>
 
 
       {/* ================= CONTENT ================= */}
-      <div className="p-5 space-y-6 mt-[140px]">
+     <div className="p-5 space-y-6">
 
 
         {showBio && profile && (
