@@ -100,9 +100,36 @@ export default function ClientViewComponent({
     {/* 🔥 REFRESH ICON */}
     <RefreshButton />
 
-    <IconButton onClick={() => setOpenFilter(true)}>
-      <Menu size={16} />
-    </IconButton>
+    <div className="relative">
+  <IconButton onClick={() => setOpenFilter((s) => !s)}>
+    <Menu size={16} />
+  </IconButton>
+
+  {openFilter && (
+    <div
+      className={`
+        absolute
+        top-full mt-3
+        left-1/2 -translate-x-1/2
+        z-50
+        w-[320px]
+        rounded-xl
+        border
+        shadow-xl
+        ${
+          currentTheme === "light"
+            ? "bg-white border-gray-200"
+            : "bg-gray-900 border-gray-800"
+        }
+      `}
+    >
+      <div className="p-4">
+        <EmbedFilter />
+      </div>
+    </div>
+  )}
+</div>
+
 
     <IconButton onClick={() => setOpenSetting((s) => !s)}>
       <Settings size={16} />
@@ -111,7 +138,6 @@ export default function ClientViewComponent({
 </header>
 
 
-      {/* ================= SETTINGS POPOVER ================= */}
       {openSetting && (
         <div
           className={`absolute right-4 top-14 z-50 w-56 rounded-xl border shadow ${
@@ -140,30 +166,7 @@ export default function ClientViewComponent({
         </div>
       )}
 
-      {/* ================= FILTER DRAWER ================= */}
-      {openFilter && (
-        <div className="fixed inset-0 z-50">
-          <div
-            className="absolute inset-0 bg-black/50"
-            onClick={() => setOpenFilter(false)}
-          />
-
-          <div
-            className={`absolute right-0 top-0 h-full w-[320px] p-4 overflow-y-auto ${
-              currentTheme === "light" ? "bg-white" : "bg-gray-900"
-            }`}
-          >
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="font-semibold text-sm">Filter</h3>
-              <button onClick={() => setOpenFilter(false)}>
-                <X size={18} />
-              </button>
-            </div>
-
-            <EmbedFilter />
-          </div>
-        </div>
-      )}
+      
 
       {/* ================= CONTENT ================= */}
       <div className="p-5 space-y-6">
@@ -298,7 +301,7 @@ function VisualGrid({ filtered, gridColumns, theme, cardBg, onSelect }: any) {
           <div
             key={i}
             onClick={() => onSelect(item)}
-            className={`relative group rounded-xl overflow-hidden aspect-[4/5] cursor-pointer hover:-translate-y-1 transition ${cardBg}`}
+            className={`relative group  overflow-hidden aspect-[4/5] cursor-pointer hover:-translate-y-1 transition ${cardBg}`}
           >
             {pinned && (
               <Pin className="absolute top-3 right-3 text-yellow-400 z-10" />
