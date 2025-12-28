@@ -62,7 +62,17 @@ export default function EmbedFilter() {
     setOpen(null);
   };
 
-  const clearAll = () => router.push("?");
+  const clearAll = () => {
+  const newParams = new URLSearchParams();
+
+  const db = params.get("db");
+  if (db) {
+    newParams.set("db", db);
+  }
+
+  router.push(`?${newParams.toString()}`);
+};
+
 
   const isActive = (key: string) =>
     current[key as keyof typeof current] !== defaultValue[key as keyof typeof defaultValue];
