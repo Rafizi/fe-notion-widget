@@ -2,25 +2,43 @@
 
 import { useRouter } from "next/navigation";
 import { RotateCw } from "lucide-react";
+import { useState } from "react";
 
 export default function RefreshButton() {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
+
+  const handleRefresh = () => {
+    if (loading) return;
+    setLoading(true);
+    router.refresh();
+
+    // safety unlock (router.refresh ga return promise)
+    setTimeout(() => setLoading(false), 600);
+  };
 
   return (
     <button
-      onClick={() => router.refresh()}
+      onClick={handleRefresh}
+      disabled={loading}
       title="Refresh"
-      className="
-        w-9 h-9
+      aria-label="Refresh"
+      className={`
+        w-10 h-10 sm:w-9 sm:h-9
         flex items-center justify-center
-        rounded-full
-        border
+        rounded-full border
         transition
-        hover:bg-gray-100
-        dark:hover:bg-gray-800
-      "
+        ${
+          loading
+            ? "opacity-60 cursor-not-allowed"
+            : "hover:bg-gray-100 dark:hover:bg-gray-800"
+        }
+      `}
     >
-      <RotateCw size={16} />
+      <RotateCw
+        size={16}
+        className={loading ? "animate-spin" : ""}
+      />
     </button>
   );
 }

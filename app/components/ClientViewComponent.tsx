@@ -53,6 +53,20 @@ export default function ClientViewComponent({
     setCurrentTheme(theme);
   }, [theme]);
 
+
+  useEffect(() => {
+  if (openFilter) {
+    document.body.style.overflow = "hidden";
+  } else {
+    document.body.style.overflow = "unset";
+  }
+
+  return () => {
+    document.body.style.overflow = "unset";
+  };
+}, [openFilter]);
+
+
   const bg =
     currentTheme === "light" ? "bg-white text-gray-900" : "bg-black text-white";
 
@@ -101,7 +115,12 @@ export default function ClientViewComponent({
           <RefreshButton />
 
           <div className="relative">
-            <IconButton onClick={() => setOpenFilter((s) => !s)}>
+            <IconButton
+              onClick={() => {
+                setOpenFilter((s) => !s);
+                setOpenSetting(false);
+              }}
+            >
               <Menu size={16} />
             </IconButton>
 
@@ -109,25 +128,25 @@ export default function ClientViewComponent({
               <>
                 {/* overlay */}
                 <div
-                  className="fixed inset-0 z-40 bg-black/30"
-                  onClick={() => setOpenFilter(false)}
-                />
+  className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
+  onClick={() => setOpenFilter(false)}
+/>
+
 
                 {/* DESKTOP / TABLET */}
                 <div
-                  className={`
-        hidden sm:block
-        fixed top-[64px] left-1/2 -translate-x-1/2
-        z-50
-        rounded-xl border shadow-xl
-        max-w-[90vw]
-        ${
-          currentTheme === "light"
-            ? "bg-white border-gray-200"
-            : "bg-gray-900 border-gray-800"
-        }
-      `}
-                >
+  className={`
+    sm:hidden
+    fixed bottom-0 left-0 right-0
+    z-50
+    max-h-[85vh] overflow-y-auto
+    rounded-t-2xl border-t shadow-xl
+    ${currentTheme === "light"
+      ? "bg-white border-gray-200"
+      : "bg-gray-900 border-gray-800"}
+  `}
+>
+
                   <EmbedFilter />
                 </div>
 
@@ -303,12 +322,9 @@ function HighlightSection({ highlights, theme }: any) {
 
 function VisualGrid({ filtered, gridColumns, theme, cardBg, onSelect }: any) {
   return (
-    <div
-      className="grid gap-4"
-      style={{
-        gridTemplateColumns: `repeat(${gridColumns}, 1fr)`,
-      }}
-    >
+<div className="grid gap-4 grid-cols-2 sm:grid-cols-2 md:grid-cols-3">
+
+
       {filtered.map((item: any, i: number) => {
         const name =
           item.properties?.Name?.title?.[0]?.plain_text || "Untitled";

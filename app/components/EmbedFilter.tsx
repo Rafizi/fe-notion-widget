@@ -2,7 +2,7 @@
 
 import { ChevronDown, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const filterOptions = {
   platform: ["All Platform", "Instagram", "Tiktok", "Others"],
@@ -28,8 +28,19 @@ const defaultValue = {
 export default function EmbedFilter() {
   const router = useRouter();
   const params = useSearchParams();
-  const [open, setOpen] = useState<string | null>(null);
 
+  const [open, setOpen] = useState<string | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  /* ================= MOBILE DETECT ================= */
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 640);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  /* ================= CURRENT VALUE ================= */
   const current = {
     platform: params.get("platform") ?? defaultValue.platform,
     status: params.get("status") ?? defaultValue.status,
@@ -42,6 +53,7 @@ export default function EmbedFilter() {
         : defaultValue.pinned,
   };
 
+  /* ================= ACTION ================= */
   const updateFilter = (key: string, value: string) => {
     const newParams = new URLSearchParams(params.toString());
 
@@ -51,7 +63,11 @@ export default function EmbedFilter() {
       if (key === "pinned") {
         newParams.set(
           key,
-          value === "Pinned Only" ? "true" : value === "Unpinned Only" ? "false" : "all"
+          value === "Pinned Only"
+            ? "true"
+            : value === "Unpinned Only"
+            ? "false"
+            : "all"
         );
       } else {
         newParams.set(key, value);
@@ -63,63 +79,89 @@ export default function EmbedFilter() {
   };
 
   const clearAll = () => {
-  const newParams = new URLSearchParams();
-
-  const db = params.get("db");
-  if (db) {
-    newParams.set("db", db);
-  }
-
-  router.push(`?${newParams.toString()}`);
-};
-
+    const newParams = new URLSearchParams();
+    const db = params.get("db");
+    if (db) newParams.set("db", db);
+    router.push(`?${newParams.toString()}`);
+  };
 
   const isActive = (key: string) =>
-    current[key as keyof typeof current] !== defaultValue[key as keyof typeof defaultValue];
+    current[key as keyof typeof current] !==
+    defaultValue[key as keyof typeof defaultValue];
 
   const activeCount = Object.keys(current).filter(isActive).length;
 
+  /* ================= UI ================= */
   return (
     <div className="mb-6">
+      {/* overlay GLOBAL */}
+      {open && (
+        <div
+          className="fixed inset-0 z-40"
+          onClick={() => setOpen(null)}
+        />
+      )}
+
       {/* FILTER BAR */}
-      <div className="bg-white border border-gray-200 rounded-xl p-4 flex gap-3 items-center">
+      <div
+        className="
+          bg-white border border-gray-200 rounded-xl p-4
+          flex flex-wrap gap-2 items-center
+        "
+      >
         {Object.entries(current).map(([key, value]) => (
-          <div key={key} className="relative">
+          <div key={key} className="relative w-full sm:w-auto">
             <button
               onClick={() => setOpen(open === key ? null : key)}
-              className={`px-4 py-2 rounded-lg flex items-center gap-3 min-w-[170px] border text-sm transition
+              className={`
+                px-4 py-2 rounded-lg flex items-center gap-3
+                w-full sm:min-w-[170px] sm:w-auto
+                border text-sm transition
                 ${
                   isActive(key)
                     ? "bg-purple-50 border-purple-300 text-purple-700"
                     : "bg-gray-50 border-gray-300 text-gray-700 hover:bg-gray-100"
-                }`}
+                }
+              `}
             >
-              <span>{value}</span>
-              <ChevronDown className="w-4 h-4 ml-auto" />
+              <span className="truncate">{value}</span>
+              <ChevronDown className="w-4 h-4 ml-auto shrink-0" />
             </button>
 
             {open === key && (
-              <>
-                <div className="fixed inset-0 z-40" onClick={() => setOpen(null)} />
-                <div className="absolute z-50 mt-2 w-full bg-white border border-gray-200 rounded-lg shadow">
+              <div
+                className={`
+                  z-50 bg-white border border-gray-200 shadow
+                  ${isMobile
+                    ? "fixed bottom-0 left-0 right-0 rounded-t-2xl"
+                    : "absolute mt-2 left-0 right-0 rounded-lg"}
+                `}
+              >
+                {isMobile && (
+                  <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto my-2" />
+                )}
+
+                <div className="max-h-[260px] overflow-y-auto">
                   {filterOptions[key as keyof typeof filterOptions].map(
                     (opt) => (
                       <button
                         key={opt}
                         onClick={() => updateFilter(key, opt)}
-                        className={`w-full px-4 py-2 text-left text-sm transition
+                        className={`
+                          w-full px-4 py-2 text-left text-sm transition
                           ${
                             value === opt
                               ? "bg-purple-50 text-purple-700"
                               : "hover:bg-gray-100"
-                          }`}
+                          }
+                        `}
                       >
                         {opt}
                       </button>
                     )
                   )}
                 </div>
-              </>
+              </div>
             )}
           </div>
         ))}
@@ -127,14 +169,14 @@ export default function EmbedFilter() {
         {activeCount > 0 && (
           <button
             onClick={clearAll}
-            className="ml-auto text-sm text-gray-500 hover:text-gray-900"
+            className="sm:ml-auto text-sm text-gray-500 hover:text-gray-900"
           >
             Clear all
           </button>
         )}
       </div>
 
-      {/* ACTIVE FILTER CHIPS */}
+      {/* ACTIVE CHIPS */}
       {activeCount > 0 && (
         <div className="flex flex-wrap gap-2 mt-3">
           {Object.entries(current).map(
@@ -145,8 +187,15 @@ export default function EmbedFilter() {
                   className="flex items-center gap-2 px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm"
                 >
                   <span className="capitalize">{key}</span>
-                  <span>{value}</span>
-                  <button onClick={() => updateFilter(key, defaultValue[key as keyof typeof defaultValue])}>
+                  <span className="truncate max-w-[140px]">{value}</span>
+                  <button
+                    onClick={() =>
+                      updateFilter(
+                        key,
+                        defaultValue[key as keyof typeof defaultValue]
+                      )
+                    }
+                  >
                     <X className="w-3 h-3" />
                   </button>
                 </div>
