@@ -81,83 +81,80 @@ export default function EmbedFilter() {
 
   return (
     <div className="mb-4">
-      {/* FILTER BAR */}
-      <div className="bg-white border border-gray-200 rounded-xl p-4">
-        <div className="flex flex-wrap gap-3 items-start">
-          {/* FILTER BUTTONS */}
-<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 w-full">
-            {Object.entries(current).map(([key, value]) => (
-              <div key={key} className="relative w-full sm:w-auto">
-                <button
-                  onClick={() => setOpen(open === key ? null : key)}
-                  className={`
-                    w-full sm:w-auto sm:min-w-[160px]
-                    px-4 py-2 rounded-lg
-                    flex items-center gap-3
-                    border text-sm transition
-                    ${
-                      isActive(key)
-                        ? "bg-purple-50 border-purple-300 text-purple-700"
-                        : "bg-gray-50 border-gray-300 text-gray-700 hover:bg-gray-100"
-                    }
-                  `}
-                >
-                  <span className="truncate">{value}</span>
-                  <ChevronDown className="w-4 h-4 ml-auto shrink-0" />
-                </button>
+      <div className="bg-white border border-gray-200 rounded-xl p-4 space-y-3">
 
-                {open === key && (
-                  <>
-                    <div
-                      className="fixed inset-0 z-40"
-                      onClick={() => setOpen(null)}
-                    />
-                    <div
-                      className="
-                        absolute z-50 mt-2
-                        min-w-full sm:min-w-[200px]
-                        max-w-[90vw]
-                        bg-white border border-gray-200
-                        rounded-lg shadow
-                      "
-                    >
-                      {filterOptions[key as keyof typeof filterOptions].map(
-                        (opt) => (
-                          <button
-                            key={opt}
-                            onClick={() => updateFilter(key, opt)}
-                            className={`
-                              w-full px-4 py-2 text-left text-sm transition
-                              ${
-                                value === opt
-                                  ? "bg-purple-50 text-purple-700"
-                                  : "hover:bg-gray-100"
-                              }
-                            `}
-                          >
-                            {opt}
-                          </button>
-                        )
-                      )}
-                    </div>
-                  </>
-                )}
-              </div>
-            ))}
-          </div>
-
-          {/* CLEAR ALL */}
-          {activeCount > 0 && (
-            <div className="w-full sm:w-auto sm:ml-auto">
+        {/* FILTER GRID */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {Object.entries(current).map(([key, value]) => (
+            <div key={key} className="relative w-full">
               <button
-                onClick={clearAll}
-                className="text-sm text-gray-500 hover:text-gray-900"
+                onClick={() => setOpen(open === key ? null : key)}
+                className={`
+                  w-full px-4 py-2 rounded-lg
+                  flex items-center gap-3
+                  border text-sm transition
+                  ${
+                    isActive(key)
+                      ? "bg-purple-50 border-purple-300 text-purple-700"
+                      : "bg-gray-50 border-gray-300 text-gray-700 hover:bg-gray-100"
+                  }
+                `}
               >
-                Clear all
+                <span className="truncate">{value}</span>
+                <ChevronDown className="w-4 h-4 ml-auto shrink-0" />
               </button>
+
+              {open === key && (
+                <>
+                  <div
+                    className="fixed inset-0 z-40"
+                    onClick={() => setOpen(null)}
+                  />
+                  <div
+                    className="
+                      absolute z-50 mt-2
+                      w-full
+                      max-w-[90vw]
+                      bg-white border border-gray-200
+                      rounded-lg shadow
+                    "
+                  >
+                    {filterOptions[key as keyof typeof filterOptions].map(
+                      (opt) => (
+                        <button
+                          key={opt}
+                          onClick={() => updateFilter(key, opt)}
+                          className={`
+                            w-full px-4 py-2 text-left text-sm transition
+                            ${
+                              value === opt
+                                ? "bg-purple-50 text-purple-700"
+                                : "hover:bg-gray-100"
+                            }
+                          `}
+                        >
+                          {opt}
+                        </button>
+                      )
+                    )}
+                  </div>
+                </>
+              )}
             </div>
-          )}
+          ))}
         </div>
+
+        {/* CLEAR ALL */}
+        {activeCount > 0 && (
+          <div className="flex justify-end">
+            <button
+              onClick={clearAll}
+              className="text-sm text-gray-500 hover:text-gray-900"
+            >
+              Clear all
+            </button>
+          </div>
+        )}
       </div>
 
       {/* ACTIVE FILTER CHIPS */}
