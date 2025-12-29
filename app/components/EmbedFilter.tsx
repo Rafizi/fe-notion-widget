@@ -22,7 +22,7 @@ const defaultValue = {
   platform: "All Platform",
   status: "All Status",
   pillar: "All Pillars",
-  pinned: "Pinned + Unpinned",
+  pinned: "Pinned",
 };
 
 export default function EmbedFilter() {
