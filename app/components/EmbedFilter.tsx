@@ -85,7 +85,7 @@ export default function EmbedFilter() {
       <div className="bg-white border border-gray-200 rounded-xl p-4">
         <div className="flex flex-wrap gap-3 items-start">
           {/* FILTER BUTTONS */}
-          <div className="grid grid-cols-1 sm:flex gap-3 w-full">
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 w-full">
             {Object.entries(current).map(([key, value]) => (
               <div key={key} className="relative w-full sm:w-auto">
                 <button
