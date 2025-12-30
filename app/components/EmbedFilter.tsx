@@ -82,17 +82,16 @@ export default function EmbedFilter() {
   return (
     <div className="mb-4">
       <div className="bg-white border border-gray-200 rounded-xl p-4 space-y-3">
-
         {/* FILTER GRID */}
-       <div
+        <div
   className="
-    grid
-    grid-cols-1
-    sm:grid-cols-2
-    md:grid-cols-3
-    lg:grid-cols-3
-    xl:grid-cols-3
-    gap-3
+    absolute z-50 mt-2
+    w-full
+    max-h-[240px]
+    overflow-y-auto
+    overscroll-contain
+    bg-white border border-gray-200
+    rounded-lg shadow
   "
 >
 
