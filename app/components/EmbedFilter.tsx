@@ -29,7 +29,7 @@ export default function EmbedFilter() {
   const router = useRouter();
   const params = useSearchParams();
   const [open, setOpen] = useState<string | null>(null);
-
+    
   const current = {
     platform: params.get("platform") ?? defaultValue.platform,
     status: params.get("status") ?? defaultValue.status,
@@ -82,18 +82,9 @@ export default function EmbedFilter() {
   return (
     <div className="mb-4">
       <div className="bg-white border border-gray-200 rounded-xl p-4 space-y-3">
+
         {/* FILTER GRID */}
-        <div
-          className="
-    grid
-    grid-cols-1
-    sm:grid-cols-2
-    md:grid-cols-3
-    lg:grid-cols-3
-    xl:grid-cols-3
-    gap-3
-  "
-        >
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {Object.entries(current).map(([key, value]) => (
             <div key={key} className="relative w-full">
               <button
