@@ -18,8 +18,8 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "./ui/sheet";
-import { ScrollArea } from "./ui/scroll-area";
+} from "./sheet";
+import { ScrollArea } from "./scroll-area";
 
 interface ConnectStepProps {
   notionUrl: string;
