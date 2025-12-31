@@ -11,9 +11,15 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { getNotionDatabases } from "../lib/widget.api";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "./sheet";
-import { ScrollArea } from "@radix-ui/react-scroll-area";
-
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "./ui/sheet";
+import { ScrollArea } from "./ui/scroll-area";
 
 interface ConnectStepProps {
   notionUrl: string;
@@ -39,7 +45,6 @@ export function ConnectStep({
   const [detectError, setDetectError] = useState<string | null>(null);
   const [selectedDb, setSelectedDb] = useState<any>(null);
 
-  /** VALIDATOR */
   const validate = (token: string) =>
     token.startsWith("ntn_") && token.length > 20;
 
@@ -49,12 +54,10 @@ export function ConnectStep({
 
     try {
       const data = await getNotionDatabases(token);
-
       if (!data.data || data.data.length === 0) {
         setDetectError("No databases found or token invalid.");
         return;
       }
-
       setDatabases(data.data);
     } catch {
       setDetectError("Failed to fetch databases.");
@@ -81,7 +84,7 @@ export function ConnectStep({
 
   return (
     <div className="space-y-6">
-      {/* HEADER + HELP */}
+      {/* HEADER */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
@@ -95,7 +98,7 @@ export function ConnectStep({
           </div>
         </div>
 
-        {/* NEED HELP DRAWER */}
+        {/* DRAWER */}
         <Sheet>
           <SheetTrigger asChild>
             <button className="inline-flex items-center gap-2 px-4 py-2 text-sm text-purple-600 hover:bg-purple-50 rounded-lg">
@@ -106,30 +109,60 @@ export function ConnectStep({
 
           <SheetContent className="sm:max-w-lg p-0">
             <SheetHeader className="px-6 py-6 border-b">
-              <SheetTitle>How to Connect Notion</SheetTitle>
+              <SheetTitle className="text-xl">
+                How to Connect Notion
+              </SheetTitle>
               <SheetDescription>
-                Ikuti step ini biar database lo kebaca
+                Follow these steps to set up your Notion database
               </SheetDescription>
             </SheetHeader>
 
-            <ScrollArea className="h-[calc(100vh-120px)]">
-              <div className="px-6 py-6 space-y-6 text-sm text-gray-600">
-                <ol className="space-y-3 list-decimal ml-4">
-                  <li>
-                    Buka{" "}
-                    <a
-                      href="https://www.notion.so/my-integrations"
-                      target="_blank"
-                      className="text-purple-600 inline-flex items-center gap-1"
-                    >
-                      Notion Integrations <ExternalLink className="w-3 h-3" />
-                    </a>
-                  </li>
-                  <li>Create New Integration</li>
-                  <li>Copy token yang diawali <code>ntn_</code></li>
-                  <li>Share database ke integration</li>
-                  <li>Paste token di form ini</li>
-                </ol>
+            <ScrollArea className="h-[calc(100vh-140px)]">
+              <div className="px-6 py-6 space-y-10 text-sm text-gray-600">
+                {/* OPTION 1 */}
+                <section className="space-y-4">
+                  <h3 className="text-base text-gray-900">
+                    Option 1 — Use Our Template (Recommended)
+                  </h3>
+                  <p>
+                    Duplicate our ready-to-use template with all
+                    required properties configured.
+                  </p>
+                  <a
+                    href="https://www.notion.so/my-integrations"
+                    target="_blank"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg"
+                  >
+                    Get Notion Template
+                    <ExternalLink className="w-4 h-4" />
+                  </a>
+                </section>
+
+                <div className="border-t" />
+
+                {/* OPTION 2 */}
+                <section className="space-y-4">
+                  <h3 className="text-base text-gray-900">
+                    Option 2 — Manual Setup
+                  </h3>
+                  <ol className="space-y-3 list-decimal ml-4">
+                    <li>Create a new Notion Integration</li>
+                    <li>
+                      Copy token that starts with{" "}
+                      <code className="bg-gray-100 px-1 rounded">
+                        ntn_
+                      </code>
+                    </li>
+                    <li>Share database to the integration</li>
+                    <li>Paste token in this form</li>
+                  </ol>
+
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-xs">
+                    <strong>💡 Important:</strong> Integration
+                    must have access to the database or it won’t
+                    show up.
+                  </div>
+                </section>
               </div>
             </ScrollArea>
           </SheetContent>
@@ -138,7 +171,7 @@ export function ConnectStep({
 
       {/* TOKEN INPUT */}
       <div>
-        <label className="text-sm text-gray-700">Notion Token</label>
+        <label className="text-sm">Notion Token</label>
         <div className="relative mt-2">
           <input
             value={notionUrl}
@@ -146,7 +179,6 @@ export function ConnectStep({
             placeholder="ntn_xxxxxxxxxxxx"
             className="w-full px-4 py-3 border rounded-lg"
           />
-
           {notionUrl && (
             <div className="absolute right-3 top-1/2 -translate-y-1/2">
               {loadingDetect ? (
@@ -159,9 +191,10 @@ export function ConnectStep({
             </div>
           )}
         </div>
-
         {detectError && (
-          <p className="text-sm text-red-600 mt-2">{detectError}</p>
+          <p className="text-sm text-red-600 mt-2">
+            {detectError}
+          </p>
         )}
       </div>
 
@@ -169,7 +202,6 @@ export function ConnectStep({
       {databases.length > 0 && (
         <div className="space-y-3">
           <p className="text-sm font-medium">Select Database</p>
-
           {databases.map((db) => (
             <div
               key={db.id}
@@ -177,30 +209,24 @@ export function ConnectStep({
                 setSelectedDb(db);
                 onSelectDb(db.id, db.name);
               }}
-              className={`p-4 border rounded-lg cursor-pointer transition
-                ${
-                  selectedDb?.id === db.id
-                    ? "border-purple-600 bg-purple-50"
-                    : "hover:border-purple-400"
-                }`}
+              className={`p-4 border rounded-lg cursor-pointer ${
+                selectedDb?.id === db.id
+                  ? "border-purple-600 bg-purple-50"
+                  : "hover:border-purple-400"
+              }`}
             >
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">{db.icon?.emoji || "📁"}</span>
-                <div>
-                  <p className="font-medium">{db.name}</p>
-                  <p className="text-xs text-gray-500">{db.id}</p>
-                </div>
-              </div>
+              <p className="font-medium">{db.name}</p>
+              <p className="text-xs text-gray-500">{db.id}</p>
             </div>
           ))}
         </div>
       )}
 
-      {/* CREATE BUTTON */}
+      {/* CTA */}
       <button
         onClick={onCreateWidget}
         disabled={!selectedDb || !isUrlValid || loading}
-        className="w-full px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg disabled:opacity-50"
+        className="w-full px-6 py-3 bg-purple-600 text-white rounded-lg disabled:opacity-50"
       >
         {loading ? "Creating..." : "Create Widget"}
       </button>
