@@ -102,9 +102,7 @@ export function ConnectStep({
             <Link2 className="w-5 h-5 text-purple-600" />
           </div>
           <div>
-            <h2 className="text-xl text-gray-900">
-              Connect to Notion
-            </h2>
+            <h2 className="text-xl text-gray-900">Connect to Notion</h2>
             <p className="text-sm text-gray-500">
               Paste your Notion Integration token
             </p>
@@ -121,126 +119,122 @@ export function ConnectStep({
           </SheetTrigger>
 
           <SheetContent className="sm:max-w-lg p-0">
-  <SheetHeader className="space-y-3 px-6 pt-6 pb-6 border-b border-gray-200">
-    <SheetTitle className="text-xl">
-      How to Connect Notion
-    </SheetTitle>
-    <SheetDescription className="text-sm">
-      Follow these steps to set up your Notion
-      database integration
-    </SheetDescription>
-  </SheetHeader>
+            <SheetHeader className="space-y-3 px-6 pt-6 pb-6 border-b border-gray-200">
+              <SheetTitle className="text-xl">How to Connect Notion</SheetTitle>
+              <SheetDescription className="text-sm">
+                Follow these steps to set up your Notion database integration
+              </SheetDescription>
+            </SheetHeader>
 
-  <ScrollArea className="h-[calc(100vh-140px)]">
-    <div className="px-6 py-6 space-y-10">
+            <ScrollArea className="h-[calc(100vh-140px)]">
+              <div className="px-6 py-6 space-y-10">
+                {/* STEP 1 */}
+                <section>
+                  <div className="mb-6">
+                    <h3 className="text-base text-gray-900 mb-1">
+                      Step 1: Choose Your Setup Method
+                    </h3>
+                    <p className="text-sm text-gray-500">
+                      Select one option below to get started
+                    </p>
+                  </div>
 
-      {/* STEP 1 */}
-      <section>
-        <div className="mb-6">
-          <h3 className="text-base text-gray-900 mb-1">
-            Step 1: Choose Your Setup Method
-          </h3>
-          <p className="text-sm text-gray-500">
-            Select one option below to get started
-          </p>
-        </div>
+                  <div className="space-y-6">
+                    {/* OPTION 1 */}
+                    <div className="border border-gray-200 rounded-lg p-5 bg-gray-50">
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="px-2.5 py-0.5 bg-purple-600 text-white rounded text-xs">
+                          Option 1
+                        </div>
+                        <h4 className="text-sm text-gray-900">
+                          Use Our Template (Recommended)
+                        </h4>
+                      </div>
 
-        <div className="space-y-6">
-          {/* OPTION 1 */}
-          <div className="border border-gray-200 rounded-lg p-5 bg-gray-50">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="px-2.5 py-0.5 bg-purple-600 text-white rounded text-xs">
-                Option 1
-              </div>
-              <h4 className="text-sm text-gray-900">
-                Use Our Template (Recommended)
-              </h4>
-            </div>
+                      <p className="text-sm text-gray-600 mb-4">
+                        Start easily by duplicating our ready-to-use template.
+                      </p>
 
-            <p className="text-sm text-gray-600 mb-4">
-              Start easily by duplicating our ready-to-use template.
-            </p>
+                      <a
+                        href="https://notion.so/your-template-link"
+                        target="_blank"
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white text-sm rounded-lg"
+                      >
+                        Get Notion Template
+                        <ExternalLink className="w-4 h-4" />
+                      </a>
+                    </div>
 
-            <a
-              href="https://notion.so/your-template-link"
-              target="_blank"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white text-sm rounded-lg"
-            >
-              Get Notion Template
-              <ExternalLink className="w-4 h-4" />
-            </a>
-          </div>
+                    {/* OPTION 2 */}
+                    <div className="border border-gray-200 rounded-lg p-5 bg-gray-50">
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="px-2.5 py-0.5 bg-purple-600 text-white rounded text-xs">
+                          Option 2
+                        </div>
+                        <h4 className="text-sm text-gray-900">
+                          Setup Database Manually
+                        </h4>
+                      </div>
 
-          {/* OPTION 2 */}
-          <div className="border border-gray-200 rounded-lg p-5 bg-gray-50">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="px-2.5 py-0.5 bg-purple-600 text-white rounded text-xs">
-                Option 2
-              </div>
-              <h4 className="text-sm text-gray-900">
-                Setup Database Manually
-              </h4>
-            </div>
-
-            <div className="bg-white border border-gray-200 rounded-lg p-4">
-              <div className="space-y-2.5">
-                {requiredProperties.map((prop) => (
-                  <div
-                    key={prop.name}
-                    className="flex items-start gap-2"
-                  >
-                    <span className="text-purple-600 mt-0.5 text-sm">
-                      •
-                    </span>
-                    <div className="flex-1">
-                      <code className="text-xs bg-gray-100 px-2 py-1 rounded font-mono">
-                        {prop.name}
-                      </code>
-                      <span className="text-xs text-gray-500 ml-2">
-                        ({prop.type})
-                      </span>
+                      <div className="bg-white border border-gray-200 rounded-lg p-4">
+                        <div className="space-y-2.5">
+                          {requiredProperties.map((prop) => (
+                            <div
+                              key={prop.name}
+                              className="flex items-start gap-2"
+                            >
+                              <span className="text-purple-600 mt-0.5 text-sm">
+                                •
+                              </span>
+                              <div className="flex-1">
+                                <code className="text-xs bg-gray-100 px-2 py-1 rounded font-mono">
+                                  {prop.name}
+                                </code>
+                                <span className="text-xs text-gray-500 ml-2">
+                                  ({prop.type})
+                                </span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
                     </div>
                   </div>
-                ))}
+                </section>
+
+                <div className="border-t border-gray-200" />
+
+                {/* STEP 2 */}
+                <section>
+                  <div className="mb-6">
+                    <h3 className="text-base text-gray-900 mb-1">
+                      Step 2: Create Notion Integration
+                    </h3>
+                    <p className="text-sm text-gray-500">
+                      Connect your database to this widget
+                    </p>
+                  </div>
+
+                  <ol className="text-sm text-gray-600 space-y-4">
+                    <li>Go to Notion Integrations</li>
+                    <li>Create new integration</li>
+                    <li>
+                      Copy token starting with <code>ntn_</code>
+                    </li>
+                    <li>Share database to the integration</li>
+                    <li>Paste token in this form</li>
+                  </ol>
+
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
+                    <p className="text-xs">
+                      <strong>💡 Important:</strong> Database won’t appear if
+                      integration has no access.
+                    </p>
+                  </div>
+                </section>
               </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <div className="border-t border-gray-200" />
-
-      {/* STEP 2 */}
-      <section>
-        <div className="mb-6">
-          <h3 className="text-base text-gray-900 mb-1">
-            Step 2: Create Notion Integration
-          </h3>
-          <p className="text-sm text-gray-500">
-            Connect your database to this widget
-          </p>
-        </div>
-
-        <ol className="text-sm text-gray-600 space-y-4">
-          <li>Go to Notion Integrations</li>
-          <li>Create new integration</li>
-          <li>Copy token starting with <code>ntn_</code></li>
-          <li>Share database to the integration</li>
-          <li>Paste token in this form</li>
-        </ol>
-
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
-          <p className="text-xs">
-            <strong>💡 Important:</strong> Database won’t appear
-            if integration has no access.
-          </p>
-        </div>
-      </section>
-
-    </div>
-  </ScrollArea>
-</SheetContent>
-
+            </ScrollArea>
+          </SheetContent>
         </Sheet>
       </div>
 
@@ -267,9 +261,7 @@ export function ConnectStep({
           )}
         </div>
         {detectError && (
-          <p className="text-sm text-red-600 mt-2">
-            {detectError}
-          </p>
+          <p className="text-sm text-red-600 mt-2">{detectError}</p>
         )}
       </div>
 
