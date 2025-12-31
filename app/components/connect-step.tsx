@@ -121,105 +121,126 @@ export function ConnectStep({
           </SheetTrigger>
 
           <SheetContent className="sm:max-w-lg p-0">
-            <SheetHeader className="px-6 py-6 border-b">
-              <SheetTitle className="text-xl">
-                How to Connect Notion
-              </SheetTitle>
-              <SheetDescription>
-                Follow these steps to set up your Notion database
-              </SheetDescription>
-            </SheetHeader>
+  <SheetHeader className="space-y-3 px-6 pt-6 pb-6 border-b border-gray-200">
+    <SheetTitle className="text-xl">
+      How to Connect Notion
+    </SheetTitle>
+    <SheetDescription className="text-sm">
+      Follow these steps to set up your Notion
+      database integration
+    </SheetDescription>
+  </SheetHeader>
 
-            <ScrollArea className="h-[calc(100vh-140px)]">
-              <div className="px-6 py-6 space-y-10">
-                {/* OPTION 1 */}
-                <section className="space-y-4">
-                  <div>
-                    <span className="text-xs bg-purple-600 text-white px-2 py-0.5 rounded">
-                      Option 1
-                    </span>
-                    <h3 className="text-base text-gray-900 mt-2">
-                      Use Our Template (Recommended)
-                    </h3>
-                  </div>
-                  <p className="text-sm text-gray-600">
-                    Duplicate our ready-to-use template with all
-                    required properties configured.
-                  </p>
-                  <a
-                    href="https://notion.so/your-template-link"
-                    target="_blank"
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg"
-                  >
-                    Get Notion Template
-                    <ExternalLink className="w-4 h-4" />
-                  </a>
-                </section>
+  <ScrollArea className="h-[calc(100vh-140px)]">
+    <div className="px-6 py-6 space-y-10">
 
-                <div className="border-t" />
+      {/* STEP 1 */}
+      <section>
+        <div className="mb-6">
+          <h3 className="text-base text-gray-900 mb-1">
+            Step 1: Choose Your Setup Method
+          </h3>
+          <p className="text-sm text-gray-500">
+            Select one option below to get started
+          </p>
+        </div>
 
-                {/* OPTION 2 */}
-                <section className="space-y-4">
-                  <div>
-                    <span className="text-xs bg-purple-600 text-white px-2 py-0.5 rounded">
-                      Option 2
-                    </span>
-                    <h3 className="text-base text-gray-900 mt-2">
-                      Setup Database Manually
-                    </h3>
-                  </div>
-
-                  <div className="bg-white border rounded-lg p-4 space-y-2">
-                    {requiredProperties.map((p) => (
-                      <div
-                        key={p.name}
-                        className="flex items-center gap-2 text-sm"
-                      >
-                        <span className="text-purple-600">•</span>
-                        <code className="bg-gray-100 px-2 py-0.5 rounded text-xs">
-                          {p.name}
-                        </code>
-                        <span className="text-xs text-gray-500">
-                          ({p.type})
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </section>
-
-                <div className="border-t" />
-
-                {/* STEP 2 */}
-                <section className="space-y-4 text-sm text-gray-600">
-                  <h3 className="text-base text-gray-900">
-                    Create Notion Integration
-                  </h3>
-                  <ol className="list-decimal ml-4 space-y-2">
-                    <li>
-                      Open{" "}
-                      <a
-                        href="https://www.notion.so/my-integrations"
-                        target="_blank"
-                        className="text-purple-600 inline-flex items-center gap-1"
-                      >
-                        Notion Integrations
-                        <ExternalLink className="w-3 h-3" />
-                      </a>
-                    </li>
-                    <li>Create new integration</li>
-                    <li>Copy token starting with <code>ntn_</code></li>
-                    <li>Share database to the integration</li>
-                    <li>Paste token in this form</li>
-                  </ol>
-
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-xs">
-                    <strong>💡 Important:</strong> Database
-                    won’t appear if integration has no access.
-                  </div>
-                </section>
+        <div className="space-y-6">
+          {/* OPTION 1 */}
+          <div className="border border-gray-200 rounded-lg p-5 bg-gray-50">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="px-2.5 py-0.5 bg-purple-600 text-white rounded text-xs">
+                Option 1
               </div>
-            </ScrollArea>
-          </SheetContent>
+              <h4 className="text-sm text-gray-900">
+                Use Our Template (Recommended)
+              </h4>
+            </div>
+
+            <p className="text-sm text-gray-600 mb-4">
+              Start easily by duplicating our ready-to-use template.
+            </p>
+
+            <a
+              href="https://notion.so/your-template-link"
+              target="_blank"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white text-sm rounded-lg"
+            >
+              Get Notion Template
+              <ExternalLink className="w-4 h-4" />
+            </a>
+          </div>
+
+          {/* OPTION 2 */}
+          <div className="border border-gray-200 rounded-lg p-5 bg-gray-50">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="px-2.5 py-0.5 bg-purple-600 text-white rounded text-xs">
+                Option 2
+              </div>
+              <h4 className="text-sm text-gray-900">
+                Setup Database Manually
+              </h4>
+            </div>
+
+            <div className="bg-white border border-gray-200 rounded-lg p-4">
+              <div className="space-y-2.5">
+                {requiredProperties.map((prop) => (
+                  <div
+                    key={prop.name}
+                    className="flex items-start gap-2"
+                  >
+                    <span className="text-purple-600 mt-0.5 text-sm">
+                      •
+                    </span>
+                    <div className="flex-1">
+                      <code className="text-xs bg-gray-100 px-2 py-1 rounded font-mono">
+                        {prop.name}
+                      </code>
+                      <span className="text-xs text-gray-500 ml-2">
+                        ({prop.type})
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="border-t border-gray-200" />
+
+      {/* STEP 2 */}
+      <section>
+        <div className="mb-6">
+          <h3 className="text-base text-gray-900 mb-1">
+            Step 2: Create Notion Integration
+          </h3>
+          <p className="text-sm text-gray-500">
+            Connect your database to this widget
+          </p>
+        </div>
+
+        <ol className="text-sm text-gray-600 space-y-4">
+          <li>Go to Notion Integrations</li>
+          <li>Create new integration</li>
+          <li>Copy token starting with <code>ntn_</code></li>
+          <li>Share database to the integration</li>
+          <li>Paste token in this form</li>
+        </ol>
+
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
+          <p className="text-xs">
+            <strong>💡 Important:</strong> Database won’t appear
+            if integration has no access.
+          </p>
+        </div>
+      </section>
+
+    </div>
+  </ScrollArea>
+</SheetContent>
+
         </Sheet>
       </div>
 
