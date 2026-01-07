@@ -15,7 +15,7 @@ export default function SelectDatabaseStep({
 }: SelectDatabaseStepProps) {
   const [databases, setDatabases] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [processing, setProcessing] = useState(false);
+  const [processingId, setProcessingId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchDb = async () => {
@@ -28,13 +28,12 @@ export default function SelectDatabaseStep({
   }, [token]);
 
   const handleSelect = async (db: any) => {
-    setProcessing(true);
+    setProcessingId(db.id);
     await onSelect(db.id, db.name);
-    // jangan setProcessing(false)
-    // karena biasanya langsung pindah step
+    // gak perlu set null karena biasanya langsung pindah step
   };
 
-  // loading saat fetch database
+  // loading fetch database
   if (loading) {
     return (
       <div className="flex justify-center py-20">
@@ -44,37 +43,43 @@ export default function SelectDatabaseStep({
   }
 
   return (
-    <>
-      {/* FULLSCREEN LOADING OVERLAY */}
-      {processing && (
-        <div className="fixed inset-0 z-50 bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center">
-          <Loader2 className="w-10 h-10 animate-spin text-purple-600 mb-4" />
-          <p className="text-sm text-gray-600">
-            Processing your widget...
-          </p>
-        </div>
-      )}
+    <div className="space-y-4">
+      <h2 className="text-xl font-semibold">Select Database</h2>
 
-      <div className="space-y-4 relative">
-        <h2 className="text-xl font-semibold">Select Database</h2>
+      {databases.map((db) => {
+        const isProcessing = processingId === db.id;
 
-        {databases.map((db) => (
+        return (
           <button
             key={db.id}
-            disabled={processing}
+            disabled={!!processingId}
             onClick={() => handleSelect(db)}
-            className="w-full p-4 border rounded-lg text-left hover:border-purple-500 disabled:opacity-50"
+            className="
+              w-full p-4 border rounded-lg text-left
+              hover:border-purple-500
+              disabled:opacity-60
+              relative
+            "
           >
-            <div className="flex gap-3">
-              <Folder className="w-5 h-5 text-yellow-500 mt-0.5" />
-              <div>
-                <p className="font-medium">{db.name}</p>
-                <p className="text-xs text-gray-500">{db.id}</p>
+            {isProcessing ? (
+              <div className="flex items-center gap-3">
+                <Loader2 className="w-5 h-5 animate-spin text-purple-600" />
+                <span className="text-sm text-gray-600">
+                  Processing database...
+                </span>
               </div>
-            </div>
+            ) : (
+              <div className="flex gap-3">
+                <Folder className="w-5 h-5 text-yellow-500 mt-0.5" />
+                <div>
+                  <p className="font-medium">{db.name}</p>
+                  <p className="text-xs text-gray-500">{db.id}</p>
+                </div>
+              </div>
+            )}
           </button>
-        ))}
-      </div>
-    </>
+        );
+      })}
+    </div>
   );
 }
