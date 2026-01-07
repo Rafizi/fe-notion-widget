@@ -118,10 +118,10 @@ export default function CreateWidgetPageMerged() {
           {step === 4 && (
             <SelectDatabaseStep
               token={notionToken}
-              onSelect={(id, name) => {
+              onSelect={async (id, name) => {
                 setDb(id);
                 setDbName(name);
-                handleGenerateWidget();
+                await handleGenerateWidget();
               }}
             />
           )}
