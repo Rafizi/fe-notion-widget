@@ -110,25 +110,26 @@ export default function EmbedFilter() {
                     onClick={() => setOpen(null)}
                   />
                   <div
-                    className="
-                       fixed z-50
+  className="
+    fixed z-50
     bg-white border border-gray-200 shadow-xl
     overflow-y-auto
 
-    /* MOBILE → BOTTOM SHEET */
-    bottom-0 left-0 right-0
-    max-h-[70vh]
-    rounded-t-2xl
+    /* MOBILE FIX */
+    top-24 left-1/2
+    -translate-x-1/2
+    w-[92vw]
+    max-h-[65vh]
+    rounded-2xl
 
-    /* DESKTOP → TURUN DIKIT (ANTI OVERFLOW) */
+    /* DESKTOP */
     sm:top-20
-    sm:left-1/2
-    sm:-translate-x-1/2
-    sm:bottom-auto sm:right-auto
-    sm:w-[90vw] sm:max-w-sm
+    sm:w-[90vw]
+    sm:max-w-sm
     sm:rounded-xl
-                    "
-                  >
+  "
+>
+
                     {filterOptions[key as keyof typeof filterOptions].map(
                       (opt) => (
                         <button
