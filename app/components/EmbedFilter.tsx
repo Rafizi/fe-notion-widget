@@ -129,33 +129,42 @@ export default function EmbedFilter() {
 <div
   className="
     z-50 bg-white border border-gray-200 shadow-xl
-    rounded-2xl
     overflow-y-auto
 
-    /* MOBILE + DESKTOP = CENTER MODAL */
-    fixed
-    left-1/2 top-1/2
-    -translate-x-1/2 -translate-y-1/2
-    w-[90vw] max-w-sm
-    max-h-[70vh]
+    /* MOBILE = CENTER MODAL */
+    fixed inset-0 flex items-center justify-center p-4
+    max-h-none
+
+    /* DESKTOP = DROPDOWN */
+    sm:absolute sm:inset-auto sm:mt-2 sm:w-full
+    sm:block
   "
 >
+  <div
+    className="
+      w-full max-w-sm
+      rounded-2xl
+      bg-white
+      max-h-[80dvh] overflow-y-auto
+      sm:max-w-none sm:rounded-xl
+    "
+  >
+    {filterOptions[key].map((opt) => (
+      <button
+        key={opt}
+        onClick={() => updateFilter(key, opt)}
+        className={`w-full px-4 py-2 text-left text-sm ${
+          value === opt
+            ? "bg-purple-50 text-purple-700"
+            : "hover:bg-gray-100"
+        }`}
+      >
+        {opt}
+      </button>
+    ))}
+  </div>
+</div>
 
-
-                      {filterOptions[key].map((opt) => (
-                        <button
-                          key={opt}
-                          onClick={() => updateFilter(key, opt)}
-                          className={`w-full px-4 py-2 text-left text-sm ${
-                            value === opt
-                              ? "bg-purple-50 text-purple-700"
-                              : "hover:bg-gray-100"
-                          }`}
-                        >
-                          {opt}
-                        </button>
-                      ))}
-                    </div>
                   </>
                 )}
               </div>
