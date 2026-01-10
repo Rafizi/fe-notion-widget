@@ -109,21 +109,22 @@ export default function EmbedFilter() {
                     className="fixed inset-0 z-40"
                     onClick={() => setOpen(null)}
                   />
-                  <div
+                 <div
   className="
     fixed z-50
     bg-white border border-gray-200 shadow-xl
     overflow-y-auto
 
     left-1/2 -translate-x-1/2
-    w-[92vw]
+    w-[88vw]
+    max-w-sm
     rounded-2xl
 
-    /* real mobile safe area */
-    top-[20vh]
-    max-h-[calc(var(--vh)*70)]
-
-    /* desktop */
+    /* MOBILE: center & compact */
+    top-[12vh]
+    max-h-[calc(var(--vh)*55)]
+    
+    /* DESKTOP */
     sm:absolute
     sm:top-full
     sm:left-0
@@ -133,6 +134,7 @@ export default function EmbedFilter() {
     sm:rounded-xl
   "
 >
+
                     {filterOptions[key as keyof typeof filterOptions].map(
                       (opt) => (
                         <button
