@@ -45,9 +45,8 @@ export default function EmbedFilter() {
   };
 
   const isMobile =
-  typeof window !== "undefined" &&
-  window.matchMedia("(max-width: 639px)").matches;
-
+    typeof window !== "undefined" &&
+    window.matchMedia("(max-width: 639px)").matches;
 
   const updateFilter = (key: string, value: string) => {
     const newParams = new URLSearchParams(params.toString());
@@ -121,6 +120,31 @@ export default function EmbedFilter() {
 
                 {open === key && (
   <>
+    {/* ===== BACKDROP (MOBILE) ===== */}
+    <div
+      className="fixed inset-0 z-[9998] bg-black/40 sm:hidden"
+      onClick={() => setOpen(null)}
+    />
+
+    {/* ===== MOBILE CENTER MODAL ===== */}
+    <div className="sm:hidden fixed inset-0 z-[9999] flex items-center justify-center p-4">
+      <div className="w-full max-w-sm bg-white rounded-2xl shadow-2xl max-h-[80dvh] overflow-y-auto">
+        {filterOptions[key].map((opt) => (
+          <button
+            key={opt}
+            onClick={() => updateFilter(key, opt)}
+            className={`w-full px-4 py-3 text-left text-sm ${
+              value === opt
+                ? "bg-purple-50 text-purple-700"
+                : "hover:bg-gray-100"
+            }`}
+          >
+            {opt}
+          </button>
+        ))}
+      </div>
+    </div>
+
     {/* ===== DESKTOP ===== */}
     <div className="hidden sm:block fixed inset-0 z-[9999] flex items-center justify-center p-4">
       <div
@@ -143,23 +167,6 @@ export default function EmbedFilter() {
           </button>
         ))}
       </div>
-    </div>
-
-    {/* ===== MOBILE ===== */}
-    <div className="sm:hidden mt-2 rounded-xl border bg-white shadow-lg overflow-hidden">
-      {filterOptions[key].map((opt) => (
-        <button
-          key={opt}
-          onClick={() => updateFilter(key, opt)}
-          className={`w-full px-4 py-2 text-left text-sm ${
-            value === opt
-              ? "bg-purple-50 text-purple-700"
-              : "hover:bg-gray-100"
-          }`}
-        >
-          {opt}
-        </button>
-      ))}
     </div>
   </>
 )}
@@ -191,14 +198,8 @@ export default function EmbedFilter() {
                   className="flex items-center gap-2 px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm"
                 >
                   <span className="capitalize">{key}</span>
-                  <span className="truncate max-w-[120px]">
-                    {current[key]}
-                  </span>
-                  <button
-                    onClick={() =>
-                      updateFilter(key, defaultValue[key])
-                    }
-                  >
+                  <span className="truncate max-w-[120px]">{current[key]}</span>
+                  <button onClick={() => updateFilter(key, defaultValue[key])}>
                     <X className="w-3 h-3" />
                   </button>
                 </div>
