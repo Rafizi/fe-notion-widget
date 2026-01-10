@@ -133,21 +133,28 @@ export default function ClientViewComponent({
 
                 {/* MOBILE BOTTOM SHEET */}
                 <div
-                  className={`
-        sm:hidden
-        fixed bottom-0 left-0 right-0
-        z-50
-        rounded-t-2xl border-t shadow-xl
-        ${
-          currentTheme === "light"
-            ? "bg-white border-gray-200"
-            : "bg-gray-900 border-gray-800"
-        }
-      `}
-                >
-                  <div className="w-12 h-1.5 bg-gray-400/40 rounded-full mx-auto my-2" />
-                  <EmbedFilter />
-                </div>
+  className={`
+    sm:hidden
+    fixed inset-x-0 bottom-0 z-50
+    max-h-[85dvh]
+    rounded-t-2xl
+    shadow-2xl
+    flex flex-col
+    ${
+      currentTheme === "light"
+        ? "bg-white border-t border-gray-200"
+        : "bg-gray-900 border-gray-800"
+    }
+  `}
+>
+  {/* handle */}
+  <div className="w-12 h-1.5 bg-gray-400/40 rounded-full mx-auto my-3" />
+
+  {/* scroll area */}
+  <div className="flex-1 overflow-y-auto px-3 pb-6">
+    <EmbedFilter />
+  </div>
+</div>
               </>
             )}
           </div>
