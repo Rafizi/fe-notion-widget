@@ -68,8 +68,6 @@ export default function EmbedFilter() {
     setOpen(null);
   };
 
-
-
   const clearAll = () => {
     const newParams = new URLSearchParams();
     const db = params.get("db");
@@ -146,27 +144,25 @@ export default function EmbedFilter() {
 
       {/* ================= MODAL (MOBILE ONLY) ================= */}
       {open && (
-  <div className="sm:hidden">
-    {/* backdrop LOCAL */}
+  <div className="sm:hidden relative z-50">
+    {/* backdrop */}
     <div
-      className="fixed inset-0 z-40 bg-black/30"
+      className="absolute inset-0 bg-black/30"
       onClick={() => setOpen(null)}
     />
 
-    {/* option sheet */}
+    {/* option list */}
     <div
       className="
-        fixed inset-x-0 bottom-0 z-50
+        absolute left-0 right-0
+        mt-4
         bg-white
-        rounded-t-2xl
-        max-h-[70dvh]
+        rounded-xl
+        max-h-[50dvh]
         overflow-y-auto
-        shadow-2xl
+        shadow-xl
       "
     >
-      {/* handle */}
-      <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto my-3" />
-
       {filterOptions[open].map((opt) => (
         <button
           key={opt}
