@@ -133,7 +133,7 @@ export default function EmbedFilter() {
     rounded-2xl
 
     /* MOBILE: center & compact */
-    top-[20vh]
+    top-[10vh]
     max-h-[45vh]
     
     /* DESKTOP */
