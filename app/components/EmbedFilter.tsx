@@ -67,12 +67,11 @@ export default function EmbedFilter() {
   };
 
   useEffect(() => {
-  document.body.style.overflow = open ? "hidden" : "unset";
-  return () => {
-    document.body.style.overflow = "unset";
-  };
-}, [open]);
-
+    document.body.style.overflow = open ? "hidden" : "unset";
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [open]);
 
   const clearAll = () => {
     const newParams = new URLSearchParams();
@@ -162,18 +161,19 @@ export default function EmbedFilter() {
         sm:hidden
         fixed bottom-0 left-0 right-0 z-50
         bg-white rounded-t-2xl shadow-2xl
-        max-h-[70vh] overflow-y-auto
+        max-h-[55vh] overflow-y-auto
       "
                   >
-                    <div className="w-12 h-1.5 bg-gray-400/40 rounded-full mx-auto my-2" />
+                    <div className="w-10 h-1 bg-gray-400/40 rounded-full mx-auto my-1.5" />
 
-                    <div className="px-4 pb-6 space-y-1">
+                    <div className="px-3 pb-4 space-y-0.5">
+
                       {filterOptions[key as keyof typeof filterOptions].map(
                         (opt) => (
                           <button
                             key={opt}
                             onClick={() => updateFilter(key, opt)}
-                            className={`w-full px-4 py-3 rounded-lg text-left text-sm ${
+                            className={`w-full px-3 py-2 rounded-md text-left text-[13px] ${
                               value === opt
                                 ? "bg-purple-100 text-purple-700"
                                 : "hover:bg-gray-100"
