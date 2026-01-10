@@ -25,7 +25,6 @@ const defaultValue = {
   pinned: "Pinned",
 };
 
-// 🔒 urutan fix biar mobile 2x2 konsisten
 const orderedKeys = ["platform", "status", "pillar", "pinned"] as const;
 
 export default function EmbedFilter() {
@@ -92,13 +91,12 @@ export default function EmbedFilter() {
   return (
     <div className="w-full">
       <div className="bg-white border border-gray-200 rounded-xl p-3 sm:p-4 space-y-3">
-        {/* FILTER GRID */}
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-2 lg:grid-cols-3">
           {orderedKeys.map((key) => {
             const value = current[key];
 
             return (
-              <div key={key} className="relative w-full">
+              <div key={key} className="w-full">
                 <button
                   onClick={() => setOpen(open === key ? null : key)}
                   className={`
@@ -118,53 +116,41 @@ export default function EmbedFilter() {
 
                 {open === key && (
                   <>
-                    {/* overlay */}
-                    <div
-                      className="fixed inset-0 z-40 bg-black/30"
-                      onClick={() => setOpen(null)}
-                    />
+                    {/* 🔥 GLOBAL MODAL */}
+                    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+                      {/* backdrop */}
+                      <div
+                        className="absolute inset-0 bg-black/40"
+                        onClick={() => setOpen(null)}
+                      />
 
-                    {/* DROPDOWN (DESKTOP + MOBILE CONTENT) */}
-                    {/* DROPDOWN */}
-<div
-  className="
-    z-50 bg-white border border-gray-200 shadow-xl
-    overflow-y-auto
-
-    /* MOBILE = CENTER MODAL */
-    fixed inset-0 flex items-center justify-center p-4
-    max-h-none
-
-    /* DESKTOP = DROPDOWN */
-    sm:absolute sm:inset-auto sm:mt-2 sm:w-full
-    sm:block
-  "
->
-  <div
-    className="
-      w-full max-w-sm
-      rounded-2xl
-      bg-white
-      max-h-[80dvh] overflow-y-auto
-      sm:max-w-none sm:rounded-xl
-    "
-  >
-    {filterOptions[key].map((opt) => (
-      <button
-        key={opt}
-        onClick={() => updateFilter(key, opt)}
-        className={`w-full px-4 py-2 text-left text-sm ${
-          value === opt
-            ? "bg-purple-50 text-purple-700"
-            : "hover:bg-gray-100"
-        }`}
-      >
-        {opt}
-      </button>
-    ))}
-  </div>
-</div>
-
+                      {/* modal */}
+                      <div
+                        className="
+                          relative
+                          w-full max-w-sm
+                          bg-white
+                          rounded-2xl
+                          shadow-2xl
+                          max-h-[80dvh]
+                          overflow-y-auto
+                        "
+                      >
+                        {filterOptions[key].map((opt) => (
+                          <button
+                            key={opt}
+                            onClick={() => updateFilter(key, opt)}
+                            className={`w-full px-4 py-2 text-left text-sm ${
+                              value === opt
+                                ? "bg-purple-50 text-purple-700"
+                                : "hover:bg-gray-100"
+                            }`}
+                          >
+                            {opt}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
                   </>
                 )}
               </div>
@@ -172,7 +158,6 @@ export default function EmbedFilter() {
           })}
         </div>
 
-        {/* CLEAR ALL */}
         {activeCount > 0 && (
           <div className="flex justify-end">
             <button
@@ -185,7 +170,6 @@ export default function EmbedFilter() {
         )}
       </div>
 
-      {/* ACTIVE FILTER CHIPS */}
       {activeCount > 0 && (
         <div className="flex flex-wrap gap-2 mt-3">
           {orderedKeys.map(
