@@ -93,7 +93,8 @@ export default function EmbedFilter() {
     <div className="w-full">
       <div className="bg-white border border-gray-200 rounded-xl p-3 sm:p-4 space-y-3">
         {/* FILTER GRID */}
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-2 gap-1.5 sm:gap-2 lg:grid-cols-3">
+
           {orderedKeys.map((key) => {
             const value = current[key];
 
@@ -102,9 +103,14 @@ export default function EmbedFilter() {
                 <button
                   onClick={() => setOpen(open === key ? null : key)}
                   className={`
-                    w-full px-3 py-1.5 sm:px-4 sm:py-2
-                    rounded-lg flex items-center gap-2
-                    border text-[13px] sm:text-sm transition
+                     w-full
+  px-2 py-1 sm:px-4 sm:py-2
+  rounded-md sm:rounded-lg
+  flex items-center gap-1.5
+  border
+  text-[11px] sm:text-sm
+  leading-tight
+  transition
                     ${
                       isActive(key)
                         ? "bg-purple-50 border-purple-300 text-purple-700"
@@ -113,7 +119,8 @@ export default function EmbedFilter() {
                   `}
                 >
                   <span className="truncate flex-1">{value}</span>
-                  <ChevronDown className="w-4 h-4 shrink-0" />
+                 <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4 shrink-0" />
+
                 </button>
 
                 {open === key && (
