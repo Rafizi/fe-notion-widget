@@ -30,7 +30,7 @@ const orderedKeys = ["platform", "status", "pillar", "pinned"] as const;
 export default function EmbedFilter() {
   const router = useRouter();
   const params = useSearchParams();
-  const [open, setOpen] = useState<string | null>(null);
+  const [open, setOpen] = useState<keyof typeof filterOptions | null>(null);
 
   const current = {
     platform: params.get("platform") ?? defaultValue.platform,
@@ -44,14 +44,10 @@ export default function EmbedFilter() {
         : defaultValue.pinned,
   };
 
-  const isMobile =
-    typeof window !== "undefined" &&
-    window.matchMedia("(max-width: 639px)").matches;
-
-  const updateFilter = (key: string, value: string) => {
+  const updateFilter = (key: keyof typeof filterOptions, value: string) => {
     const newParams = new URLSearchParams(params.toString());
 
-    if (value === defaultValue[key as keyof typeof defaultValue]) {
+    if (value === defaultValue[key]) {
       newParams.delete(key);
     } else {
       if (key === "pinned") {
@@ -86,9 +82,8 @@ export default function EmbedFilter() {
     router.push(`?${newParams.toString()}`);
   };
 
-  const isActive = (key: string) =>
-    current[key as keyof typeof current] !==
-    defaultValue[key as keyof typeof defaultValue];
+  const isActive = (key: keyof typeof defaultValue) =>
+    current[key] !== defaultValue[key];
 
   const activeCount = orderedKeys.filter(isActive).length;
 
@@ -117,60 +112,6 @@ export default function EmbedFilter() {
                   <span className="truncate flex-1">{value}</span>
                   <ChevronDown className="w-4 h-4 shrink-0" />
                 </button>
-
-                {open === key && (
-  <>
-    {/* ===== BACKDROP (MOBILE) ===== */}
-    <div
-      className="fixed inset-0 z-[9998] bg-black/40 sm:hidden"
-      onClick={() => setOpen(null)}
-    />
-
-    {/* ===== MOBILE CENTER MODAL ===== */}
-    <div className="sm:hidden fixed inset-0 z-[9999] flex items-center justify-center p-4">
-      <div className="w-full max-w-sm bg-white rounded-2xl shadow-2xl max-h-[80dvh] overflow-y-auto">
-        {filterOptions[key].map((opt) => (
-          <button
-            key={opt}
-            onClick={() => updateFilter(key, opt)}
-            className={`w-full px-4 py-3 text-left text-sm ${
-              value === opt
-                ? "bg-purple-50 text-purple-700"
-                : "hover:bg-gray-100"
-            }`}
-          >
-            {opt}
-          </button>
-        ))}
-      </div>
-    </div>
-
-    {/* ===== DESKTOP ===== */}
-    <div className="hidden sm:block fixed inset-0 z-[9999] flex items-center justify-center p-4">
-      <div
-        className="absolute inset-0 bg-black/40"
-        onClick={() => setOpen(null)}
-      />
-
-      <div className="relative w-full max-w-sm bg-white rounded-2xl shadow-2xl max-h-[80dvh] overflow-y-auto">
-        {filterOptions[key].map((opt) => (
-          <button
-            key={opt}
-            onClick={() => updateFilter(key, opt)}
-            className={`w-full px-4 py-2 text-left text-sm ${
-              value === opt
-                ? "bg-purple-50 text-purple-700"
-                : "hover:bg-gray-100"
-            }`}
-          >
-            {opt}
-          </button>
-        ))}
-      </div>
-    </div>
-  </>
-)}
-
               </div>
             );
           })}
@@ -206,6 +147,36 @@ export default function EmbedFilter() {
               )
           )}
         </div>
+      )}
+
+      {/* ================= MODAL (MOBILE ONLY) ================= */}
+      {open && (
+        <>
+          {/* backdrop */}
+          <div
+            className="fixed inset-0 z-[9998] bg-black/40 sm:hidden"
+            onClick={() => setOpen(null)}
+          />
+
+          {/* center modal */}
+          <div className="fixed inset-0 z-[9999] sm:hidden flex items-center justify-center">
+            <div className="w-[90%] max-w-sm bg-white rounded-2xl shadow-2xl max-h-[80dvh] overflow-y-auto">
+              {filterOptions[open].map((opt) => (
+                <button
+                  key={opt}
+                  onClick={() => updateFilter(open, opt)}
+                  className={`w-full px-4 py-3 text-left text-sm ${
+                    current[open] === opt
+                      ? "bg-purple-50 text-purple-700"
+                      : "hover:bg-gray-100"
+                  }`}
+                >
+                  {opt}
+                </button>
+              ))}
+            </div>
+          </div>
+        </>
       )}
     </div>
   );
