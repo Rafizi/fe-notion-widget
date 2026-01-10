@@ -185,6 +185,7 @@ export default function EmbedFilter() {
         )}
       </div>
 
+      
       {/* ACTIVE FILTER CHIPS */}
       {activeCount > 0 && (
         <div className="flex flex-wrap gap-2 mt-3">
