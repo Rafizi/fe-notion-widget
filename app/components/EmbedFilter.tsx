@@ -88,27 +88,17 @@ export default function EmbedFilter() {
 
   return (
     <div className="mb-4">
-      <div
-        className="
-  bg-white border border-gray-200 rounded-xl
-  p-3 sm:p-4
-  space-y-2 sm:space-y-3
-"
-      >
+      <div className="bg-white border border-gray-200 rounded-xl p-3 sm:p-4 space-y-3">
         {/* FILTER GRID */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-2 lg:grid-cols-3">
           {Object.entries(current).map(([key, value]) => (
-            <div key={key} className="relative w-full min-w-0">
+            <div key={key} className="relative w-full">
               <button
                 onClick={() => setOpen(open === key ? null : key)}
                 className={`
-                 w-full
-  px-3 py-1.5 sm:px-4 sm:py-2
-  rounded-lg
-  flex items-center gap-2
-  border
-  text-[13px] sm:text-sm
-  transition
+                  w-full px-3 py-1.5 sm:px-4 sm:py-2
+                  rounded-lg flex items-center gap-2
+                  border text-[13px] sm:text-sm transition
                   ${
                     isActive(key)
                       ? "bg-purple-50 border-purple-300 text-purple-700"
@@ -116,28 +106,20 @@ export default function EmbedFilter() {
                   }
                 `}
               >
-                <span className="truncate min-w-0 flex-1">{value}</span>
-
-                <ChevronDown className="w-4 h-4 ml-auto shrink-0" />
+                <span className="truncate flex-1">{value}</span>
+                <ChevronDown className="w-4 h-4 shrink-0" />
               </button>
 
               {open === key && (
                 <>
-                  {/* overlay */}
+                  {/* OVERLAY */}
                   <div
                     className="fixed inset-0 z-40 bg-black/30"
                     onClick={() => setOpen(null)}
                   />
 
-                  {/* DESKTOP */}
-                  <div
-                    className="
-        hidden sm:block
-        absolute z-50 mt-2 w-full
-        bg-white border border-gray-200 shadow-xl
-        rounded-xl max-h-64 overflow-y-auto
-      "
-                  >
+                  {/* DESKTOP DROPDOWN */}
+                  <div className="hidden sm:block absolute z-50 mt-2 w-full bg-white border border-gray-200 shadow-xl rounded-xl max-h-64 overflow-y-auto">
                     {filterOptions[key as keyof typeof filterOptions].map(
                       (opt) => (
                         <button
@@ -155,19 +137,18 @@ export default function EmbedFilter() {
                     )}
                   </div>
 
-                  {/* MOBILE BOTTOM SHEET */}
+                  {/* MOBILE BOTTOM SHEET (FIXED) */}
                   <div
                     className="
-        sm:hidden
-        fixed bottom-0 left-0 right-0 z-50
-        bg-white rounded-t-2xl shadow-2xl
-        max-h-[55vh] overflow-y-auto
-      "
+                      sm:hidden fixed inset-x-0 bottom-0 z-50
+                      bg-white rounded-t-2xl shadow-2xl
+                      max-h-[70dvh] overflow-hidden
+                      animate-in slide-in-from-bottom-4
+                    "
                   >
-                    <div className="w-10 h-1 bg-gray-400/40 rounded-full mx-auto my-1.5" />
+                    <div className="w-10 h-1 bg-gray-400/40 rounded-full mx-auto my-2" />
 
-                    <div className="px-3 pb-4 space-y-0.5">
-
+                    <div className="px-3 pb-4 overflow-y-auto max-h-[calc(70dvh-24px)]">
                       {filterOptions[key as keyof typeof filterOptions].map(
                         (opt) => (
                           <button
