@@ -309,13 +309,15 @@ function HighlightSection({ highlights, theme }: any) {
 
 /* ================= GRID ================= */
 
-function VisualGrid({ filtered, gridColumns, theme, cardBg, onSelect }: any) {
+function VisualGrid({ filtered, theme, cardBg, onSelect }: any) {
   return (
     <div
-      className="grid gap-4"
-      style={{
-        gridTemplateColumns: `repeat(${gridColumns}, 1fr)`,
-      }}
+      className="
+        grid gap-3
+        grid-cols-2
+        sm:grid-cols-3
+        lg:grid-cols-4
+      "
     >
       {filtered.map((item: any, i: number) => {
         const name =
@@ -327,20 +329,36 @@ function VisualGrid({ filtered, gridColumns, theme, cardBg, onSelect }: any) {
           <div
             key={i}
             onClick={() => onSelect(item)}
-            className={`relative group  overflow-hidden aspect-[4/5] cursor-pointer hover:-translate-y-1 transition ${cardBg}`}
+            className={`
+              relative group overflow-hidden
+              aspect-[4/5]
+              cursor-pointer
+              transition
+              hover:-translate-y-1
+              ${cardBg}
+            `}
           >
             {pinned && (
-              <Pin className="absolute top-3 right-3 text-yellow-400 z-10" />
+              <Pin className="absolute top-2 right-2 text-yellow-400 z-10" />
             )}
 
             <AutoThumbnail src={image} />
 
+            {/* hover overlay */}
             <div
-              className={`absolute inset-0 flex items-end p-3 opacity-0 group-hover:opacity-100 transition bg-gradient-to-t ${
-                theme === "light" ? "from-black/70" : "from-black/80"
-              }`}
+              className={`
+                absolute inset-0
+                flex items-end
+                p-3
+                opacity-0 group-hover:opacity-100
+                transition
+                bg-gradient-to-t
+                ${theme === "light" ? "from-black/70" : "from-black/80"}
+              `}
             >
-              <p className="text-white text-xs">{name}</p>
+              <p className="text-white text-xs line-clamp-2">
+                {name}
+              </p>
             </div>
           </div>
         );

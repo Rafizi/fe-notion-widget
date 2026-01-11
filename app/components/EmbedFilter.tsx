@@ -83,8 +83,7 @@ export default function EmbedFilter() {
   return (
     <div className="w-full">
       <div className="bg-white border border-gray-200 rounded-xl p-3 sm:p-4 space-y-3">
-        <div className="grid grid-cols-4 gap-2 sm:grid-cols-2 lg:grid-cols-3">
-
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-2 lg:grid-cols-3">
           {orderedKeys.map((key) => {
             const value = current[key];
 
@@ -145,44 +144,45 @@ export default function EmbedFilter() {
 
       {/* ================= MODAL (MOBILE ONLY) ================= */}
       {open && (
-  <div className="sm:hidden fixed inset-0 z-[60]">
-    {/* backdrop */}
-    <div
-      className="absolute inset-0 bg-black/40"
-      onClick={() => setOpen(null)}
-    />
+        <div className="sm:hidden fixed inset-0 z-[60] flex items-end">
+          {/* backdrop */}
+          <div
+            className="absolute inset-0 bg-black/40"
+            onClick={() => setOpen(null)}
+          />
 
-    {/* option list */}
-    <div
-      className="
-        absolute
-        left-1/2 top-1/2
-        -translate-x-1/2 -translate-y-1/2
-        w-[90vw]
-        max-h-[70dvh]
+          {/* bottom sheet */}
+          <div
+            className="
+        relative
+        w-full
+        max-h-[80dvh]
         bg-white
-        rounded-2xl
+        rounded-t-2xl
         overflow-y-auto
         shadow-2xl
+        animate-slideUp
       "
-    >
-      {filterOptions[open].map((opt) => (
-        <button
-          key={opt}
-          onClick={() => updateFilter(open, opt)}
-          className={`w-full px-4 py-3 text-left text-sm border-b last:border-b-0 ${
-            current[open] === opt
-              ? "bg-purple-50 text-purple-700"
-              : "hover:bg-gray-100"
-          }`}
-        >
-          {opt}
-        </button>
-      ))}
-    </div>
-  </div>
-)}
+          >
+            {/* handle */}
+            <div className="w-12 h-1.5 bg-gray-400/40 rounded-full mx-auto my-3" />
 
+            {filterOptions[open].map((opt) => (
+              <button
+                key={opt}
+                onClick={() => updateFilter(open, opt)}
+                className={`w-full px-4 py-3 text-left text-sm border-b last:border-b-0 ${
+                  current[open] === opt
+                    ? "bg-purple-50 text-purple-700"
+                    : "hover:bg-gray-100"
+                }`}
+              >
+                {opt}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
