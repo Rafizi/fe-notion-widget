@@ -133,11 +133,11 @@ export default function ClientViewComponent({
 
                 {/* MOBILE BOTTOM SHEET */}
                 <div
-                  className={`
+  onClick={(e) => e.stopPropagation()}
+  className={`
     sm:hidden
     fixed inset-x-0 bottom-0 z-50
-    h-[30dvh]
-    top-2
+    h-[70dvh]
     rounded-t-2xl
     shadow-2xl
     flex flex-col
@@ -147,7 +147,8 @@ export default function ClientViewComponent({
         : "bg-gray-900 border-gray-800"
     }
   `}
-                >
+>
+
                   {/* handle */}
                   <div className="w-12 h-1.5 bg-gray-400/40 rounded-full mx-auto my-3" />
 
