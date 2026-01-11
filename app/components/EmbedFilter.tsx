@@ -2,8 +2,8 @@
 
 import { ChevronDown, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
+import { useEffect, useState } from "react";
+
 const filterOptions = {
   platform: ["All Platform", "Instagram", "Tiktok", "Others"],
   status: ["All Status", "Not started", "In progress", "Done"],
@@ -86,70 +86,45 @@ export default function EmbedFilter() {
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-2 lg:grid-cols-3">
           {orderedKeys.map((key) => {
             const value = current[key];
-            const isOpen = open === key;
-            const btnRef = useRef<HTMLButtonElement | null>(null);
 
             return (
-              <div key={key} className="w-full">
+              <div key={key} className="w-full relative">
                 <button
-                  ref={btnRef}
-                  onClick={() => setOpen(isOpen ? null : key)}
-                  className={`
-          w-full px-3 py-1.5 sm:px-4 sm:py-2
-          rounded-lg flex items-center gap-2
-          border text-[13px] sm:text-sm transition
-          ${
-            isActive(key)
-              ? "bg-purple-50 border-purple-300 text-purple-700"
-              : "bg-gray-50 border-gray-300 text-gray-700 hover:bg-gray-100"
-          }
-        `}
+                  onClick={() => setOpen(open === key ? null : key)}
+                  className={`w-full px-3 py-2 rounded-lg flex items-center gap-2 border text-sm`}
                 >
                   <span className="truncate flex-1">{value}</span>
-                  <ChevronDown
-                    className={`w-4 h-4 transition ${
-                      isOpen ? "rotate-180" : ""
-                    }`}
-                  />
+                  <ChevronDown className="w-4 h-4" />
                 </button>
 
-                {/* ✅ DROPDOWN VIA PORTAL */}
-                {isOpen &&
-                  btnRef.current &&
-                  createPortal(
-                    <div
-                      style={{
-                        position: "fixed",
-                        top: btnRef.current.getBoundingClientRect().bottom + 6,
-                        left: btnRef.current.getBoundingClientRect().left,
-                        width: btnRef.current.getBoundingClientRect().width,
-                      }}
-                      className="
-              z-[9999]
-              bg-white
-              border
-              rounded-xl
-              shadow-xl
-              max-h-60
-              overflow-y-auto
-            "
-                    >
-                      {filterOptions[key].map((opt) => (
-                        <button
-                          key={opt}
-                          onClick={() => updateFilter(key, opt)}
-                          className={`w-full px-4 py-3 text-left text-sm ${
-                            current[key] === opt
-                              ? "bg-purple-50 text-purple-700"
-                              : "hover:bg-gray-100"
-                          }`}
-                        >
-                          {opt}
-                        </button>
-                      ))}
-                    </div>,
-                    document.body
-                  )}
+                {open === key && (
+                  <div
+                    className="
+        mt-2
+        w-full
+        rounded-xl
+        border
+        bg-white
+        max-h-[40dvh]
+        overflow-y-auto
+        shadow-lg
+      "
+                  >
+                    {filterOptions[key].map((opt) => (
+                      <button
+                        key={opt}
+                        onClick={() => updateFilter(key, opt)}
+                        className={`w-full px-4 py-3 text-left text-sm ${
+                          current[key] === opt
+                            ? "bg-purple-50 text-purple-700"
+                            : "hover:bg-gray-100"
+                        }`}
+                      >
+                        {opt}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             );
           })}
@@ -186,8 +161,6 @@ export default function EmbedFilter() {
           )}
         </div>
       )}
-
-      {/* MOBILE INLINE OPTIONS */}
     </div>
   );
 }
