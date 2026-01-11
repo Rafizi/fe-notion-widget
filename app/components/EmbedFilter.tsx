@@ -83,31 +83,59 @@ export default function EmbedFilter() {
   return (
     <div className="w-full">
       <div className="bg-white border border-gray-200 rounded-xl p-3 sm:p-4 space-y-3">
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-2 lg:grid-cols-3">
-          {orderedKeys.map((key) => {
-            const value = current[key];
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-2 lg:grid-cols-3 items-start">
 
-            return (
-              <div key={key} className="w-full">
-                <button
-                  onClick={() => setOpen(open === key ? null : key)}
-                  className={`
-                    w-full px-3 py-1.5 sm:px-4 sm:py-2
-                    rounded-lg flex items-center gap-2
-                    border text-[13px] sm:text-sm transition
-                    ${
-                      isActive(key)
-                        ? "bg-purple-50 border-purple-300 text-purple-700"
-                        : "bg-gray-50 border-gray-300 text-gray-700 hover:bg-gray-100"
-                    }
-                  `}
-                >
-                  <span className="truncate flex-1">{value}</span>
-                  <ChevronDown className="w-4 h-4 shrink-0" />
-                </button>
-              </div>
-            );
-          })}
+          {orderedKeys.map((key) => {
+  const value = current[key];
+  const isOpen = open === key;
+
+  return (
+    <div key={key} className="w-full">
+      {/* BUTTON */}
+      <button
+        onClick={() => setOpen(isOpen ? null : key)}
+        className={`
+          w-full px-3 py-1.5 sm:px-4 sm:py-2
+          rounded-lg flex items-center gap-2
+          border text-[13px] sm:text-sm transition
+          ${
+            isActive(key)
+              ? "bg-purple-50 border-purple-300 text-purple-700"
+              : "bg-gray-50 border-gray-300 text-gray-700 hover:bg-gray-100"
+          }
+        `}
+      >
+        <span className="truncate flex-1">{value}</span>
+        <ChevronDown
+          className={`w-4 h-4 transition ${
+            isOpen ? "rotate-180" : ""
+          }`}
+        />
+      </button>
+
+      {/* DROPDOWN INLINE */}
+      {isOpen && (
+        <div className="mt-2 rounded-lg border bg-white overflow-hidden">
+          {filterOptions[key].map((opt) => (
+            <button
+              key={opt}
+              onClick={() => updateFilter(key, opt)}
+              className={`w-full px-4 py-2 text-left text-sm border-b last:border-b-0
+                ${
+                  current[key] === opt
+                    ? "bg-purple-50 text-purple-700"
+                    : "hover:bg-gray-100"
+                }`}
+            >
+              {opt}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+})}
+
         </div>
 
         {activeCount > 0 && (
@@ -143,44 +171,7 @@ export default function EmbedFilter() {
       )}
 
       {/* ================= MODAL (MOBILE ONLY) ================= */}
-      {open && (
-        <div className="sm:hidden fixed inset-0 z-[60]">
-          {/* backdrop */}
-          <div
-            className="absolute inset-0 bg-black/40"
-            onClick={() => setOpen(null)}
-          />
-
-          {/* option list */}
-          <div
-            className="
-        absolute
-        left-1/2 top-1/2
-        -translate-x-1/2 -translate-y-1/2
-        w-[90vw]
-        max-h-[70dvh]
-        bg-white
-        rounded-2xl
-        overflow-y-auto
-        shadow-2xl
-      "
-          >
-            {filterOptions[open].map((opt) => (
-              <button
-                key={opt}
-                onClick={() => updateFilter(open, opt)}
-                className={`w-full px-4 py-3 text-left text-sm border-b last:border-b-0 ${
-                  current[open] === opt
-                    ? "bg-purple-50 text-purple-700"
-                    : "hover:bg-gray-100"
-                }`}
-              >
-                {opt}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
+      
     </div>
   );
 }
