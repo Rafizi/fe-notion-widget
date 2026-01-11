@@ -2,7 +2,7 @@
 
 import { ChevronDown, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const filterOptions = {
   platform: ["All Platform", "Instagram", "Tiktok", "Others"],
@@ -31,6 +31,9 @@ export default function EmbedFilter() {
   const router = useRouter();
   const params = useSearchParams();
   const [open, setOpen] = useState<string | null>(null);
+
+  const [position, setPosition] = useState<"top" | "bottom">("bottom");
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
 
   const current = {
     platform: params.get("platform") ?? defaultValue.platform,
@@ -96,19 +99,33 @@ export default function EmbedFilter() {
             const value = current[key];
 
             return (
-              <div key={key} className="w-full">
+              <div key={key} className="relative w-full">
                 <button
-                  onClick={() => setOpen(open === key ? null : key)}
+                  ref={triggerRef}
+                  onClick={() => {
+                    if (!triggerRef.current) return;
+
+                    const rect = triggerRef.current.getBoundingClientRect();
+                    const spaceBelow = window.innerHeight - rect.bottom;
+                    const spaceAbove = rect.top;
+
+                    setPosition(
+                      spaceBelow < 260 && spaceAbove > spaceBelow
+                        ? "top"
+                        : "bottom"
+                    );
+                    setOpen(open === key ? null : key);
+                  }}
                   className={`
-                    w-full px-3 py-1.5 sm:px-4 sm:py-2
-                    rounded-lg flex items-center gap-2
-                    border text-[13px] sm:text-sm transition
-                    ${
-                      isActive(key)
-                        ? "bg-purple-50 border-purple-300 text-purple-700"
-                        : "bg-gray-50 border-gray-300 text-gray-700 hover:bg-gray-100"
-                    }
-                  `}
+    w-full px-3 py-1.5 sm:px-4 sm:py-2
+    rounded-lg flex items-center gap-2
+    border text-[13px] sm:text-sm transition
+    ${
+      isActive(key)
+        ? "bg-purple-50 border-purple-300 text-purple-700"
+        : "bg-gray-50 border-gray-300 text-gray-700 hover:bg-gray-100"
+    }
+  `}
                 >
                   <span className="truncate flex-1">{value}</span>
                   <ChevronDown className="w-4 h-4 shrink-0" />
@@ -116,40 +133,37 @@ export default function EmbedFilter() {
 
                 {open === key && (
                   <>
-                    {/* 🔥 GLOBAL MODAL */}
-                    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
-                      {/* backdrop */}
-                      <div
-                        className="absolute inset-0 bg-black/40"
-                        onClick={() => setOpen(null)}
-                      />
+                    {/* CLICK OUTSIDE */}
+                    <div
+                      className="fixed inset-0 z-40"
+                      onClick={() => setOpen(null)}
+                    />
 
-                      {/* modal */}
-                      <div
-                        className="
-                          relative
-                          w-full max-w-sm
-                          bg-white
-                          rounded-2xl
-                          shadow-2xl
-                          max-h-[80dvh]
-                          overflow-y-auto
-                        "
-                      >
-                        {filterOptions[key].map((opt) => (
-                          <button
-                            key={opt}
-                            onClick={() => updateFilter(key, opt)}
-                            className={`w-full px-4 py-2 text-left text-sm ${
-                              value === opt
-                                ? "bg-purple-50 text-purple-700"
-                                : "hover:bg-gray-100"
-                            }`}
-                          >
-                            {opt}
-                          </button>
-                        ))}
-                      </div>
+                    {/* DROPDOWN */}
+                    <div
+                      className={`
+        absolute z-50 w-full max-w-sm
+        bg-white rounded-xl shadow-xl
+        max-h-[260px] overflow-y-auto
+        ${position === "bottom" ? "mt-2 top-full" : "mb-2 bottom-full"}
+      `}
+                    >
+                      {filterOptions[key].map((opt) => (
+                        <button
+                          key={opt}
+                          onClick={() => updateFilter(key, opt)}
+                          className={`
+            w-full px-4 py-2 text-left text-sm
+            ${
+              value === opt
+                ? "bg-purple-50 text-purple-700"
+                : "hover:bg-gray-100"
+            }
+          `}
+                        >
+                          {opt}
+                        </button>
+                      ))}
                     </div>
                   </>
                 )}
@@ -180,14 +194,8 @@ export default function EmbedFilter() {
                   className="flex items-center gap-2 px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm"
                 >
                   <span className="capitalize">{key}</span>
-                  <span className="truncate max-w-[120px]">
-                    {current[key]}
-                  </span>
-                  <button
-                    onClick={() =>
-                      updateFilter(key, defaultValue[key])
-                    }
-                  >
+                  <span className="truncate max-w-[120px]">{current[key]}</span>
+                  <button onClick={() => updateFilter(key, defaultValue[key])}>
                     <X className="w-3 h-3" />
                   </button>
                 </div>
