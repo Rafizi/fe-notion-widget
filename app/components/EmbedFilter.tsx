@@ -30,7 +30,7 @@ const orderedKeys = ["platform", "status", "pillar", "pinned"] as const;
 export default function EmbedFilter() {
   const router = useRouter();
   const params = useSearchParams();
-  const [open, setOpen] = useState<keyof typeof filterOptions | null>(null);
+  const [open, setOpen] = useState<string | null>(null);
 
   const current = {
     platform: params.get("platform") ?? defaultValue.platform,
@@ -44,10 +44,10 @@ export default function EmbedFilter() {
         : defaultValue.pinned,
   };
 
-  const updateFilter = (key: keyof typeof filterOptions, value: string) => {
+  const updateFilter = (key: string, value: string) => {
     const newParams = new URLSearchParams(params.toString());
 
-    if (value === defaultValue[key]) {
+    if (value === defaultValue[key as keyof typeof defaultValue]) {
       newParams.delete(key);
     } else {
       if (key === "pinned") {
@@ -68,6 +68,13 @@ export default function EmbedFilter() {
     setOpen(null);
   };
 
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "unset";
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [open]);
+
   const clearAll = () => {
     const newParams = new URLSearchParams();
     const db = params.get("db");
@@ -75,8 +82,9 @@ export default function EmbedFilter() {
     router.push(`?${newParams.toString()}`);
   };
 
-  const isActive = (key: keyof typeof defaultValue) =>
-    current[key] !== defaultValue[key];
+  const isActive = (key: string) =>
+    current[key as keyof typeof current] !==
+    defaultValue[key as keyof typeof defaultValue];
 
   const activeCount = orderedKeys.filter(isActive).length;
 
@@ -105,6 +113,46 @@ export default function EmbedFilter() {
                   <span className="truncate flex-1">{value}</span>
                   <ChevronDown className="w-4 h-4 shrink-0" />
                 </button>
+
+                {open === key && (
+                  <>
+                    {/* 🔥 GLOBAL MODAL */}
+                    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+                      {/* backdrop */}
+                      <div
+                        className="absolute inset-0 bg-black/40"
+                        onClick={() => setOpen(null)}
+                      />
+
+                      {/* modal */}
+                      <div
+                        className="
+                          relative
+                          w-full max-w-sm
+                          bg-white
+                          rounded-2xl
+                          shadow-2xl
+                          max-h-[80dvh]
+                          overflow-y-auto
+                        "
+                      >
+                        {filterOptions[key].map((opt) => (
+                          <button
+                            key={opt}
+                            onClick={() => updateFilter(key, opt)}
+                            className={`w-full px-4 py-2 text-left text-sm ${
+                              value === opt
+                                ? "bg-purple-50 text-purple-700"
+                                : "hover:bg-gray-100"
+                            }`}
+                          >
+                            {opt}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
             );
           })}
@@ -132,8 +180,14 @@ export default function EmbedFilter() {
                   className="flex items-center gap-2 px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm"
                 >
                   <span className="capitalize">{key}</span>
-                  <span className="truncate max-w-[120px]">{current[key]}</span>
-                  <button onClick={() => updateFilter(key, defaultValue[key])}>
+                  <span className="truncate max-w-[120px]">
+                    {current[key]}
+                  </span>
+                  <button
+                    onClick={() =>
+                      updateFilter(key, defaultValue[key])
+                    }
+                  >
                     <X className="w-3 h-3" />
                   </button>
                 </div>
@@ -141,45 +195,6 @@ export default function EmbedFilter() {
           )}
         </div>
       )}
-
-      {/* ================= MODAL (MOBILE ONLY) ================= */}
-      {open && (
-  <div className="sm:hidden   relative z-50">
-    {/* backdrop */}
-    <div
-      className="absolute inset-0 bg-black/30"
-      onClick={() => setOpen(null)}
-    />
-
-    {/* option list */}
-    <div
-      className="
-        absolute left-0 right-0
-        mt-4
-        bg-white
-        rounded-xl
-        max-h-[50dvh]
-        overflow-y-auto
-        shadow-xl
-      "
-    >
-      {filterOptions[open].map((opt) => (
-        <button
-          key={opt}
-          onClick={() => updateFilter(open, opt)}
-          className={`w-full px-4 py-3 text-left text-sm border-b ${
-            current[open] === opt
-              ? "bg-purple-50 text-purple-700"
-              : "hover:bg-gray-100"
-          }`}
-        >
-          {opt}
-        </button>
-      ))}
-    </div>
-  </div>
-)}
-
     </div>
   );
 }
