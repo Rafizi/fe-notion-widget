@@ -137,7 +137,7 @@ export default function ClientViewComponent({
     sm:hidden
     fixed inset-x-0 bottom-0 z-50
     max-h-[85dvh]
-    overflow-visible
+    overflow-hidden
     rounded-t-2xl
     shadow-2xl
     flex flex-col
