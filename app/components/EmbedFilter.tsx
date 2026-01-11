@@ -144,7 +144,7 @@ export default function EmbedFilter() {
 
       {/* ================= MODAL (MOBILE ONLY) ================= */}
       {open && (
-  <div className="sm:hidden relative ">
+  <div className="sm:hidden relative z-50">
     {/* backdrop */}
     <div
       className="absolute inset-0 bg-black/30"
