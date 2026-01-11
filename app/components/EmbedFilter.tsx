@@ -2,7 +2,7 @@
 
 import { ChevronDown, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const filterOptions = {
   platform: ["All Platform", "Instagram", "Tiktok", "Others"],
@@ -81,7 +81,7 @@ export default function EmbedFilter() {
   const activeCount = orderedKeys.filter(isActive).length;
 
   return (
-    <div className="w-full space-y-3">
+    <div className="w-full">
       <div className="bg-white border border-gray-200 rounded-xl p-3 sm:p-4 space-y-3">
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-2 lg:grid-cols-3">
           {orderedKeys.map((key) => {
@@ -105,36 +105,6 @@ export default function EmbedFilter() {
                   <span className="truncate flex-1">{value}</span>
                   <ChevronDown className="w-4 h-4 shrink-0" />
                 </button>
-
-                {/* ✅ MOBILE INLINE DROPDOWN */}
-                {open === key && (
-                  <div
-                    className="
-                      sm:hidden
-                      mt-2
-                      bg-white
-                      border
-                      rounded-xl
-                      shadow
-                      max-h-[40dvh]
-                      overflow-y-auto
-                    "
-                  >
-                    {filterOptions[key].map((opt) => (
-                      <button
-                        key={opt}
-                        onClick={() => updateFilter(key, opt)}
-                        className={`w-full px-4 py-3 text-left text-sm border-b last:border-0 ${
-                          current[key] === opt
-                            ? "bg-purple-50 text-purple-700"
-                            : "hover:bg-gray-100"
-                        }`}
-                      >
-                        {opt}
-                      </button>
-                    ))}
-                  </div>
-                )}
               </div>
             );
           })}
@@ -153,7 +123,7 @@ export default function EmbedFilter() {
       </div>
 
       {activeCount > 0 && (
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 mt-3">
           {orderedKeys.map(
             (key) =>
               isActive(key) && (
@@ -171,6 +141,47 @@ export default function EmbedFilter() {
           )}
         </div>
       )}
+
+      {/* ================= MODAL (MOBILE ONLY) ================= */}
+      {open && (
+  <div className="sm:hidden fixed inset-0 z-[60]">
+    {/* backdrop */}
+    <div
+      className="absolute inset-0 bg-black/40"
+      onClick={() => setOpen(null)}
+    />
+
+    {/* option list */}
+    <div
+      className="
+        absolute
+        left-1/2 top-1/2
+        -translate-x-1/2 -translate-y-1/2
+        w-[90vw]
+        max-h-[70dvh]
+        bg-white
+        rounded-2xl
+        overflow-y-auto
+        shadow-2xl
+      "
+    >
+      {filterOptions[open].map((opt) => (
+        <button
+          key={opt}
+          onClick={() => updateFilter(open, opt)}
+          className={`w-full px-4 py-3 text-left text-sm border-b last:border-b-0 ${
+            current[open] === opt
+              ? "bg-purple-50 text-purple-700"
+              : "hover:bg-gray-100"
+          }`}
+        >
+          {opt}
+        </button>
+      ))}
+    </div>
+  </div>
+)}
+
     </div>
   );
 }
