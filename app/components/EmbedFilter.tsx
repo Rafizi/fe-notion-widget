@@ -15,14 +15,14 @@ const filterOptions = {
     "Other",
     "Behind the Scenes",
   ],
-  pinned: ["Pinned", "Pinned Only", "Unpinned Only"],
+  pinned: ["All posts", "Pinned Only", "Unpinned Only"],
 };
 
 const defaultValue = {
   platform: "All Platform",
   status: "All Status",
   pillar: "All Pillars",
-  pinned: "Pinned",
+  pinned: "All posts",
 };
 
 const orderedKeys = ["platform", "status", "pillar", "pinned"] as const;
@@ -50,7 +50,7 @@ export default function EmbedFilter() {
     if (value === defaultValue[key as keyof typeof defaultValue]) {
       newParams.delete(key);
     } else {
-      if (key === "All Posts") {
+      if (key === "pinned") {
         newParams.set(
           key,
           value === "Pinned Only"
