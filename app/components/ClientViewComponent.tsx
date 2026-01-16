@@ -277,7 +277,7 @@ function HighlightSection({ highlights, theme }: any) {
 function VisualGrid({ filtered, gridColumns, theme, cardBg, onSelect }: any) {
   return (
     <div
-      className="grid gap-2"
+      className="grid gap-0.5"
       style={{
         gridTemplateColumns: `repeat(${gridColumns}, 1fr)`,
       }}
