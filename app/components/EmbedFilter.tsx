@@ -15,14 +15,14 @@ const filterOptions = {
     "Other",
     "Behind the Scenes",
   ],
-  pinned: ["All posts", "Pinned Only", "Unpinned Only"],
+  pinned: ["All Posts", "Pinned Only", "Unpinned Only"],
 };
 
 const defaultValue = {
   platform: "All Platform",
   status: "All Status",
   pillar: "All Pillars",
-  pinned: "All posts",
+  pinned: "All Posts",
 };
 
 const orderedKeys = ["platform", "status", "pillar", "pinned"] as const;
@@ -142,9 +142,7 @@ export default function EmbedFilter() {
                           `}
                         >
                           <span>{opt}</span>
-                          {value === opt && (
-                            <span className="text-xs">✓</span>
-                          )}
+                          {value === opt && <span className="text-xs">✓</span>}
                         </button>
                       ))}
                     </div>
@@ -177,12 +175,8 @@ export default function EmbedFilter() {
                   className="flex items-center gap-2 px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm"
                 >
                   <span className="capitalize">{key}</span>
-                  <span className="truncate max-w-[120px]">
-                    {current[key]}
-                  </span>
-                  <button
-                    onClick={() => updateFilter(key, defaultValue[key])}
-                  >
+                  <span className="truncate max-w-[120px]">{current[key]}</span>
+                  <button onClick={() => updateFilter(key, defaultValue[key])}>
                     <X className="w-3 h-3" />
                   </button>
                 </div>
