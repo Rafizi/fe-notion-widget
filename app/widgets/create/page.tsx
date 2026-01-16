@@ -13,7 +13,7 @@ import SelectDatabaseStep from "@/app/components/SelectDatabaseStep";
 
 // STEP COMPONENTS
 
-type WizardStep = 1 | 2 | 3 | 4 ;
+type WizardStep = 1 | 2 | 3;
 
 export default function CreateWidgetPageMerged() {
   const [step, setStep] = useState<WizardStep>(1);
@@ -27,6 +27,7 @@ export default function CreateWidgetPageMerged() {
   const [embedUrl, setEmbedUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const [showTokenInput, setShowTokenInput] = useState(false);
 
   const router = useRouter();
 
@@ -55,7 +56,7 @@ export default function CreateWidgetPageMerged() {
       if (!embedLink) return;
 
       setEmbedUrl(embedLink);
-      setStep(4);
+      setStep(3);
     } finally {
       setLoading(false);
     }
@@ -69,31 +70,28 @@ export default function CreateWidgetPageMerged() {
         {/* STEP INDICATOR */}
         <div className="flex justify-center mb-10">
           <div className="flex gap-8">
-            {[
-              "Setup",
-              "Create Token",
-              "Input Token & Select DB",
-              "Finish",
-            ].map((label, i) => {
-              const id = (i + 1) as WizardStep;
-              return (
-                <div key={id} className="flex items-center gap-2">
-                  <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center text-white
+            {["Setup", "Create Token", "Input Token & Select DB", "Finish"].map(
+              (label, i) => {
+                const id = (i + 1) as WizardStep;
+                return (
+                  <div key={id} className="flex items-center gap-2">
+                    <div
+                      className={`w-8 h-8 rounded-full flex items-center justify-center text-white
                       ${step === id ? "bg-purple-600" : "bg-gray-300"}`}
-                  >
-                    {id}
+                    >
+                      {id}
+                    </div>
+                    <span
+                      className={
+                        step === id ? "text-purple-600" : "text-gray-500"
+                      }
+                    >
+                      {label}
+                    </span>
                   </div>
-                  <span
-                    className={
-                      step === id ? "text-purple-600" : "text-gray-500"
-                    }
-                  >
-                    {label}
-                  </span>
-                </div>
-              );
-            })}
+                );
+              }
+            )}
           </div>
         </div>
 
@@ -101,32 +99,34 @@ export default function CreateWidgetPageMerged() {
         <div className="max-w-5xl mx-auto bg-gray-50 p-8 rounded-xl shadow">
           {step === 1 && <TemplateStep onConfirm={() => setStep(2)} />}
 
-          {step === 2 && <CreateTokenStep onNext={() => setStep(3)} />}
-
-          {step === 3 && (
-            <InputTokenStep
-              token={notionToken}
-              setToken={setNotionToken}
-              setTokenValid={setIsTokenValid}
-              onDbSelect={(id, name) => {
-                setDb(id);
-                setDbName(name);
-                handleGenerateWidget();
-              }}
-            />
+          {step === 2 && (
+            <>
+              {!showTokenInput ? (
+                <CreateTokenStep onNext={() => setShowTokenInput(true)} />
+              ) : (
+                <InputTokenStep
+                  token={notionToken}
+                  setToken={setNotionToken}
+                  setTokenValid={setIsTokenValid}
+                  onDbSelect={(id, name) => {
+                    setDb(id);
+                    setDbName(name);
+                    handleGenerateWidget();
+                  }}
+                />
+              )}
+            </>
           )}
 
-          
-
-          {step === 4 && (
+          {step === 3 && (
             <FinishStep
               db={db!}
               embedUrl={embedUrl}
               token={notionToken}
-              onBack={() => setStep(4)}
+              onBack={() => setStep(3)}
             />
           )}
-        </div>  
+        </div>
       </div>
     </>
   );
