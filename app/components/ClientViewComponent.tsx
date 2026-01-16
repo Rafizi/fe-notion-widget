@@ -115,12 +115,13 @@ export default function ClientViewComponent({
 
                 {/* DESKTOP / TABLET */}
                 <div
+                  onClick={(e) => e.stopPropagation()}
                   className={`
         hidden sm:block
-        fixed top-[64px] left-1/2 -translate-x-1/2
+        absolute top-full right-0 mt-2
         z-50
+        w-[360px] max-w-[90vw]
         rounded-xl border shadow-xl
-        max-w-[90vw]
         ${
           currentTheme === "light"
             ? "bg-white border-gray-200"
@@ -131,29 +132,25 @@ export default function ClientViewComponent({
                   <EmbedFilter />
                 </div>
 
-                {/* MOBILE BOTTOM SHEET */}
+                {/* MOBILE BOTTOM SHEET (AMAN, BIARIN) */}
                 <div
-  onClick={(e) => e.stopPropagation()}
-  className={`
-    sm:hidden
-    fixed inset-x-0 bottom-0 z-50
-    top-2
-    h-[35dvh]
-    rounded-t-2xl
-    shadow-2xl
-    flex flex-col
-    ${
-      currentTheme === "light"
-        ? "bg-white border-t border-gray-200"
-        : "bg-gray-900 border-gray-800"
-    }
-  `}
->
-
-                  {/* handle */}
+                  onClick={(e) => e.stopPropagation()}
+                  className={`
+        sm:hidden
+        fixed inset-x-0 bottom-0 z-50
+        top-2
+        h-[35dvh]
+        rounded-t-2xl
+        shadow-2xl
+        flex flex-col
+        ${
+          currentTheme === "light"
+            ? "bg-white border-t border-gray-200"
+            : "bg-gray-900 border-gray-800"
+        }
+      `}
+                >
                   <div className="w-12 h-1.5 bg-gray-400/40 rounded-full mx-auto my-3" />
-
-                  {/* scroll area */}
                   <div className="flex-1 overflow-y-auto px-3 pb-6">
                     <EmbedFilter />
                   </div>
