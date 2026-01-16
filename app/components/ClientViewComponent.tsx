@@ -61,7 +61,8 @@ export default function ClientViewComponent({
 
   /* ================= FILTER LOGIC ================= */
 
-  const filteredData = filtered.filter((item) => {
+  const filteredData = filtered
+  .filter((item) => {
     const platform = params.get("platform");
     const status = params.get("status");
     const pinned = params.get("pinned");
@@ -77,11 +78,16 @@ export default function ClientViewComponent({
     }
 
     if (pinned === "true" && props.Pinned?.checkbox !== true) return false;
-
     if (pinned === "false" && props.Pinned?.checkbox !== false) return false;
 
     return true;
+  })
+  .sort((a, b) => {
+    const aPinned = a.properties?.Pinned?.checkbox ? 1 : 0;
+    const bPinned = b.properties?.Pinned?.checkbox ? 1 : 0;
+    return bPinned - aPinned; // 🔥 pinned ke atas
   });
+
 
   /* ================= RENDER ================= */
 
