@@ -142,12 +142,12 @@ export default function ClientViewComponent({
 
             {openSetting && (
               <div
-                className={`absolute right-0 top-full mt-2 z-50 w-56 rounded-xl border shadow
-                ${
-                  currentTheme === "light"
-                    ? "bg-white border-gray-200"
-                    : "bg-[#1F2A3C] border-[#2A3550]"
-                }`}
+                className={`absolute right-0 top-full mt-2 z-50 w-56 rounded-xl border shadow overflow-hidden
+    ${
+      currentTheme === "light"
+        ? "bg-white border-gray-200"
+        : "bg-[#1F2A3C] border-[#2A3550]"
+    }`}
               >
                 <SettingToggle
                   theme={currentTheme}
@@ -155,12 +155,14 @@ export default function ClientViewComponent({
                   value={showBio}
                   onChange={() => setShowBio(!showBio)}
                 />
+
                 <SettingToggle
                   theme={currentTheme}
                   label="Show Highlight"
                   value={showHighlight}
                   onChange={() => setShowHighlight(!showHighlight)}
                 />
+
                 <SettingToggle
                   theme={currentTheme}
                   label="Dark Mode"
@@ -169,6 +171,31 @@ export default function ClientViewComponent({
                     setCurrentTheme((t) => (t === "light" ? "dark" : "light"))
                   }
                 />
+
+                {/* DIVIDER */}
+                <div
+                  className={`h-px my-1 ${
+                    currentTheme === "light" ? "bg-gray-200" : "bg-[#2A3550]"
+                  }`}
+                />
+
+                {/* 🔥 PRO BUTTON */}
+                <button
+                  onClick={() => {
+                    alert("Upgrade to PRO 🚀"); // nanti ganti ke modal / page pro
+                  }}
+                  className={`
+        w-full py-3 text-sm font-semibold
+        transition
+        ${
+          currentTheme === "light"
+            ? "text-purple-600 hover:bg-[#F9FAFB]"
+            : "text-purple-400 hover:bg-[#24304A]"
+        }
+      `}
+                >
+                  Upgrade to PRO version
+                </button>
               </div>
             )}
           </div>
