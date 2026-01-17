@@ -116,7 +116,7 @@ export default function EmbedFilter({
                           ? "bg-purple-50 border-purple-300 text-purple-700"
                           : "bg-purple-600/20 border-purple-500 text-purple-300"
                         : theme === "light"
-                        ? "bg-gray-50 border-gray-300 text-gray-700 hover:bg-gray-100"
+                        ? "bg-gray-50 border-gray-300 text-gray-700 hover:bg-[#F9FAFB]"
                         : "bg-[#24304A] border-[#2A3550] text-gray-200 hover:bg-[#2E3A55]"
                     }
                   `}
@@ -160,7 +160,7 @@ export default function EmbedFilter({
                                   ? "bg-purple-50 text-purple-700"
                                   : "bg-purple-600/20 text-purple-300"
                                 : theme === "light"
-                                ? "hover:bg-gray-100"
+                                ? "hover:bg-[#F9FAFB]"
                                 : "hover:bg-[#24304A]"
                             }
                           `}
@@ -183,7 +183,8 @@ export default function EmbedFilter({
               onClick={clearAll}
               className={`text-sm ${
                 theme === "light"
-                  ? "text-gray-500 hover:text-gray-900"
+                  ? "text-gray-500 hover:text-gray-700"
+
                   : "text-gray-400 hover:text-white"
               }`}
             >
