@@ -205,23 +205,35 @@ export default function ClientViewComponent({
 
 /* ================= UI ================= */
 
-function IconButton({ children, onClick }: any) {
+function IconButton({ children, onClick, theme }: any) {
   return (
     <button
       onClick={onClick}
-      className="w-9 h-9 flex items-center justify-center rounded-full border hover:bg-[#F9FAFB] dark:hover:bg-[#24304A]"
-
+      className={`w-9 h-9 flex items-center justify-center rounded-full border transition
+        ${
+          theme === "light"
+            ? "hover:bg-[#F9FAFB]"
+            : "hover:bg-[#24304A]"
+        }
+      `}
     >
       {children}
     </button>
   );
 }
 
-function SettingToggle({ label, value, onChange }: any) {
+
+function SettingToggle({ label, value, onChange, theme }: any) {
   return (
     <button
       onClick={onChange}
-      className="w-full px-4 py-3 flex items-center justify-between text-sm rounded-xl hover:bg-[#F9FAFB] dark:hover:bg-[#24304A]"
+     className={`w-full px-4 py-3 flex items-center justify-between text-sm rounded-xl transition
+  ${
+    theme === "light"
+      ? "hover:bg-[#F9FAFB]"
+      : "hover:bg-[#24304A]"
+  }
+`}
 
     >
       <span>{label}</span>
