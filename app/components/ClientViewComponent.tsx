@@ -55,45 +55,40 @@ export default function ClientViewComponent({
   }, [theme]);
 
   const bg =
-  currentTheme === "light"
-    ? "bg-white text-gray-900"
-    : "bg-[#1A2332] text-white";
+    currentTheme === "light"
+      ? "bg-white text-gray-900"
+      : "bg-[#1A2332] text-white";
 
-const cardBg =
-  currentTheme === "light"
-    ? "bg-white"
-    : "bg-[#1F2A3C]";
-
+  const cardBg = currentTheme === "light" ? "bg-white" : "bg-[#1F2A3C]";
 
   /* ================= FILTER LOGIC ================= */
 
   const filteredData = filtered
-  .filter((item) => {
-    const platform = params.get("platform");
-    const status = params.get("status");
-    const pinned = params.get("pinned");
+    .filter((item) => {
+      const platform = params.get("platform");
+      const status = params.get("status");
+      const pinned = params.get("pinned");
 
-    const props = item.properties;
+      const props = item.properties;
 
-    if (platform && platform !== "All Platform") {
-      if (props.Platform?.select?.name !== platform) return false;
-    }
+      if (platform && platform !== "All Platform") {
+        if (props.Platform?.select?.name !== platform) return false;
+      }
 
-    if (status && status !== "All Status") {
-      if (props.Status?.select?.name !== status) return false;
-    }
+      if (status && status !== "All Status") {
+        if (props.Status?.select?.name !== status) return false;
+      }
 
-    if (pinned === "true" && props.Pinned?.checkbox !== true) return false;
-    if (pinned === "false" && props.Pinned?.checkbox !== false) return false;
+      if (pinned === "true" && props.Pinned?.checkbox !== true) return false;
+      if (pinned === "false" && props.Pinned?.checkbox !== false) return false;
 
-    return true;
-  })
-  .sort((a, b) => {
-    const aPinned = a.properties?.Pinned?.checkbox ? 1 : 0;
-    const bPinned = b.properties?.Pinned?.checkbox ? 1 : 0;
-    return bPinned - aPinned; // 🔥 pinned ke atas
-  });
-
+      return true;
+    })
+    .sort((a, b) => {
+      const aPinned = a.properties?.Pinned?.checkbox ? 1 : 0;
+      const bPinned = b.properties?.Pinned?.checkbox ? 1 : 0;
+      return bPinned - aPinned; // 🔥 pinned ke atas
+    });
 
   /* ================= RENDER ================= */
 
@@ -103,9 +98,8 @@ const cardBg =
       <header
         className={`sticky top-0 z-40 px-4 py-3 flex items-center justify-between border-b backdrop-blur ${
           currentTheme === "light"
-  ? "bg-white/80 border-gray-200"
-  : "bg-[#1A2332]/90 border-[#2A3550]"
-
+            ? "bg-white/80 border-gray-200"
+            : "bg-[#1A2332]/90 border-[#2A3550]"
         }`}
       >
         <span className="font-semibold text-sm">khaslify</span>
@@ -123,19 +117,17 @@ const cardBg =
             {showFilterBar && (
               <div
                 className={`
-      absolute right-0 top-full mt-2 z-50
-      w-[260px] sm:w-[320px] md:w-[520px]
-      rounded-xl border shadow-lg p-4
-      ${
-        currentTheme === "light"
-  ? "bg-white border-gray-200"
-  : "bg-[#1F2A3C] border-[#2A3550]"
-
-      }
-    `}
+                     absolute right-0 top-full mt-2 z-50
+                          w-[260px] sm:w-[320px] md:w-[520px]
+                               rounded-xl border shadow-lg p-4
+                                   ${
+                                     currentTheme === "light"
+                                       ? "bg-white border-gray-200"
+                                       : "bg-[#1F2A3C] border-[#2A3550]"
+                                   }
+                                       `}
               >
                 <EmbedFilter theme={currentTheme} />
-
               </div>
             )}
           </div>
@@ -146,34 +138,41 @@ const cardBg =
         </div>
       </header>
 
-      {openSetting && (
-        <div
-          className={`absolute right-4 top-14 z-50 w-56 rounded-xl border shadow ${
-           currentTheme === "light"
-  ? "bg-white border-gray-200"
-  : "bg-[#1F2A3C] border-[#2A3550]"
+      <div className="relative">
+        <IconButton onClick={() => setOpenSetting((s) => !s)}>
+          <Settings size={16} />
+        </IconButton>
 
-          }`}
-        >
-          <SettingToggle
-            label="Show Bio"
-            value={showBio}
-            onChange={() => setShowBio(!showBio)}
-          />
-          <SettingToggle
-            label="Show Highlight"
-            value={showHighlight}
-            onChange={() => setShowHighlight(!showHighlight)}
-          />
-          <SettingToggle
-            label="Dark Mode"
-            value={currentTheme === "dark"}
-            onChange={() =>
-              setCurrentTheme((t) => (t === "light" ? "dark" : "light"))
-            }
-          />
-        </div>
-      )}
+        {openSetting && (
+          <div
+            className={`absolute right-0 top-full mt-2 z-50 w-56 rounded-xl border shadow
+        ${
+          currentTheme === "light"
+            ? "bg-white border-gray-200"
+            : "bg-[#1F2A3C] border-[#2A3550]"
+        }
+      `}
+          >
+            <SettingToggle
+              label="Show Bio"
+              value={showBio}
+              onChange={() => setShowBio(!showBio)}
+            />
+            <SettingToggle
+              label="Show Highlight"
+              value={showHighlight}
+              onChange={() => setShowHighlight(!showHighlight)}
+            />
+            <SettingToggle
+              label="Dark Mode"
+              value={currentTheme === "dark"}
+              onChange={() =>
+                setCurrentTheme((t) => (t === "light" ? "dark" : "light"))
+              }
+            />
+          </div>
+        )}
+      </div>
 
       {/* ================= CONTENT ================= */}
       <div className="p-5 space-y-6">
@@ -255,9 +254,8 @@ function BioSection({ profile, theme }: any) {
     <section
       className={`border rounded-2xl p-4 flex gap-4 ${
         theme === "light"
-  ? "bg-white border-gray-200"
-  : "bg-[#1F2A3C] border-[#2A3550]"
-
+          ? "bg-white border-gray-200"
+          : "bg-[#1F2A3C] border-[#2A3550]"
       }`}
     >
       <div className="w-16 h-16 rounded-full bg-gray-300" />
@@ -276,9 +274,8 @@ function HighlightSection({ highlights, theme }: any) {
     <section
       className={`border rounded-2xl p-4 ${
         theme === "light"
-  ? "bg-gray-50 border-gray-200"
-  : "bg-[#1F2A3C] border-[#2A3550]"
-
+          ? "bg-gray-50 border-gray-200"
+          : "bg-[#1F2A3C] border-[#2A3550]"
       }`}
     >
       <div className="flex gap-3 overflow-x-auto">
@@ -356,10 +353,9 @@ function DetailModal({ item, theme, onClose }: any) {
       <div
         onClick={(e) => e.stopPropagation()}
         className={`w-full max-w-5xl rounded-2xl overflow-hidden ${
-         theme === "light"
-  ? "bg-gray-50 border-gray-200"
-  : "bg-[#1F2A3C] border-[#2A3550]"
-
+          theme === "light"
+            ? "bg-gray-50 border-gray-200"
+            : "bg-[#1F2A3C] border-[#2A3550]"
         }`}
       >
         <button
