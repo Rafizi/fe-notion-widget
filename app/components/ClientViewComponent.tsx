@@ -106,12 +106,12 @@ export default function ClientViewComponent({
         <div className="flex items-center gap-2">
           <RefreshButton theme={currentTheme} />
 
-
           {/* FILTER */}
           <div className="relative">
-            <IconButton 
-            theme={currentTheme}
-            onClick={() => setShowFilterBar((s) => !s)}>
+            <IconButton
+              theme={currentTheme}
+              onClick={() => setShowFilterBar((s) => !s)}
+            >
               <Menu size={16} />
             </IconButton>
 
@@ -133,9 +133,10 @@ export default function ClientViewComponent({
 
           {/* SETTINGS ✅ FIXED */}
           <div className="relative">
-            <IconButton 
-            theme={currentTheme}
-            onClick={() => setOpenSetting((s) => !s)}>
+            <IconButton
+              theme={currentTheme}
+              onClick={() => setOpenSetting((s) => !s)}
+            >
               <Settings size={16} />
             </IconButton>
 
@@ -165,9 +166,7 @@ export default function ClientViewComponent({
                   label="Dark Mode"
                   value={currentTheme === "dark"}
                   onChange={() =>
-                    setCurrentTheme((t) =>
-                      t === "light" ? "dark" : "light"
-                    )
+                    setCurrentTheme((t) => (t === "light" ? "dark" : "light"))
                   }
                 />
               </div>
@@ -218,11 +217,7 @@ function IconButton({ children, onClick, theme }: any) {
     <button
       onClick={onClick}
       className={`w-9 h-9 flex items-center justify-center rounded-full border transition
-        ${
-          theme === "light"
-            ? "hover:bg-[#F9FAFB]"
-            : "hover:bg-[#24304A]"
-        }
+        ${theme === "light" ? "hover:bg-[#F9FAFB]" : "hover:bg-[#24304A]"}
       `}
     >
       {children}
@@ -230,19 +225,13 @@ function IconButton({ children, onClick, theme }: any) {
   );
 }
 
-
 function SettingToggle({ label, value, onChange, theme }: any) {
   return (
     <button
       onClick={onChange}
-     className={`w-full px-4 py-3 flex items-center justify-between text-sm rounded-xl transition
-  ${
-    theme === "light"
-      ? "hover:bg-[#F9FAFB]"
-      : "hover:bg-[#24304A]"
-  }
+      className={`w-full px-4 py-3 flex items-center justify-between text-sm rounded-xl transition
+  ${theme === "light" ? "hover:bg-[#F9FAFB]" : "hover:bg-[#24304A]"}
 `}
-
     >
       <span>{label}</span>
       <span
@@ -323,8 +312,15 @@ function VisualGrid({ filtered, gridColumns, theme, cardBg, onSelect }: any) {
             className={`relative group overflow-hidden aspect-[4/5] cursor-pointer hover:-translate-y-1 transition ${cardBg}`}
           >
             {pinned && (
-              <Pin className="absolute top-3 right-3 text-yellow-400 z-10" />
+              <div className="absolute top-2.5 right-2.5 z-10">
+                <Pin
+                  size={14}
+                  className="text-white drop-shadow-sm"
+                  strokeWidth={2.2}
+                />
+              </div>
             )}
+
             <AutoThumbnail src={image} />
           </div>
         );
