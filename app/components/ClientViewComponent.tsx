@@ -331,7 +331,6 @@ function VisualGrid({ filtered, gridColumns, theme, cardBg, onSelect }: any) {
   return (
     <div
       className="grid gap-px"
-
       style={{ gridTemplateColumns: `repeat(${gridColumns}, 1fr)` }}
     >
       {filtered.map((item: any, i: number) => {
@@ -347,12 +346,13 @@ function VisualGrid({ filtered, gridColumns, theme, cardBg, onSelect }: any) {
             className={`relative group overflow-hidden aspect-[4/5] cursor-pointer hover:-translate-y-1 transition ${cardBg}`}
           >
             {pinned && (
-              <div className="absolute top-2.5 right-2.5 z-10">
-                <Pin
-                  size={14}
-                  className="text-white drop-shadow-sm"
-                  strokeWidth={2.2}
-                />
+              <div
+                className="absolute top-2.5 right-2.5 z-10
+                  w-6 h-6 rounded-full
+                  bg-black/40
+                  flex items-center justify-center"
+              >
+                <Pin size={13} className="text-white" strokeWidth={2.2} />
               </div>
             )}
 
