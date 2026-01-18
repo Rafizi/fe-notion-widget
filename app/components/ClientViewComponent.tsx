@@ -224,13 +224,15 @@ export default function ClientViewComponent({
         )}
 
         {viewMode === "visual" && (
-          <VisualGrid
-            filtered={filteredData}
-            gridColumns={gridColumns}
-            theme={currentTheme}
-            cardBg={cardBg}
-            onSelect={setSelectedItem}
-          />
+          <div className="-mx-5">
+            <VisualGrid
+              filtered={filteredData}
+              gridColumns={gridColumns}
+              theme={currentTheme}
+              cardBg={cardBg}
+              onSelect={setSelectedItem}
+            />
+          </div>
         )}
       </div>
 
@@ -328,7 +330,8 @@ function HighlightSection({ highlights, theme }: any) {
 function VisualGrid({ filtered, gridColumns, theme, cardBg, onSelect }: any) {
   return (
     <div
-      className="grid gap-0.5"
+      className="grid gap-px"
+
       style={{ gridTemplateColumns: `repeat(${gridColumns}, 1fr)` }}
     >
       {filtered.map((item: any, i: number) => {
