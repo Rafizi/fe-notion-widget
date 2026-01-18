@@ -93,103 +93,109 @@ export default function EmbedFilter({
   const activeCount = orderedKeys.filter(isActive).length;
 
   return (
-    <div className="w-full space-y-3">
-      {/* FILTER GRID */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-        {orderedKeys.map((key) => {
-          const value = current[key];
+    <div className="w-full">
+      <div
+        className={`rounded-xl p-3 sm:p-4 space-y-3 border ${
+          theme === "light"
+            ? "bg-white border-gray-200"
+            : "bg-[#1F2A3C] border-[#2A3550] text-white"
+        }`}
+      >
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+          {orderedKeys.map((key) => {
+            const value = current[key];
 
-          return (
-            <div key={key} className="relative w-full">
-              <button
-                onClick={() => setOpen(open === key ? null : key)}
-                className={`w-full px-3 py-2 rounded-lg flex items-center gap-2 border text-sm transition
-                  ${
-                    isActive(key)
-                      ? theme === "light"
-                        ? "bg-purple-50 border-purple-300 text-purple-700"
-                        : "bg-purple-600/20 border-purple-500 text-purple-300"
-                      : theme === "light"
-                      ? "bg-gray-50 border-gray-300 text-gray-700 hover:bg-[#F9FAFB]"
-                      : "bg-[#24304A] border-[#2A3550] text-gray-200 hover:bg-[#2E3A55]"
-                  }
-                `}
-              >
-                <span className="truncate flex-1">{value}</span>
-                <ChevronDown className="w-4 h-4 shrink-0" />
-              </button>
+            return (
+              <div key={key} className="relative w-full">
+                <button
+                  onClick={() => setOpen(open === key ? null : key)}
+                  className={`w-full px-3 py-2 rounded-lg flex items-center gap-2 border text-sm transition
+                    ${
+                      isActive(key)
+                        ? theme === "light"
+                          ? "bg-purple-50 border-purple-300 text-purple-700"
+                          : "bg-purple-600/20 border-purple-500 text-purple-300"
+                        : theme === "light"
+                        ? "bg-gray-50 border-gray-300 text-gray-700 hover:bg-[#F9FAFB]"
+                        : "bg-[#24304A] border-[#2A3550] text-gray-200 hover:bg-[#2E3A55]"
+                    }
+                  `}
+                >
+                  <span className="truncate flex-1">{value}</span>
+                  <ChevronDown className="w-4 h-4 shrink-0" />
+                </button>
 
-              {open === key && (
-                <>
-                  <div
-                    className="fixed inset-0 z-40"
-                    onClick={() => setOpen(null)}
-                  />
-
-                  <div
-                    className={`absolute z-50 mt-2 w-56 rounded-xl border shadow-lg overflow-hidden ${
-                      theme === "light"
-                        ? "bg-white border-gray-200"
-                        : "bg-[#1F2A3C] border-[#2A3550]"
-                    }`}
-                  >
+                {open === key && (
+                  <>
                     <div
-                      className={`px-4 py-2 text-xs font-semibold border-b ${
+                      className="fixed inset-0 z-40"
+                      onClick={() => setOpen(null)}
+                    />
+
+                    <div
+                      className={`absolute z-50 mt-2 w-56 rounded-xl border shadow-lg overflow-hidden ${
                         theme === "light"
-                          ? "text-gray-400 border-gray-200"
-                          : "text-gray-400 border-[#2A3550]"
+                          ? "bg-white border-gray-200"
+                          : "bg-[#1F2A3C] border-[#2A3550]"
                       }`}
                     >
-                      {key.toUpperCase()}
-                    </div>
-
-                    {filterOptions[key].map((opt) => (
-                      <button
-                        key={opt}
-                        onClick={() => updateFilter(key, opt)}
-                        className={`w-full px-4 py-3 flex items-center justify-between text-sm
-                          ${
-                            value === opt
-                              ? theme === "light"
-                                ? "bg-purple-50 text-purple-700"
-                                : "bg-purple-600/20 text-purple-300"
-                              : theme === "light"
-                              ? "hover:bg-[#F9FAFB]"
-                              : "hover:bg-[#24304A]"
-                          }
-                        `}
+                      <div
+                        className={`px-4 py-2 text-xs font-semibold border-b ${
+                          theme === "light"
+                            ? "text-gray-400 border-gray-200"
+                            : "text-gray-400 border-[#2A3550]"
+                        }`}
                       >
-                        <span>{opt}</span>
-                        {value === opt && <span className="text-xs">✓</span>}
-                      </button>
-                    ))}
-                  </div>
-                </>
-              )}
-            </div>
-          );
-        })}
+                        {key.toUpperCase()}
+                      </div>
+
+                      {filterOptions[key].map((opt) => (
+                        <button
+                          key={opt}
+                          onClick={() => updateFilter(key, opt)}
+                          className={`w-full px-4 py-3 flex items-center justify-between text-sm
+                            ${
+                              value === opt
+                                ? theme === "light"
+                                  ? "bg-purple-50 text-purple-700"
+                                  : "bg-purple-600/20 text-purple-300"
+                                : theme === "light"
+                                ? "hover:bg-[#F9FAFB]"
+                                : "hover:bg-[#24304A]"
+                            }
+                          `}
+                        >
+                          <span>{opt}</span>
+                          {value === opt && <span className="text-xs">✓</span>}
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {activeCount > 0 && (
+          <div className="flex justify-end">
+            <button
+              onClick={clearAll}
+              className={`text-sm ${
+                theme === "light"
+                  ? "text-gray-500 hover:text-gray-700"
+
+                  : "text-gray-400 hover:text-white"
+              }`}
+            >
+              Clear all
+            </button>
+          </div>
+        )}
       </div>
 
-      {/* CLEAR ALL */}
       {activeCount > 0 && (
-        <div className="flex justify-end">
-          <button
-            onClick={clearAll}
-            className={`text-sm ${
-              theme === "light"
-                ? "text-gray-500 hover:text-gray-700"
-                : "text-gray-400 hover:text-white"
-            }`}
-          >
-            Clear all
-          </button>
-        </div>
-      )}
-
-      {/* ACTIVE TAGS */}
-      {activeCount > 0 && (
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 mt-3">
           {orderedKeys.map(
             (key) =>
               isActive(key) && (
