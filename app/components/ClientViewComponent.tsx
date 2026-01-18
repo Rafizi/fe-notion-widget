@@ -226,7 +226,7 @@ export default function ClientViewComponent({
       </div>
 
       {viewMode === "visual" && (
-        <div className="-mx-5">
+        <div className="mt-2 -mx-5">
           <VisualGrid
             filtered={filteredData}
             gridColumns={gridColumns}
