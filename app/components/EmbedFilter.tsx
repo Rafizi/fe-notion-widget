@@ -192,9 +192,8 @@ export default function EmbedFilter({
             </button>
           </div>
         )}
-      </div>
 
-      {activeCount > 0 && (
+        {activeCount > 0 && (
         <div className="flex flex-wrap gap-2 mt-3">
           {orderedKeys.map(
             (key) =>
@@ -221,6 +220,9 @@ export default function EmbedFilter({
           )}
         </div>
       )}
+      </div>
+
+      
     </div>
   );
 }
