@@ -105,11 +105,12 @@ export default function ClientViewComponent({
 
   return (
     <main className={`${bg} min-h-screen w-full overflow-x-hidden`}>
+      <div className="max-w-7xl mx-auto">
       {/* ================= HEADER ================= */}
       <header
-        className={`sticky top-0 z-40 px-4 py-3 flex items-center justify-between border-b backdrop-blur ${
+        className={`sticky top-0 z-40 px-5 py-3 flex items-center justify-between border-b backdrop-blur ${
           currentTheme === "light"
-            ? "bg-white/80 border-gray-200"
+          ? "bg-white/80 border-gray-200"
             : "bg-[#1A2332]/90 border-[#2A3550]"
         }`}
       >
@@ -157,7 +158,7 @@ export default function ClientViewComponent({
                 className={`absolute right-0 top-full mt-2 z-50 w-56 rounded-xl border shadow overflow-hidden
       ${
         currentTheme === "light"
-          ? "bg-white border-gray-200"
+        ? "bg-white border-gray-200"
           : "bg-[#1F2A3C] border-[#2A3550]"
       }`}
               >
@@ -202,14 +203,14 @@ export default function ClientViewComponent({
                       alert("Open customize bio");
                     }}
                     className={`
-      w-full py-3 text-sm font-semibold
+                      w-full py-3 text-sm font-semibold
       transition
       ${
         currentTheme === "light"
           ? "text-purple-600 hover:bg-[#F9FAFB]"
           : "text-purple-400 hover:bg-[#24304A]"
       }
-    `}
+      `}
                   >
                     Click here to customize your bio
                   </button>
@@ -245,7 +246,7 @@ export default function ClientViewComponent({
 
         {showHighlight && profile?.highlights && (
           <HighlightSection
-            highlights={profile.highlights}
+          highlights={profile.highlights}
             theme={currentTheme}
           />
         )}
@@ -288,8 +289,8 @@ export default function ClientViewComponent({
       from-black/60
       via-black/30
       to-transparent
-    "
-              />
+      "
+      />
 
               {/* content */}
               <div className="relative mb-6 text-center pointer-events-auto">
@@ -310,11 +311,12 @@ export default function ClientViewComponent({
 
       {selectedItem && (
         <DetailModal
-          item={selectedItem}
-          theme={currentTheme}
-          onClose={() => setSelectedItem(null)}
+        item={selectedItem}
+        theme={currentTheme}
+        onClose={() => setSelectedItem(null)}
         />
       )}
+        </div>
     </main>
   );
 }
