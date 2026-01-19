@@ -49,7 +49,7 @@ export default function ClientViewComponent({
   const [openSetting, setOpenSetting] = useState(false);
 
   const params = useSearchParams();
-  const isPro = true; // 🔥 ganti true kalau akun PRO
+  const isPro = false; // 🔥 ganti true kalau akun PRO
 
   useEffect(() => {
     setCurrentTheme(theme);
@@ -301,17 +301,18 @@ export default function ClientViewComponent({
                 />
 
                 {/* content */}
-                <div className="relative mb-5 text-center pointer-events-auto">
-  <p className="text-white text-[13px] font-semibold mb-1.5">
+                <div className="relative mb-4.5 text-center pointer-events-auto">
+  <p className="text-white text-[12px] font-medium mb-1">
     You’ve reached the free limit
   </p>
   <button
     onClick={() => alert("Upgrade to PRO")}
-    className="px-4.5 py-1.5 rounded-full bg-purple-600 text-white text-[13px] font-semibold hover:bg-purple-700 transition"
+    className="px-4 py-1.25 rounded-full bg-purple-600 text-white text-[12px] font-semibold hover:bg-purple-700 transition"
   >
     Upgrade to PRO
   </button>
 </div>
+
 
               </div>
             )}
