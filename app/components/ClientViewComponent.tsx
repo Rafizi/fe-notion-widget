@@ -106,6 +106,7 @@ export default function ClientViewComponent({
   return (
     <main className={`${bg} min-h-screen w-full overflow-x-hidden`}>
       <div className="max-w-7xl mx-auto px-5">
+
         {/* ================= HEADER ================= */}
         <header
           className={`sticky top-0 z-40 border-b backdrop-blur
@@ -300,17 +301,18 @@ export default function ClientViewComponent({
                 />
 
                 {/* content */}
-                <div className="relative mb-4 text-center pointer-events-auto scale-90">
-                  <p className="text-white text-xs font-medium mb-1">
-                    You’ve reached the free limit
-                  </p>
-                  <button
-                    onClick={() => alert("Upgrade to PRO")}
-                    className="px-4 py-1.5 rounded-full bg-purple-600 text-white text-xs font-semibold hover:bg-purple-700 transition"
-                  >
-                    Upgrade to PRO
-                  </button>
-                </div>
+                <div className="relative mb-5 text-center pointer-events-auto">
+  <p className="text-white text-[13px] font-semibold mb-1.5">
+    You’ve reached the free limit
+  </p>
+  <button
+    onClick={() => alert("Upgrade to PRO")}
+    className="px-4.5 py-1.5 rounded-full bg-purple-600 text-white text-[13px] font-semibold hover:bg-purple-700 transition"
+  >
+    Upgrade to PRO
+  </button>
+</div>
+
               </div>
             )}
           </div>
