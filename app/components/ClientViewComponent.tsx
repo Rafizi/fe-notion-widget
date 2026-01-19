@@ -104,16 +104,18 @@ export default function ClientViewComponent({
   /* ================= RENDER ================= */
 
   return (
-    <main className={`${bg} min-h-screen w-full`}>
+    <main className={`${bg} min-h-screen w-full overflow-x-hidden`}>
+
       {/* ================= HEADER ================= */}
       <header
-        className={`sticky top-0 z-40 px-4 py-3 flex items-center justify-between border-b backdrop-blur ${
-          currentTheme === "light"
-            ? "bg-white/80 border-gray-200"
-            : "bg-[#1A2332]/90 border-[#2A3550]"
-        }`}
+          className={`sticky top-0 z-40 border-b backdrop-blur
+    ${currentTheme === "light"
+      ? "bg-white/80 border-gray-200"
+      : "bg-[#1A2332]/90 border-[#2A3550]"
+    }`}
+
       >
-        <div className="flex items-center gap-2">
+        <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
           <Image
             src="/logo-primary.png"
             alt="Khlasify"
@@ -238,7 +240,8 @@ export default function ClientViewComponent({
       </header>
 
       {/* ================= CONTENT ================= */}
-      <div className="px-5 pb-5">
+     <div className="mx-auto max-w-6xl px-4 pb-5">
+
         {showBio && profile && (
           <BioSection profile={profile} theme={currentTheme} />
         )}
@@ -252,7 +255,8 @@ export default function ClientViewComponent({
       </div>
 
       {viewMode === "visual" && (
-        <div className="-mx-5 relative">
+        <div className="mx-auto max-w-6xl px-4 relative">
+
           <VisualGrid
             filtered={visibleData}
             gridColumns={gridColumns}
