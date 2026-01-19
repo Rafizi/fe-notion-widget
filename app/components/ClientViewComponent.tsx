@@ -130,7 +130,7 @@ export default function ClientViewComponent({
 
             {showFilterBar && (
               <div className="absolute right-0 top-full mt-2 z-50 w-56">
-                <EmbedFilter theme={currentTheme} />
+                <EmbedFilter theme={currentTheme}  isPro={isPro}/>
               </div>
             )}
           </div>
