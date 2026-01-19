@@ -95,6 +95,12 @@ export default function ClientViewComponent({
       return bPinned - aPinned;
     });
 
+  const LIMIT_FREE = 9;
+
+  const isLimited = !isPro && filteredData.length > LIMIT_FREE;
+
+  const visibleData = isPro ? filteredData : filteredData.slice(0, LIMIT_FREE);
+
   /* ================= RENDER ================= */
 
   return (
@@ -246,9 +252,9 @@ export default function ClientViewComponent({
       </div>
 
       {viewMode === "visual" && (
-        <div className="-mx-5">
+        <div className="-mx-5 relative">
           <VisualGrid
-            filtered={filteredData}
+            filtered={visibleData}
             gridColumns={gridColumns}
             theme={currentTheme}
             cardBg={cardBg}
@@ -260,6 +266,30 @@ export default function ClientViewComponent({
               setSelectedItem(item);
             }}
           />
+
+          {/* 🔒 FREE LIMIT OVERLAY */}
+          {isLimited && (
+            <div
+              className="pointer-events-none absolute bottom-0 left-0 w-full h-40
+        bg-gradient-to-t
+        from-black/80 via-black/40 to-transparent
+        backdrop-blur-sm
+        flex items-end justify-center
+      "
+            >
+              <div className="mb-6 text-center pointer-events-auto">
+                <p className="text-white text-sm font-semibold mb-2">
+                  You’ve reached the free limit
+                </p>
+                <button
+                  onClick={() => alert("Upgrade to PRO")}
+                  className="px-5 py-2 rounded-full bg-purple-600 text-white text-sm font-semibold hover:bg-purple-700 transition"
+                >
+                  Upgrade to PRO
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
