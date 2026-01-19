@@ -105,17 +105,15 @@ export default function ClientViewComponent({
 
   return (
     <main className={`${bg} min-h-screen w-full overflow-x-hidden`}>
-
       {/* ================= HEADER ================= */}
       <header
-          className={`sticky top-0 z-40 border-b backdrop-blur
-    ${currentTheme === "light"
-      ? "bg-white/80 border-gray-200"
-      : "bg-[#1A2332]/90 border-[#2A3550]"
-    }`}
-
+        className={`sticky top-0 z-40 px-4 py-3 flex items-center justify-between border-b backdrop-blur ${
+          currentTheme === "light"
+            ? "bg-white/80 border-gray-200"
+            : "bg-[#1A2332]/90 border-[#2A3550]"
+        }`}
       >
-        <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-2">
           <Image
             src="/logo-primary.png"
             alt="Khlasify"
@@ -240,8 +238,7 @@ export default function ClientViewComponent({
       </header>
 
       {/* ================= CONTENT ================= */}
-     <div className="mx-auto max-w-6xl px-4 pb-5">
-
+      <div className="px-5 pb-5 space-y-4 sm:space-y-6">
         {showBio && profile && (
           <BioSection profile={profile} theme={currentTheme} />
         )}
@@ -255,8 +252,7 @@ export default function ClientViewComponent({
       </div>
 
       {viewMode === "visual" && (
-        <div className="mx-auto max-w-6xl px-4 relative">
-
+        <div className="relative px-5">
           <VisualGrid
             filtered={visibleData}
             gridColumns={gridColumns}
@@ -411,9 +407,11 @@ function HighlightSection({ highlights, theme }: any) {
 function VisualGrid({ filtered, gridColumns, theme, cardBg, onSelect }: any) {
   return (
     <div
-      className="grid gap-px"
-      style={{ gridTemplateColumns: `repeat(${gridColumns}, 1fr)` }}
-    >
+  className="grid gap-px"
+  style={{
+    gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+  }}
+>
       {filtered.map((item: any, i: number) => {
         const name =
           item.properties?.Name?.title?.[0]?.plain_text || "Untitled";
@@ -478,7 +476,11 @@ function DetailModal({ item, theme, onClose }: any) {
 
         <div className="flex flex-col lg:flex-row">
           <div className="lg:w-2/3 bg-black flex items-center justify-center">
-            <img src={image} alt={name} className="object-contain h-full" />
+            <img
+              src={image}
+              alt={name}
+              className="object-contain max-w-full max-h-[80vh]"
+            />
           </div>
         </div>
       </div>
