@@ -101,7 +101,7 @@ export default function EmbedFilter({
             : "bg-[#1F2A3C] border-[#2A3550] text-white"
         }`}
       >
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+        <div className="grid grid-cols-1 ">
           {orderedKeys.map((key) => {
             const value = current[key];
 
