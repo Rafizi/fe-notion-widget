@@ -129,12 +129,7 @@ export default function ClientViewComponent({
             </IconButton>
 
             {showFilterBar && (
-              <div
-                className="
-      absolute right-0 top-full mt-2 z-50
-      w-[260px] sm:w-[320px] md:w-[520px]
-    "
-              >
+              <div className="absolute right-0 top-full mt-2 z-50 w-56">
                 <EmbedFilter theme={currentTheme} />
               </div>
             )}
