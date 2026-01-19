@@ -49,6 +49,7 @@ export default function ClientViewComponent({
   const [openSetting, setOpenSetting] = useState(false);
 
   const params = useSearchParams();
+  const isPro = false; // 🔥 ganti true kalau akun PRO
 
   useEffect(() => {
     setCurrentTheme(theme);
@@ -161,6 +162,7 @@ export default function ClientViewComponent({
                   theme={currentTheme}
                   label="Show Bio"
                   value={showBio}
+                  disabled={!isPro}
                   onChange={() => setShowBio(!showBio)}
                 />
 
@@ -168,6 +170,7 @@ export default function ClientViewComponent({
                   theme={currentTheme}
                   label="Show Highlight"
                   value={showHighlight}
+                  disabled={!isPro}
                   onChange={() => setShowHighlight(!showHighlight)}
                 />
 
@@ -175,6 +178,7 @@ export default function ClientViewComponent({
                   theme={currentTheme}
                   label="Dark Mode"
                   value={currentTheme === "dark"}
+                  disabled={!isPro}
                   onChange={() =>
                     setCurrentTheme((t) => (t === "light" ? "dark" : "light"))
                   }
@@ -188,22 +192,42 @@ export default function ClientViewComponent({
                 />
 
                 {/* 🔥 PRO BUTTON */}
-                <button
-                  onClick={() => {
-                    alert("Upgrade to PRO version");
-                  }}
-                  className={`
-          w-full py-3 text-sm font-semibold
-          transition
-          ${
-            currentTheme === "light"
-              ? "text-purple-600 hover:bg-[#F9FAFB]"
-              : "text-purple-400 hover:bg-[#24304A]"
-          }
-        `}
-                >
-                  Upgrade to PRO version
-                </button>
+                {/* 🔥 PRO CTA */}
+                {isPro ? (
+                  <button
+                    onClick={() => {
+                      alert("Open customize bio");
+                    }}
+                    className={`
+      w-full py-3 text-sm font-semibold
+      transition
+      ${
+        currentTheme === "light"
+          ? "text-purple-600 hover:bg-[#F9FAFB]"
+          : "text-purple-400 hover:bg-[#24304A]"
+      }
+    `}
+                  >
+                    Click here to customize your bio
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => {
+                      alert("Upgrade to PRO version");
+                    }}
+                    className={`
+      w-full py-3 text-sm font-semibold
+      transition
+      ${
+        currentTheme === "light"
+          ? "text-purple-600 hover:bg-[#F9FAFB]"
+          : "text-purple-400 hover:bg-[#24304A]"
+      }
+    `}
+                  >
+                    Upgrade to PRO version
+                  </button>
+                )}
               </div>
             )}
           </div>
@@ -212,7 +236,6 @@ export default function ClientViewComponent({
 
       {/* ================= CONTENT ================= */}
       <div className="px-5 pb-5 space-y-4 sm:space-y-6">
-
         {showBio && profile && (
           <BioSection profile={profile} theme={currentTheme} />
         )}
@@ -263,13 +286,18 @@ function IconButton({ children, onClick, theme }: any) {
   );
 }
 
-function SettingToggle({ label, value, onChange, theme }: any) {
+function SettingToggle({ label, value, onChange, theme, disabled }: any) {
   return (
     <button
-      onClick={onChange}
-      className={`w-full px-4 py-3 flex items-center justify-between text-sm rounded-xl transition
-    ${theme === "light" ? "hover:bg-[#F9FAFB]" : "hover:bg-[#24304A]"}
-  `}
+      disabled={disabled}
+      onClick={() => {
+        if (!disabled) onChange();
+      }}
+      className={`
+        w-full px-4 py-3 flex items-center justify-between text-sm rounded-xl transition
+        ${theme === "light" ? "hover:bg-[#F9FAFB]" : "hover:bg-[#24304A]"}
+        ${disabled ? "opacity-50 cursor-not-allowed" : ""}
+      `}
     >
       <span>{label}</span>
       <span
