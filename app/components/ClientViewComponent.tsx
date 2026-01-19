@@ -74,6 +74,8 @@ export default function ClientViewComponent({
 
       if (props.Hide?.checkbox === true) return false;
 
+      if (!hasAttachment(item)) return false;
+
       if (platform && platform !== "All Platform") {
         if (props.Platform?.select?.name !== platform) return false;
       }
@@ -437,3 +439,12 @@ function extractImage(item: any) {
     "/placeholder.png"
   );
 }
+
+function hasAttachment(item: any) {
+  const files = item.properties?.Attachment?.files;
+  if (!files || files.length === 0) return false;
+
+  const first = files[0];
+  return !!(first?.file?.url || first?.external?.url);
+}
+
