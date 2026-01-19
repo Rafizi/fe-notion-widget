@@ -132,7 +132,7 @@ export default function ClientViewComponent({
 
             {showFilterBar && (
               <div className="absolute right-0 top-full mt-2 z-50 w-56">
-                <EmbedFilter theme={currentTheme}  isPro={isPro}/>
+                <EmbedFilter theme={currentTheme} isPro={isPro} />
               </div>
             )}
           </div>
@@ -252,7 +252,13 @@ export default function ClientViewComponent({
             gridColumns={gridColumns}
             theme={currentTheme}
             cardBg={cardBg}
-            onSelect={setSelectedItem}
+            onSelect={(item: any) => {
+              if (!isPro) {
+                alert("Upgrade to PRO to view widget details");
+                return;
+              }
+              setSelectedItem(item);
+            }}
           />
         </div>
       )}
@@ -447,4 +453,3 @@ function hasAttachment(item: any) {
   const first = files[0];
   return !!(first?.file?.url || first?.external?.url);
 }
-
