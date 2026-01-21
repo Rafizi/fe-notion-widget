@@ -92,10 +92,10 @@ export default function Navbar() {
           </nav>
 
           {/* FOOTER */}
-          <div className="text-right leading-tight">
+          {/* <div className="text-right leading-tight">
             <p className="text-xs text-gray-500">Made with ❤️ by</p>
             <p className="text-sm text-gray-900 font-semibold">@rainbowgrow</p>
-          </div>
+          </div> */}
         </div>
       </div>
     </header>

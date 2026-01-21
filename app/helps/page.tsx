@@ -55,7 +55,7 @@ export default function Helps() {
               Read guides and tutorials to get the most out of the widget.
             </p>
             <a
-              href="#"
+              href="https://khlasify.super.site/docs/content-widget"
               className="text-purple-600 hover:text-purple-700 text-sm inline-flex items-center gap-1 transition-colors"
             >
               <span>View Documentation</span>
@@ -95,10 +95,10 @@ export default function Helps() {
               Get help from our team. We typically reply within 24 hours.
             </p>
             <a
-              href="mailto:support@graceandigrow.co"
+              href="mailto:hello@khlasify.com"
               className="text-purple-600 hover:text-purple-700 text-sm inline-flex items-center gap-1 transition-colors"
             >
-              <span>support@graceandigrow.co</span>
+              <span>hello@khlasify.com</span>
               <span>→</span>
             </a>
           </div>
@@ -115,7 +115,7 @@ export default function Helps() {
               Join the community & connect with other users.
             </p>
             <a
-              href="#"
+              href="https://t.me/khlasify_community"
               className="text-purple-600 hover:text-purple-700 text-sm inline-flex items-center gap-1 transition-colors"
             >
               <span>Join Community</span>
