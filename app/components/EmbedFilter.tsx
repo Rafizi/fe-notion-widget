@@ -201,7 +201,12 @@ export default function EmbedFilter({
 />
 
             <button
-              onClick={() => alert("Upgrade to PRO")}
+              onClick={() => {
+                window.open(
+                            "https://khlasify.myr.id/pl/content-pro",
+                            "_blank",
+                          );
+              }}
               className="w-full py-3 text-sm font-semibold text-purple-600 hover:bg-purple-50 transition"
             >
               Upgrade to PRO version
