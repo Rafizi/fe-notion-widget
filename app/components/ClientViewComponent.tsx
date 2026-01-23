@@ -49,7 +49,7 @@ export default function ClientViewComponent({
   const [openSetting, setOpenSetting] = useState(false);
 
   const params = useSearchParams();
-  const isPro = false; //  ganti true kalau akun PRO
+  const isPro = true; //  ganti true kalau akun PRO
 
   useEffect(() => {
     setCurrentTheme(theme);
@@ -307,7 +307,12 @@ export default function ClientViewComponent({
                     You’ve reached the free limit
                   </p>
                   <button
-                    onClick={() => alert("Upgrade to PRO")}
+                    onClick={() => {
+                      window.open(
+                        "https://khlasify.myr.id/pl/content-pro",
+                        "_blank",
+                      );
+                    }}
                     className="px-4 py-1.25 rounded-full bg-purple-600 text-white text-[12px] font-semibold hover:bg-purple-700 transition"
                   >
                     Upgrade to PRO
