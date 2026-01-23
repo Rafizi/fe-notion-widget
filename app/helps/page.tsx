@@ -72,7 +72,7 @@ export default function Helps() {
               <h3 className="text-lg text-gray-900">Video Tutorials</h3>
             </div>
             <p className="text-gray-600 text-sm mb-4">
-              Watch step-by-step video guides to set up and customize your widget.
+              Watch step-by-step video guides to set up your widget.
             </p>
             <a
               href="#"
@@ -126,7 +126,9 @@ export default function Helps() {
 
         {/* FAQ — NEW UI */}
         <div>
-          <h2 className="text-2xl text-gray-900 mb-6">Frequently Asked Questions</h2>
+          <h2 className="text-2xl text-gray-900 mb-6">
+            Frequently Asked Questions
+          </h2>
 
           <div className="space-y-4">
             {faqs.map((faq, index) => {
