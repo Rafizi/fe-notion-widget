@@ -41,7 +41,7 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 border-b border-gray-200 backdrop-blur-md bg-white/80">
       <div className="max-w-7xl mx-auto px-6 py-4">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center">
           {/* LEFT */}
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-purple-600 rounded-xl flex items-center justify-center">
@@ -61,7 +61,8 @@ export default function Navbar() {
           </div>
 
           {/* NAV MENU */}
-          <nav>
+          <nav className="absolute left-1/2 -translate-x-1/2">
+
             <ul className="flex items-center gap-4">
               {menuItems.map((item) => {
                 const Icon = item.icon;
@@ -99,5 +100,5 @@ export default function Navbar() {
         </div>
       </div>
     </header>
-  );
+  );  
 }
