@@ -76,7 +76,7 @@ export default function Navbar() {
               text-[11px] md:text-sm
               ${
                 isActive
-                  ? "bg-purple-50 text-purple-600 ring-1 ring-purple-200"
+                  ? "bg-purple-50 text-purple-600 "
                   : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
               }`}
                     >
