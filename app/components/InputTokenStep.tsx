@@ -6,16 +6,16 @@ import {
   AlertCircle,
   Loader2,
   Folder,
+  Sparkles,
 } from "lucide-react";
 import { getNotionDatabases } from "@/app/lib/widget.api";
 
 interface InputTokenStepProps {
   token: string;
   setToken: (val: string) => void;
-  setTokenValid: (val: boolean) => void; // ✅ NEW
+  setTokenValid: (val: boolean) => void;
   onDbSelect: (dbId: string, name: string) => void;
 }
-
 
 export default function InputTokenStep({
   token,
@@ -24,43 +24,60 @@ export default function InputTokenStep({
   onDbSelect,
 }: InputTokenStepProps) {
   const [loading, setLoading] = useState(false);
+  const [creating, setCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [databases, setDatabases] = useState<any[]>([]);
+  const [selectedDb, setSelectedDb] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
 
   useEffect(() => {
-  if (!token.startsWith("ntn_")) {
-    setTokenValid(false);
-    return;
-  }
+    if (!token.startsWith("ntn_")) {
+      setTokenValid(false);
+      setDatabases([]);
+      return;
+    }
 
-  const validateAndFetch = async () => {
-    setLoading(true);
-    setError(null);
+    const validateAndFetch = async () => {
+      setLoading(true);
+      setError(null);
 
-    try {
-      const res = await getNotionDatabases(token);
+      try {
+        const res = await getNotionDatabases(token);
 
-      if (!res.data || res.data.length === 0) {
-        setError("Token valid tapi database tidak ditemukan");
+        if (!res.data || res.data.length === 0) {
+          setError("Token valid tapi database tidak ditemukan");
+          setDatabases([]);
+          setTokenValid(false);
+          return;
+        }
+
+        setDatabases(res.data);
+        setTokenValid(true);
+      } catch {
+        setError("Invalid token atau belum di-share ke database");
         setDatabases([]);
         setTokenValid(false);
-        return;
+      } finally {
+        setLoading(false);
       }
+    };
 
-      setDatabases(res.data);
-      setTokenValid(true); // 🔥 PENTING
-    } catch {
-      setError("Invalid token atau belum di-share ke database");
-      setDatabases([]);
-      setTokenValid(false);
-    } finally {
-      setLoading(false);
-    }
+    validateAndFetch();
+  }, [token, setTokenValid]);
+
+  const handleCreateWidget = async () => {
+    if (!selectedDb) return;
+
+    setCreating(true);
+
+    // simulasi proses create widget (ganti API beneran nanti)
+    await new Promise((res) => setTimeout(res, 1500));
+
+    onDbSelect(selectedDb.id, selectedDb.name);
+    setCreating(false);
   };
-
-  validateAndFetch();
-}, [token, setTokenValid]);
-
 
   return (
     <div className="space-y-6">
@@ -72,7 +89,7 @@ export default function InputTokenStep({
           value={token}
           onChange={(e) => setToken(e.target.value.trim())}
           placeholder="ntn_xxxxxxxxx"
-          className="w-full px-4 py-3 border rounded-lg"
+          className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none"
         />
 
         {token && (
@@ -95,22 +112,57 @@ export default function InputTokenStep({
         <div className="space-y-3">
           <h3 className="font-semibold">Select Database</h3>
 
-          {databases.map((db) => (
-            <button
-              key={db.id}
-              onClick={() => onDbSelect(db.id, db.name)}
-              className="w-full p-4 border rounded-lg text-left hover:border-purple-500"
-            >
-              <div className="flex gap-3">
-                <Folder className="w-5 h-5 text-yellow-500 mt-0.5" />
-                <div>
-                  <p className="font-medium">{db.name}</p>
-                  <p className="text-xs text-gray-500">{db.id}</p>
+          {databases.map((db) => {
+            const active = selectedDb?.id === db.id;
+
+            return (
+              <button
+                key={db.id}
+                onClick={() =>
+                  setSelectedDb({ id: db.id, name: db.name })
+                }
+                className={`w-full p-4 border rounded-lg text-left transition-all
+                  ${
+                    active
+                      ? "border-purple-600 bg-purple-50 scale-[1.01]"
+                      : "hover:border-purple-400"
+                  }`}
+              >
+                <div className="flex gap-3">
+                  <Folder className="w-5 h-5 text-yellow-500 mt-0.5" />
+                  <div>
+                    <p className="font-medium">{db.name}</p>
+                    <p className="text-xs text-gray-500">{db.id}</p>
+                  </div>
                 </div>
-              </div>
-            </button>
-          ))}
+              </button>
+            );
+          })}
         </div>
+      )}
+
+      {/* CREATE WIDGET BUTTON */}
+      {selectedDb && (
+        <button
+          onClick={handleCreateWidget}
+          disabled={creating}
+          className="w-full flex items-center justify-center gap-2 py-3 rounded-xl
+            bg-purple-600 text-white font-semibold
+            hover:bg-purple-700 transition-all
+            disabled:opacity-60 disabled:cursor-not-allowed"
+        >
+          {creating ? (
+            <>
+              <Loader2 className="w-5 h-5 animate-spin" />
+              Creating widget...
+            </>
+          ) : (
+            <>
+              <Sparkles className="w-5 h-5" />
+              Create Widget
+            </>
+          )}
+        </button>
       )}
     </div>
   );
