@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const api = axios.create({
-    baseURL: "https://khalify-be.vercel.app",
+    baseURL: "https://khlasify-widget-be.vercel.app",
     headers: {
         "Content-Type": "application/json",
     },
