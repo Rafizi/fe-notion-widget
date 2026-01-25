@@ -32,7 +32,7 @@ export default function AuthEmbedClient() {
         setStatus("success");
 
         setTimeout(() => {
-          router.replace("/welcome");
+          router.replace("/home");
         }, 1500);
       } catch (err) {
         console.error("verify error:", err);
