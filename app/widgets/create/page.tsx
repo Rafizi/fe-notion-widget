@@ -70,28 +70,26 @@ export default function CreateWidgetPageMerged() {
         {/* STEP INDICATOR */}
         <div className="flex justify-center mb-10">
           <div className="flex gap-8">
-            {["Start", "Setup", "Finish"].map(
-              (label, i) => {
-                const id = (i + 1) as WizardStep;
-                return (
-                  <div key={id} className="flex items-center gap-2">
-                    <div
-                      className={`w-8 h-8 rounded-full flex items-center justify-center text-white
+            {["Start", "Setup", "Finish"].map((label, i) => {
+              const id = (i + 1) as WizardStep;
+              return (
+                <div key={id} className="flex items-center gap-2">
+                  <div
+                    className={`w-8 h-8 rounded-full flex items-center justify-center text-white
                       ${step === id ? "bg-purple-600" : "bg-gray-300"}`}
-                    >
-                      {id}
-                    </div>
-                    <span
-                      className={
-                        step === id ? "text-purple-600" : "text-gray-500"
-                      }
-                    >
-                      {label}
-                    </span>
+                  >
+                    {id}
                   </div>
-                );
-              }
-            )}
+                  <span
+                    className={
+                      step === id ? "text-purple-600" : "text-gray-500"
+                    }
+                  >
+                    {label}
+                  </span>
+                </div>
+              );
+            })}
           </div>
         </div>
 
@@ -108,7 +106,8 @@ export default function CreateWidgetPageMerged() {
                   token={notionToken}
                   setToken={setNotionToken}
                   setTokenValid={setIsTokenValid}
-                  onDbSelect={(id, name) => {
+                  loadingCreate={loading}
+                  onCreate={(id, name) => {
                     setDb(id);
                     setDbName(name);
                     handleGenerateWidget();

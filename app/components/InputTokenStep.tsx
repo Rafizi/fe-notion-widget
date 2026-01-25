@@ -14,6 +14,7 @@ interface InputTokenStepProps {
   token: string;
   setToken: (val: string) => void;
   setTokenValid: (val: boolean) => void;
+  loadingCreate: boolean; // ✅ dari parent
   onDbSelect: (dbId: string, name: string) => void;
 }
 
@@ -21,10 +22,10 @@ export default function InputTokenStep({
   token,
   setToken,
   setTokenValid,
+  loadingCreate,
   onDbSelect,
 }: InputTokenStepProps) {
   const [loading, setLoading] = useState(false);
-  const [creating, setCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [databases, setDatabases] = useState<any[]>([]);
   const [selectedDb, setSelectedDb] = useState<{
@@ -67,16 +68,9 @@ export default function InputTokenStep({
     validateAndFetch();
   }, [token, setTokenValid]);
 
-  const handleCreateWidget = async () => {
-    if (!selectedDb) return;
-
-    setCreating(true);
-
-    // simulasi proses create widget (ganti API beneran nanti)
-    await new Promise((res) => setTimeout(res, 1500));
-
+  const handleCreateWidget = () => {
+    if (!selectedDb || loadingCreate) return;
     onDbSelect(selectedDb.id, selectedDb.name);
-    setCreating(false);
   };
 
   return (
@@ -118,15 +112,16 @@ export default function InputTokenStep({
             return (
               <button
                 key={db.id}
-                onClick={() =>
-                  setSelectedDb({ id: db.id, name: db.name })
-                }
+                disabled={loadingCreate}
+                onClick={() => setSelectedDb({ id: db.id, name: db.name })}
                 className={`w-full p-4 border rounded-lg text-left transition-all
                   ${
                     active
                       ? "border-purple-600 bg-purple-50 scale-[1.01]"
                       : "hover:border-purple-400"
-                  }`}
+                  }
+                  ${loadingCreate ? "opacity-60 cursor-not-allowed" : ""}
+                `}
               >
                 <div className="flex gap-3">
                   <Folder className="w-5 h-5 text-yellow-500 mt-0.5" />
@@ -145,13 +140,13 @@ export default function InputTokenStep({
       {selectedDb && (
         <button
           onClick={handleCreateWidget}
-          disabled={creating}
+          disabled={loadingCreate}
           className="w-full flex items-center justify-center gap-2 py-3 rounded-xl
             bg-purple-600 text-white font-semibold
             hover:bg-purple-700 transition-all
             disabled:opacity-60 disabled:cursor-not-allowed"
         >
-          {creating ? (
+          {loadingCreate ? (
             <>
               <Loader2 className="w-5 h-5 animate-spin" />
               Creating widget...
