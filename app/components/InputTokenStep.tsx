@@ -14,7 +14,7 @@ interface InputTokenStepProps {
   token: string;
   setToken: (val: string) => void;
   setTokenValid: (val: boolean) => void;
-  loadingCreate: boolean; // ✅ dari parent
+  loadingCreate: boolean;
   onDbSelect: (dbId: string, name: string) => void;
 }
 
@@ -112,8 +112,10 @@ export default function InputTokenStep({
             return (
               <button
                 key={db.id}
+                onClick={() =>
+                  setSelectedDb({ id: db.id, name: db.name })
+                }
                 disabled={loadingCreate}
-                onClick={() => setSelectedDb({ id: db.id, name: db.name })}
                 className={`w-full p-4 border rounded-lg text-left transition-all
                   ${
                     active

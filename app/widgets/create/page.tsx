@@ -40,21 +40,23 @@ export default function CreateWidgetPageMerged() {
     setUser({ jwt });
   }, [router]);
 
-  const handleGenerateWidget = async () => {
-    if (!db || !isTokenValid || !notionToken || !user?.jwt) return;
+  const handleGenerateWidget = async (dbId: string, name: string) => {
+    if (!isTokenValid || !notionToken || !user?.jwt) return;
 
     setLoading(true);
     try {
       const res = await createWidget({
         token: notionToken,
-        dbID: db,
+        dbID: dbId,
         email: user.jwt,
-        name: dbName || "My Notion Widget",
+        name,
       });
 
       const embedLink = res?.data?.embedLink;
       if (!embedLink) return;
 
+      setDb(dbId);
+      setDbName(name);
       setEmbedUrl(embedLink);
       setStep(3);
     } finally {
@@ -107,10 +109,8 @@ export default function CreateWidgetPageMerged() {
                   setToken={setNotionToken}
                   setTokenValid={setIsTokenValid}
                   loadingCreate={loading}
-                  onCreate={(id, name) => {
-                    setDb(id);
-                    setDbName(name);
-                    handleGenerateWidget();
+                  onDbSelect={(id, name) => {
+                    handleGenerateWidget(id, name);
                   }}
                 />
               )}
