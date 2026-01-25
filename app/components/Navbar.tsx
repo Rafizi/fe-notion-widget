@@ -61,7 +61,7 @@ export default function Navbar() {
 
           {/* NAV MENU */}
           <nav className="flex justify-center">
-            <ul className="flex flex-wrap justify-center gap-2 md:gap-4">
+            <ul className="grid grid-cols-2 gap-2 md:flex md:gap-4">
               {menuItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = pathname.startsWith(item.id);
@@ -70,12 +70,12 @@ export default function Navbar() {
                   <li key={item.id}>
                     <Link
                       href={item.id}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-all whitespace-nowrap
-                      ${
-                        isActive
-                          ? "bg-purple-50 text-purple-600 ring-1 ring-purple-200"
-                          : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                      }`}
+                      className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm transition-all whitespace-nowrap
+              ${
+                isActive
+                  ? "bg-purple-50 text-purple-600 ring-1 ring-purple-200"
+                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+              }`}
                     >
                       <Icon
                         className={`w-5 h-5 ${
