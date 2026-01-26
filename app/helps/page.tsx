@@ -75,7 +75,7 @@ export default function Helps() {
               Watch step-by-step video guides to set up your widget.
             </p>
             <a
-              href="#"
+              href="https://youtu.be/Z8xYVBWdv3c"
               className="text-purple-600 hover:text-purple-700 text-sm inline-flex items-center gap-1 transition-colors"
             >
               <span>Watch Videos</span>
