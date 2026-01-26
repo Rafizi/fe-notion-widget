@@ -15,7 +15,7 @@ export default function Home() {
       router.replace("/auth/login");
       return;
     } else {
-      router.replace("/welcome");
+      router.replace("/home");
     }
   }, [router]);
   return (
