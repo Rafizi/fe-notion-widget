@@ -28,8 +28,7 @@ export default function Home() {
         <div className="max-w-[1440px] mx-auto px-6">
 
           {/* ================= HERO SECTION ================= */}
-          <div className="flex flex-col lg:flex-row gap-14 items-stretch justify-center">
-
+          <div className="flex flex-col lg:flex-row gap-14 items-start justify-center">
 
             {/* ===== LEFT : PREVIEW MOCKUP ===== */}
             <div className="relative w-full lg:w-[700px]">
@@ -49,8 +48,7 @@ export default function Home() {
                 </div>
 
                 {/* iframe preview */}
-                <div className="flex-1">
-
+                <div className="h-[900px] lg:h-[1050px]">
                   <iframe
                     src="https://widget.khlasify.com/embed/873472?db=2ed1519e-69f0-801d-9d05-f41df80688e3"
                     className="w-full h-full"
@@ -61,8 +59,7 @@ export default function Home() {
             </div>
 
             {/* ===== RIGHT : CONTENT ===== */}
-            <div className="flex flex-col gap-8 w-full lg:w-[580px] h-full">
-
+            <div className="flex flex-col gap-8 w-full lg:w-[580px]">
 
               {/* badge */}
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-50 border border-purple-200 w-fit">
