@@ -30,7 +30,7 @@ export default function WelcomePage() {
 }, []);
 
 
-  if (!user) return <div>Loading...</div>;
+  // if (!user) return <div>Loading...</div>;
 
   return (
     <>
