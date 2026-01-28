@@ -9,15 +9,15 @@ import { useRouter } from "next/navigation";
 export default function Home() {
   const router = useRouter();
 
-  useEffect(() => {
-    const token = cookies.get("login_token");
-    if (!token) {
-      router.replace("/auth/login");
-      return;
-    } else {
-      router.replace("/home");
-    }
-  }, [router]);
+  // useEffect(() => {
+  //   const token = cookies.get("login_token");
+  //   if (!token) {
+  //     router.replace("/auth/login");
+  //     return;
+  //   } else {
+  //     router.replace("/home");
+  //   }
+  // }, [router]);
   return (
     <>  
     {/* <LoginPage /> */}

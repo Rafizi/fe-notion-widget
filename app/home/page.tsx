@@ -10,17 +10,25 @@ export default function WelcomePage() {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
 
+  // useEffect(() => {
+  //   const token = cookies.get("login_token");
+
+  //   if (!token) {
+  //     router.replace("/auth/login");
+  //     return;
+  //   }
+
+  //   setUser({ token });
+  //   cookies.remove("login_email");
+  // }, []);
+
   useEffect(() => {
-    const token = cookies.get("login_token");
-
-    if (!token) {
-      router.replace("/auth/login");
-      return;
-    }
-
+  const token = cookies.get("login_token");
+  if (token) {
     setUser({ token });
-    cookies.remove("login_email");
-  }, []);
+  }
+}, []);
+
 
   if (!user) return <div>Loading...</div>;
 

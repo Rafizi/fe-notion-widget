@@ -9,9 +9,6 @@ import { createWidget } from "@/app/lib/widget.api";
 import CreateTokenStep from "@/app/components/CreateTokenStep";
 import InputTokenStep from "@/app/components/InputTokenStep";
 import TemplateStep from "@/app/components/TemplateStep";
-import SelectDatabaseStep from "@/app/components/SelectDatabaseStep";
-
-// STEP COMPONENTS
 
 type WizardStep = 1 | 2 | 3;
 
@@ -23,25 +20,27 @@ export default function CreateWidgetPageMerged() {
 
   const [db, setDb] = useState<string | null>(null);
   const [dbName, setDbName] = useState<string | null>(null);
-
   const [embedUrl, setEmbedUrl] = useState<string | null>(null);
+
   const [loading, setLoading] = useState(false);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<{ jwt: string } | null>(null);
   const [showTokenInput, setShowTokenInput] = useState(false);
+  const [showLoginAlert, setShowLoginAlert] = useState(false);
 
   const router = useRouter();
 
+  // 🔐 soft guard → popup instead of redirect
   useEffect(() => {
     const jwt = cookies.get("login_token");
     if (!jwt) {
-      router.replace("/auth/login");
+      setShowLoginAlert(true);
       return;
     }
     setUser({ jwt });
-  }, [router]);
+  }, []);
 
   const handleGenerateWidget = async (dbId: string, name: string) => {
-    if (!isTokenValid || !notionToken || !user?.jwt) return;
+    if (!user || !isTokenValid || !notionToken) return;
 
     setLoading(true);
     try {
@@ -68,65 +67,100 @@ export default function CreateWidgetPageMerged() {
     <>
       <Navbar />
 
-      <div className="min-h-screen bg-white p-10">
-        {/* STEP INDICATOR */}
-        <div className="flex justify-center mb-10">
-          <div className="flex gap-8">
-            {["Start", "Setup", "Finish"].map((label, i) => {
-              const id = (i + 1) as WizardStep;
-              return (
-                <div key={id} className="flex items-center gap-2">
-                  <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center text-white
-                      ${step === id ? "bg-purple-600" : "bg-gray-300"}`}
-                  >
-                    {id}
-                  </div>
-                  <span
-                    className={
-                      step === id ? "text-purple-600" : "text-gray-500"
-                    }
-                  >
-                    {label}
-                  </span>
-                </div>
-              );
-            })}
+      {/* 🔔 LOGIN POPUP */}
+      {showLoginAlert && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-6 w-full max-w-sm text-center space-y-4 animate-fade-in">
+            <h2 className="text-xl font-bold">Login required 🔐</h2>
+            <p className="text-gray-600">
+              Please login first to create your widget.
+            </p>
+
+            <div className="flex justify-center gap-3">
+              <button
+                onClick={() => router.push("/")}
+                className="px-4 py-2 rounded-lg bg-gray-200"
+              >
+                Back
+              </button>
+
+              <button
+                onClick={() => router.push("/auth/login")}
+                className="px-4 py-2 rounded-lg bg-purple-600 text-white"
+              >
+                Login
+              </button>
+            </div>
           </div>
         </div>
+      )}
 
-        {/* CONTENT */}
-        <div className="max-w-5xl mx-auto bg-gray-50 p-8 rounded-xl shadow">
-          {step === 1 && <TemplateStep onConfirm={() => setStep(2)} />}
-
-          {step === 2 && (
-            <>
-              {!showTokenInput ? (
-                <CreateTokenStep onNext={() => setShowTokenInput(true)} />
-              ) : (
-                <InputTokenStep
-                  token={notionToken}
-                  setToken={setNotionToken}
-                  setTokenValid={setIsTokenValid}
-                  loadingCreate={loading}
-                  onDbSelect={(id, name) => {
-                    handleGenerateWidget(id, name);
-                  }}
-                />
-              )}
-            </>
-          )}
-
-          {step === 3 && (
-            <FinishStep
-              db={db!}
-              embedUrl={embedUrl}
-              token={notionToken}
-              onBack={() => setStep(3)}
-            />
-          )}
+      {/* 🔒 LOCKED CONTENT */}
+      {!user ? (
+        <div className="min-h-screen flex items-center justify-center text-gray-500">
+          Waiting for login...
         </div>
-      </div>
+      ) : (
+        <div className="min-h-screen bg-white p-10">
+          {/* STEP INDICATOR */}
+          <div className="flex justify-center mb-10">
+            <div className="flex gap-8">
+              {["Start", "Setup", "Finish"].map((label, i) => {
+                const id = (i + 1) as WizardStep;
+                return (
+                  <div key={id} className="flex items-center gap-2">
+                    <div
+                      className={`w-8 h-8 rounded-full flex items-center justify-center text-white
+                        ${step === id ? "bg-purple-600" : "bg-gray-300"}`}
+                    >
+                      {id}
+                    </div>
+                    <span
+                      className={
+                        step === id ? "text-purple-600" : "text-gray-500"
+                      }
+                    >
+                      {label}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* CONTENT */}
+          <div className="max-w-5xl mx-auto bg-gray-50 p-8 rounded-xl shadow">
+            {step === 1 && <TemplateStep onConfirm={() => setStep(2)} />}
+
+            {step === 2 && (
+              <>
+                {!showTokenInput ? (
+                  <CreateTokenStep onNext={() => setShowTokenInput(true)} />
+                ) : (
+                  <InputTokenStep
+                    token={notionToken}
+                    setToken={setNotionToken}
+                    setTokenValid={setIsTokenValid}
+                    loadingCreate={loading}
+                    onDbSelect={(id, name) =>
+                      handleGenerateWidget(id, name)
+                    }
+                  />
+                )}
+              </>
+            )}
+
+            {step === 3 && (
+              <FinishStep
+                db={db!}
+                embedUrl={embedUrl}
+                token={notionToken}
+                onBack={() => setStep(3)}
+              />
+            )}
+          </div>
+        </div>
+      )}
     </>
   );
 }
