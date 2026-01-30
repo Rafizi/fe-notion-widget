@@ -75,17 +75,19 @@ export default function Home() {
 
               {/* CTA */}
               <button
-                onClick={() => router.push("/widgets/create")}
+                onClick={() => {
+                  window.open("https://khlasify.myr.id/pl/content-starter/", "_blank");
+                }}
                 className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-7 py-4 rounded-xl w-fit shadow-lg shadow-purple-200 transition"
               >
-                Get Started
+                Get Template
                 <ArrowRight className="w-5 h-5" />
               </button>
 
               {/* ===== STEPS ===== */}
               <div className="mt-6">
                 <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-                  Get started in 5 minutes
+                  Create yours in 5 minutes
                 </h2>
 
                 <div className="flex flex-col gap-4">
