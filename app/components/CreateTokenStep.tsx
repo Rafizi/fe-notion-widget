@@ -17,7 +17,6 @@ export default function CreateTokenStep({ onNext }: CreateTokenStepProps) {
             href="https://www.notion.so/my-integrations"
             target="_blank"
           >
-            <ExternalLink className="w-4 h-4" />
             Go to Notion Integrations
           </a>
         </li>
