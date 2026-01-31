@@ -222,7 +222,7 @@ export default function AccountsPage() {
                   className="flex items-center gap-2 text-sm text-purple-600 hover:underline"
                 >
                   <Crown className="w-4 h-4" />
-                  Upgrade to Pro
+                  Upgrade to PRO
                 </button>
 
                 <button
