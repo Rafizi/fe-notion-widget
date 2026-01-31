@@ -277,59 +277,6 @@ export default function ClientViewComponent({
                 setSelectedItem(item);
               }}
             />
-            {/* 🔒 FREE LIMIT INFO (PAS 9) */}
-            {isExactlyLimit && (
-              <div className="mt-4 text-center">
-                <p className="text-xs text-gray-500">
-                  You’ve reached your free limit of 9 posts.
-                </p>
-              </div>
-            )}
-
-            {/* 🔒 FREE LIMIT OVERLAY (LEBIH DARI 9) */}
-            {isOverLimit && (
-              <div className="pointer-events-none absolute bottom-0 left-0 w-full h-56 flex items-end justify-center">
-                {/* blur */}
-                <div
-                  className="
-        absolute inset-0
-        backdrop-blur-lg
-        bg-black/20
-        [mask-image:linear-gradient(to_top,black,transparent)]
-      "
-                />
-
-                {/* gradient */}
-                <div
-                  className="
-        absolute inset-0
-        bg-gradient-to-t
-        from-black/60
-        via-black/30
-        to-transparent
-      "
-                />
-
-                {/* content */}
-                <div className="relative mb-5 text-center pointer-events-auto">
-                  <p className="text-white text-xs font-medium mb-2">
-                    You’ve reached your free limit of 9 posts.
-                  </p>
-
-                  <button
-                    onClick={() =>
-                      window.open(
-                        "https://khlasify.myr.id/pl/content-pro",
-                        "_blank",
-                      )
-                    }
-                    className="px-4 py-1.5 rounded-full bg-purple-600 text-white text-xs font-semibold hover:bg-purple-700 transition"
-                  >
-                    Upgrade to PRO
-                  </button>
-                </div>
-              </div>
-            )}
           </div>
         )}
 
@@ -339,6 +286,55 @@ export default function ClientViewComponent({
             theme={currentTheme}
             onClose={() => setSelectedItem(null)}
           />
+        )}
+
+        {/* 🔔 FREE LIMIT BAR */}
+        {(isExactlyLimit || isOverLimit) && (
+          <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-xl">
+            <div
+              className={`
+        flex items-center justify-between gap-3
+        px-4 py-3 rounded-2xl shadow-lg
+        backdrop-blur
+        ${
+          currentTheme === "light"
+            ? "bg-white/90 text-gray-900 border border-gray-200"
+            : "bg-[#1F2A3C]/90 text-white border border-[#2A3550]"
+        }
+      `}
+            >
+              {/* TEXT */}
+              <p className="text-xs sm:text-sm font-medium">
+                You’ve reached your free limit of{" "}
+                <span className="font-semibold">9 posts</span>.
+              </p>
+
+              {/* BUTTON → HANYA JIKA > 9 */}
+              {isOverLimit && (
+                <button
+                  onClick={() =>
+                    window.open(
+                      "https://khlasify.myr.id/pl/content-pro",
+                      "_blank",
+                    )
+                  }
+                  className="
+            shrink-0
+            px-4 py-1.5
+            rounded-full
+            bg-purple-600
+            text-white
+            text-xs
+            font-semibold
+            hover:bg-purple-700
+            transition
+          "
+                >
+                  Upgrade to PRO
+                </button>
+              )}
+            </div>
+          </div>
         )}
       </div>
     </main>
