@@ -217,8 +217,7 @@ export default function AccountsPage() {
               <div className="mt-6 flex items-center justify-between">
                 <button
                   onClick={() =>
-                    window.open(
-                      "https://khlasify.myr.id/pl/content-pro/")
+                    window.open("https://khlasify.myr.id/pl/content-pro/")
                   }
                   className="flex items-center gap-2 text-sm text-purple-600 hover:underline"
                 >
@@ -324,7 +323,9 @@ export default function AccountsPage() {
                   {/* ADVANCED TOGGLE */}
                   <button
                     onClick={() => toggleDetails(widget.id)}
-                    className="w-full flex items-center justify-between px-5 py-3 text-xs text-slate-500 border-t hover:bg-slate-50"
+                    className={`w-full flex items-center justify-between px-5 py-3 text-xs text-slate-500 border-t
+  hover:bg-slate-50 transition
+  ${!openDetails[widget.id] ? "rounded-b-2xl" : ""}`}
                   >
                     Show Advanced Details
                     {openDetails[widget.id] ? "▲" : "▼"}
@@ -332,7 +333,7 @@ export default function AccountsPage() {
 
                   {/* ADVANCED DETAILS */}
                   {openDetails[widget.id] && (
-                    <div className="px-5 pb-5 space-y-3 text-xs">
+                    <div className="px-5 pb-5 space-y-3 text-xs rounded-b-2xl">
                       {/* Widget ID */}
                       <div>
                         <p className="text-slate-500 mb-1">Widget ID</p>
