@@ -36,15 +36,13 @@ export default function LoginPage() {
       <div className="w-full max-w-md border border-gray-200 rounded-2xl p-10 text-center">
         {/* Logo */}
         <div className="flex justify-center mb-4">
-          <div className="w-14 h-14 rounded-full overflow-hidden border border-gray-200">
-            <Image
+          <Image
               src="/LogoDanNama.png"
               alt="Logo"
               width={56}
               height={56}
               className="object-cover"
             />
-          </div>
         </div>
 
         {/* Brand
