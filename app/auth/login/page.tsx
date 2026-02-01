@@ -79,7 +79,10 @@ export default function LoginPage() {
 
         {/* Terms */}
         <p className="text-xs text-gray-400">
-          By continuing, you agree to our Terms & Privacy Policy
+          By continuing, you agree to our  <span>
+            <a href="https://khlasify.super.site/privacy-policy" className="underline hover:text-purple-600">
+              Terms of Service</a>
+          </span>
         </p>
       </div>
     </div>
