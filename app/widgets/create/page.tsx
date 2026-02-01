@@ -102,10 +102,10 @@ export default function CreateWidgetPageMerged() {
         </div>
       ) : (
         <div className="min-h-screen bg-white">
-          <div className="max-w-5xl mx-auto px-12 py-12">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 md:px-10 lg:px-12 py-8 md:py-12">
             {/* STEP INDICATOR */}
             <div className="flex justify-center mb-10">
-              <div className="flex gap-8">
+              <div className="flex flex-wrap justify-center gap-4 sm:gap-6 md:gap-8">
                 {["Start", "Setup", "Finish"].map((label, i) => {
                   const id = (i + 1) as WizardStep;
                   return (
@@ -117,9 +117,9 @@ export default function CreateWidgetPageMerged() {
                         {id}
                       </div>
                       <span
-                        className={
+                        className={`text-sm sm:text-base ${
                           step === id ? "text-purple-600" : "text-gray-500"
-                        }
+                        }`}
                       >
                         {label}
                       </span>
@@ -130,7 +130,7 @@ export default function CreateWidgetPageMerged() {
             </div>
 
             {/* CONTENT */}
-            <div className="bg-gray-50 p-8 rounded-xl shadow">
+            <div className="bg-gray-50 p-4 sm:p-6 md:p-8 rounded-xl shadow">
 
               {step === 1 && <TemplateStep onConfirm={() => setStep(2)} />}
 
