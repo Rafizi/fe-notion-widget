@@ -21,7 +21,8 @@ export default function Home() {
 
       <div className="bg-gray-50 overflow-x-hidden">
 
-        <div className="max-w-7xl mx-auto px-6 py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+
           {/* ================= HERO SECTION ================= */}
           <div className="flex flex-col lg:flex-row gap-10 items-start">
 
