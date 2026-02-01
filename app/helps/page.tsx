@@ -37,7 +37,7 @@ export default function Helps() {
       <div className="max-w-5xl mx-auto px-12 py-12">
         {/* HEADER */}
         <div className="mb-8">
-          <h1 className="text-4xl text-gray-900 mb-2">Help & Support</h1>
+          <h1 className="text-4xl text-gray-900 mb-2 font-bold">Help & Support</h1>
           <p className="text-gray-600">Find answers and get assistance</p>
         </div>
 
@@ -49,7 +49,7 @@ export default function Helps() {
               <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
                 <Book className="w-6 h-6 text-blue-600" />
               </div>
-              <h3 className="text-lg text-gray-900">Documentation</h3>
+              <h3 className="text-lg text-gray-900 font-bold">Documentation</h3>
             </div>
             <p className="text-gray-600 text-sm mb-4">
               Read guides and tutorials to get the most out of the widget.
@@ -69,7 +69,7 @@ export default function Helps() {
               <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
                 <Video className="w-6 h-6 text-red-600" />
               </div>
-              <h3 className="text-lg text-gray-900">Video Tutorials</h3>
+              <h3 className="text-lg text-gray-900 font-bold">Video Tutorials</h3>
             </div>
             <p className="text-gray-600 text-sm mb-4">
               Watch step-by-step video guides to set up your widget.
@@ -89,7 +89,7 @@ export default function Helps() {
               <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
                 <Mail className="w-6 h-6 text-green-600" />
               </div>
-              <h3 className="text-lg text-gray-900">Email Support</h3>
+              <h3 className="text-lg text-gray-900 font-bold">Email Support</h3>
             </div>
             <p className="text-gray-600 text-sm mb-4">
               Get help from our team. We typically reply within 24 hours.
@@ -109,7 +109,7 @@ export default function Helps() {
               <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
                 <MessageCircle className="w-6 h-6 text-purple-600" />
               </div>
-              <h3 className="text-lg text-gray-900">Community</h3>
+              <h3 className="text-lg text-gray-900 font-bold">Community</h3>
             </div>
             <p className="text-gray-600 text-sm mb-4">
               Join the community & connect with other users.
