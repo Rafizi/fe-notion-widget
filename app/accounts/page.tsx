@@ -160,14 +160,14 @@ export default function AccountsPage() {
     <>
       <Navbar />
 
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-purple-50">
-        <div className="max-w-7xl mx-auto px-6 py-12 space-y-10">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-purple-50 overflow-x-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-10">
           {/* ===== TOP SUMMARY ===== */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* ACCOUNT */}
             <div className="md:col-span-2 rounded-3xl p-6 bg-white/70 backdrop-blur border shadow-sm">
               {/* USER HEADER */}
-              <div className="flex items-center gap-4">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                 <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white">
                   <UserIcon />
                 </div>
@@ -177,7 +177,7 @@ export default function AccountsPage() {
                   <p className="font-medium text-slate-900">{user?.email}</p>
                 </div>
 
-                <span className="px-4 py-1 rounded-full text-xs bg-purple-100 text-purple-700">
+                <span className="px-4 py-1 rounded-full text-xs bg-purple-100 text-purple-700 w-fit">
                   Basic Account
                 </span>
               </div>
@@ -214,7 +214,8 @@ export default function AccountsPage() {
               </div>
 
               {/* ACTIONS */}
-              <div className="mt-6 flex items-center justify-between">
+              <div className="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+
                 <button
                   onClick={() =>
                     window.open("https://khlasify.myr.id/pl/content-pro/")
@@ -271,9 +272,10 @@ export default function AccountsPage() {
                   className="rounded-2xl border bg-white shadow-sm hover:shadow-md transition"
                 >
                   {/* HEADER */}
-                  <div className="flex items-center justify-between p-5">
+                  <div className="flex items-start justify-between p-5 gap-3">
+
                     <div>
-                      <p className="text-sm font-medium text-slate-900">
+                      <p className="text-sm font-medium text-slate-900 break-all">
                         Widget #{widget.id.slice(0, 6).toUpperCase()}
                       </p>
                       <span className="inline-flex items-center gap-1 text-xs text-green-600 bg-green-50 px-2 py-0.5 rounded-full mt-1">
