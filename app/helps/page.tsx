@@ -126,7 +126,7 @@ export default function Helps() {
 
         {/* FAQ — NEW UI */}
         <div>
-          <h2 className="text-2xl text-gray-900 mb-6">
+          <h2 className="text-2xl text-gray-900 mb-6 font-bold">
             Frequently Asked Questions
           </h2>
 

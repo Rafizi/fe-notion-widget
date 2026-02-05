@@ -138,11 +138,17 @@ export default function Home() {
               <ul className="space-y-3">
                 <li className="flex items-center gap-2 text-purple-600">
                   <CheckCircle2 className="w-5 h-5" />
-                  Starter Setup
+                  <a href="https://youtu.be/Z8xYVBWdv3c">
+                    Starter Setup
+                  </a>
                 </li>
                 <li className="flex items-center gap-2 text-purple-600">
                   <CheckCircle2 className="w-5 h-5" />
                   PRO Setup
+                </li>
+                <li className="flex items-center gap-2 text-purple-600">
+                  <CheckCircle2 className="w-5 h-5" />
+                  Starter vs PRO Features
                 </li>
               </ul>
             </div>
