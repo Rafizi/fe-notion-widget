@@ -2,13 +2,14 @@
 import { api } from "./axios";
 
 export const getPaymentLink = async () => {
-  // Gunakan instance 'api' agar interceptor jalan
+  // HAPUS headers: { Authorization... } DARI SINI CUK!
+  // Biar axios.ts yang urus tokennya.
   const res = await api.post("/payment/link", {}); 
   return res.data;
 };
 
 export const checkPaymentStatus = async () => {
-  // Gunakan instance 'api'
+  // INI JUGA, JANGAN ADA HEADER MANUAL LAGI
   const res = await api.get("/payment/check-status");
   return res.data;
 };

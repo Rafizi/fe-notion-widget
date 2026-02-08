@@ -3,23 +3,25 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 export const api = axios.create({
-    baseURL: "https://khlasify-widget-be.vercel.app",
+    baseURL: "https://khlasify-widget-be.vercel.app", // Pastikan URL bener
     headers: {
         "Content-Type": "application/json",
     },
 });
 
+// INTERCEPTOR (Tukang Tempel Token)
 api.interceptors.request.use((config) => {
     const rawToken = Cookies.get("login_token");
     
     if (rawToken) {
-        // CLEANUP: Hapus spasi dan baris baru di awal/akhir/tengah token
-        const cleanToken = rawToken.replace(/[\n\r\t]/g, "").trim();
+        // 1. Bersihin token dari spasi/enter yang gak sengaja ke-copy
+        const cleanToken = rawToken.trim().replace(/[\n\r]/g, "");
         
-        // JANGAN TEKAN ENTER DI SINI! Tulis dalam satu baris rapat
+        // 2. Tempel string "Bearer" + spasi + token (SATU BARIS)
         config.headers.Authorization = `Bearer ${cleanToken}`;
         
-        console.log("🛠️ Header Sent:", config.headers.Authorization);
+        // Cek console browser lo nanti, harusnya LURUS satu baris
+        console.log("🛠️ Header OTW:", config.headers.Authorization);
     }
     
     return config;
