@@ -1,31 +1,13 @@
 // lib/payment.api.ts
 import { api } from "./axios";
-import Cookies from "js-cookie";
 
 export const getPaymentLink = async () => {
-  const token = Cookies.get("login_token");
-
-  const res = await api.post(
-    "/payment/link",
-    {},
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
-
+  // Post data kosong {} karena BE cuma butuh info user dari token
+  const res = await api.post("/payment/link", {});
   return res.data;
 };
 
 export const checkPaymentStatus = async () => {
-  const token = Cookies.get("login_token");
-
-  const res = await api.get("/payment/check-status", {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
+  const res = await api.get("/payment/check-status");
   return res.data;
 };
