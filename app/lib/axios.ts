@@ -10,12 +10,16 @@ export const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-    const token = Cookies.get("login_token");
+    const rawToken = Cookies.get("login_token");
     
-    if (token) {
-        // PAKAI TEMPLATE LITERAL DAN TRIM BIAR BERSIH CUK
-        config.headers.Authorization = `Bearer ${token.trim()}`;
-        console.log("Header Set:", config.headers.Authorization);
+    if (rawToken) {
+        // CLEANUP: Hapus spasi dan baris baru di awal/akhir/tengah token
+        const cleanToken = rawToken.replace(/[\n\r\t]/g, "").trim();
+        
+        // JANGAN TEKAN ENTER DI SINI! Tulis dalam satu baris rapat
+        config.headers.Authorization = `Bearer ${cleanToken}`;
+        
+        console.log("🛠️ Header Sent:", config.headers.Authorization);
     }
     
     return config;
