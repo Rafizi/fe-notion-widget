@@ -135,7 +135,7 @@ export default function AccountsPage() {
       toast.dismiss();
 
       if (res?.paymentLink) {
-        window.open(res.paymentLink, "_blank");
+        window.location.href = res.paymentLink;
         toast.info("Silakan selesaikan pembayaran, lalu refresh halaman ini.");
       }
     } catch (error) {
