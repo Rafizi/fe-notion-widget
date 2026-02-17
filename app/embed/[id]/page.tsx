@@ -36,7 +36,8 @@ export default async function EmbedPage(props: EmbedPageProps) {
 
     // 2. Ambil Status PRO dari Profile Pemilik Widget
     // Karena Backend sudah di-include 'profile', kita bisa akses profile.isPro
-    const isOwnerPro = widgetData.profile?.isPro ?? false; 
+    // const isOwnerPro = widgetData.profile?.isPro ?? false; 
+    const isOwnerPro = true; 
 
     // console.log("DEBUG: Owner is PRO?", isOwnerPro); 
 
